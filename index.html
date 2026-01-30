@@ -354,6 +354,12 @@
             </div>
 
             <div class="control-group">
+                <label>Raio Fractal: <span id="raio-fractal-valor">2.5</span></label>
+                <input type="range" id="raio-fractal" min="1" max="5" step="0.1" value="2.5" oninput="alterarRaioFractal()">
+                <small style="color: #888;">Distância das repetições</small>
+            </div>
+
+            <div class="control-group">
                 <label>Escala Fractal: <span id="escala-fractal-valor">0.5</span></label>
                 <input type="range" id="escala-fractal" min="0.2" max="0.9" step="0.1" value="0.5" oninput="alterarEscalaFractal()">
             </div>
@@ -378,6 +384,7 @@
             </div>
             <div class="btn-group">
                 <button onclick="exportarPNG()">📸 Exportar PNG</button>
+                <button onclick="exportarSTL()" class="secondary">🗿 Exportar STL</button>
             </div>
             <input type="file" id="file-input" accept=".json" style="display:none" onchange="lerFicheiro()">
         </div>
@@ -385,6 +392,7 @@
         <div id="info">
             <h3>ℹ️ Controlos</h3>
             <p>🖱️ <strong>Arrastar:</strong> Rodar câmera</p>
+            <p>⌨️ <strong>Space + Arrastar:</strong> Pan</p>
             <p>🔍 <strong>Scroll:</strong> Zoom</p>
             <p>📝 <strong>Edita o JSON</strong> e clica "Carregar"</p>
         </div>
@@ -393,6 +401,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/STLExporter.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

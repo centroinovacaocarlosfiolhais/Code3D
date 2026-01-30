@@ -178,7 +178,8 @@ function criarFractal(geometriaBase, material, nivel, escala, posicaoBase = new 
     // Se ainda há níveis, criar recursivamente
     if (nivel > 0) {
         const numCopias = 4; // Número de cópias ao redor
-        const raio = 2.5 * escala;
+        const raioFractal = parseFloat(document.getElementById('raio-fractal').value);
+        const raio = raioFractal * escala;
         
         for (let i = 0; i < numCopias; i++) {
             const angulo = (i / numCopias) * Math.PI * 2;
@@ -416,6 +417,17 @@ function alterarRepeticoes() {
     }
 }
 
+function alterarRaioFractal() {
+    const valor = document.getElementById('raio-fractal').value;
+    document.getElementById('raio-fractal-valor').textContent = valor;
+    
+    // Recarregar objeto se existir configuração e está em modo fractal
+    const repeticoes = parseInt(document.getElementById('repeticoes').value);
+    if (configuracaoAtual && repeticoes > 0) {
+        carregarJSON();
+    }
+}
+
 function alterarEscalaFractal() {
     const valor = document.getElementById('escala-fractal').value;
     document.getElementById('escala-fractal-valor').textContent = valor;
@@ -437,7 +449,8 @@ function pararRotacao() {
 
 function resetarCamera() {
     camera.position.set(0, 3, 8);
-    camera.lookAt(0, 0, 0);
+    cameraTarget.set(0, 0, 0);
+    camera.lookAt(cameraTarget);
     mostrarMensagem("Câmera resetada");
 }
 
@@ -558,15 +571,79 @@ function exportarPNG() {
     }
 }
 
+function exportarSTL() {
+    if (!objetoAtual) {
+        mostrarMensagem("Nenhum objeto para exportar!", true);
+        return;
+    }
+
+    try {
+        // Verificar se STLExporter está disponível
+        if (typeof THREE.STLExporter === 'undefined') {
+            mostrarMensagem("STLExporter não carregado. A recarregar...", true);
+            // Tentar carregar manualmente
+            const script = document.createElement('script');
+            script.src = 'https://threejs.org/examples/js/exporters/STLExporter.js';
+            script.onload = () => exportarSTL();
+            document.head.appendChild(script);
+            return;
+        }
+
+        const exporter = new THREE.STLExporter();
+        
+        // Exportar como binário (mais compacto)
+        const stlString = exporter.parse(objetoAtual, { binary: true });
+        
+        // Criar blob e download
+        const blob = new Blob([stlString], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        
+        // Nome do arquivo
+        const nomeArquivo = configuracaoAtual?.nome 
+            ? configuracaoAtual.nome.toLowerCase().replace(/\s+/g, '_')
+            : 'objeto_3d';
+        a.download = `${nomeArquivo}.stl`;
+        
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        mostrarMensagem("✓ Ficheiro STL exportado!");
+        
+    } catch (error) {
+        console.error(error);
+        mostrarMensagem("Erro ao exportar STL: " + error.message, true);
+    }
+}
+
 // ========================================
 // CONTROLES DE CÂMERA
 // ========================================
 
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
+let isPanning = false;
+let cameraTarget = new THREE.Vector3(0, 0, 0);
 
 function configurarControlesCamara() {
     const canvas = renderer.domElement;
+
+    // Detectar tecla space
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            isPanning = true;
+            e.preventDefault();
+        }
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.code === 'Space') {
+            isPanning = false;
+        }
+    });
 
     canvas.addEventListener('mousedown', (e) => {
         isDragging = true;
@@ -579,18 +656,44 @@ function configurarControlesCamara() {
         const deltaX = e.clientX - previousMousePosition.x;
         const deltaY = e.clientY - previousMousePosition.y;
 
-        // Rotação orbital
-        const angulo = Math.atan2(camera.position.z, camera.position.x);
-        const raio = Math.sqrt(camera.position.x ** 2 + camera.position.z ** 2);
+        if (isPanning) {
+            // Modo PAN (Space + arrastar)
+            const panSpeed = 0.01;
+            const right = new THREE.Vector3();
+            const up = new THREE.Vector3(0, 1, 0);
+            
+            camera.getWorldDirection(right);
+            right.cross(up).normalize();
+            
+            cameraTarget.x -= right.x * deltaX * panSpeed;
+            cameraTarget.z -= right.z * deltaX * panSpeed;
+            cameraTarget.y += deltaY * panSpeed;
+            
+            camera.position.x -= right.x * deltaX * panSpeed;
+            camera.position.z -= right.z * deltaX * panSpeed;
+            camera.position.y += deltaY * panSpeed;
+            
+            camera.lookAt(cameraTarget);
+        } else {
+            // Modo ROTAÇÃO (arrastar normal)
+            const angulo = Math.atan2(
+                camera.position.z - cameraTarget.z, 
+                camera.position.x - cameraTarget.x
+            );
+            const raio = Math.sqrt(
+                Math.pow(camera.position.x - cameraTarget.x, 2) + 
+                Math.pow(camera.position.z - cameraTarget.z, 2)
+            );
 
-        const novoAngulo = angulo - deltaX * 0.01;
-        camera.position.x = Math.cos(novoAngulo) * raio;
-        camera.position.z = Math.sin(novoAngulo) * raio;
+            const novoAngulo = angulo - deltaX * 0.01;
+            camera.position.x = cameraTarget.x + Math.cos(novoAngulo) * raio;
+            camera.position.z = cameraTarget.z + Math.sin(novoAngulo) * raio;
 
-        camera.position.y -= deltaY * 0.02;
-        camera.position.y = Math.max(0.5, Math.min(15, camera.position.y));
+            camera.position.y -= deltaY * 0.02;
+            camera.position.y = Math.max(0.5, Math.min(15, camera.position.y));
 
-        camera.lookAt(0, 0, 0);
+            camera.lookAt(cameraTarget);
+        }
 
         previousMousePosition = { x: e.clientX, y: e.clientY };
     });
@@ -603,17 +706,15 @@ function configurarControlesCamara() {
         e.preventDefault();
         
         const delta = e.deltaY * 0.01;
-        const distancia = Math.sqrt(
-            camera.position.x ** 2 +
-            camera.position.y ** 2 +
-            camera.position.z ** 2
-        );
+        const direction = new THREE.Vector3();
+        direction.subVectors(camera.position, cameraTarget);
+        const distancia = direction.length();
 
         const novaDistancia = Math.max(3, Math.min(20, distancia + delta));
-        const fator = novaDistancia / distancia;
-
-        camera.position.multiplyScalar(fator);
-        camera.lookAt(0, 0, 0);
+        direction.normalize().multiplyScalar(novaDistancia);
+        camera.position.copy(cameraTarget).add(direction);
+        
+        camera.lookAt(cameraTarget);
     });
 }
 
