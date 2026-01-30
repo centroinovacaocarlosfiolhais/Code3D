@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introdução - Modelador 3D por JSON</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a2f4a 100%);
+            color: white;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            padding: 60px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        h1 {
+            font-size: 4em;
+            color: #00ff88;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        h2 {
+            font-size: 3em;
+            color: #00ff88;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.5em;
+            line-height: 1.8;
+            max-width: 900px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .code-example {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.3em;
+            color: #00ff88;
+            white-space: pre;
+            text-align: left;
+        }
+
+        .visual {
+            font-size: 4em;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        button {
+            background: #00ff88;
+            color: #0a0e27;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #00cc66;
+            transform: scale(1.05);
+        }
+
+        .slide-number {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            font-size: 1.5em;
+            color: #00ff88;
+            opacity: 0.5;
+        }
+
+        ul {
+            font-size: 1.5em;
+            line-height: 2;
+            text-align: left;
+            max-width: 800px;
+        }
+
+        li {
+            margin: 15px 0;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 40px 0;
+        }
+
+        .box {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 30px;
+        }
+
+        .highlight {
+            color: #00ff88;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-number" id="slideNumber">1 / 10</div>
+
+    <!-- Slide 1: Título -->
+    <div class="slide active">
+        <h1>🎨 Modelador 3D por JSON</h1>
+        <p style="font-size: 2em;">Clube de Código</p>
+        <p>Centro de Inovação Carlos Fiolhais</p>
+        <div class="visual">
+            🔮 ✨ 🎯
+        </div>
+    </div>
+
+    <!-- Slide 2: O que é JSON? -->
+    <div class="slide">
+        <h2>O que é JSON? 📝</h2>
+        <p><span class="highlight">JSON</span> = JavaScript Object Notation</p>
+        <p>Uma forma simples de estruturar dados</p>
+        <div class="code-example">{
+  "nome": "João",
+  "idade": 15,
+  "hobbies": ["programação", "jogos"]
+}</div>
+        <p>Fácil de ler por <span class="highlight">humanos</span> e <span class="highlight">máquinas</span>!</p>
+    </div>
+
+    <!-- Slide 3: Como funciona? -->
+    <div class="slide">
+        <h2>Como funciona? 🔄</h2>
+        <h3 style="color: #00ff88;">Revolução de Sólidos</h3>
+        <div class="visual">
+            📄 → 🔄 → 🏺
+        </div>
+        <p>Imagina um <span class="highlight">oleiro</span> a fazer um vaso...</p>
+        <p>Ele molda o barro enquanto o torno gira 360°</p>
+        <p>É <span class="highlight">exatamente</span> isso que fazemos aqui!</p>
+    </div>
+
+    <!-- Slide 4: Curvas Bézier -->
+    <div class="slide">
+        <h2>Curvas Bézier 〰️</h2>
+        <p>Pontos de controlo que definem uma curva suave</p>
+        <div class="code-example">y (altura)
+↑
+5 |           *  ← ponto 4
+4 |         /
+3 |       *    ← ponto 3
+2 |     /
+1 |   *        ← ponto 2
+0 | *          ← ponto 1
+  └─────────→ x (raio)</div>
+        <p>Muda os valores → A forma muda! ✨</p>
+    </div>
+
+    <!-- Slide 5: Sistema de Coordenadas -->
+    <div class="slide">
+        <h2>Sistema de Coordenadas 📐</h2>
+        <div class="grid">
+            <div class="box">
+                <h3 style="color: #00ff88;">Eixo X (largura)</h3>
+                <ul style="font-size: 1.2em;">
+                    <li>x = 0 → centro fechado</li>
+                    <li>x = 1 → 1 unidade do centro</li>
+                    <li>x = 2 → mais largo</li>
+                    <li style="color: #ff4444;">⚠️ x não pode ser negativo!</li>
+                </ul>
+            </div>
+            <div class="box">
+                <h3 style="color: #00ff88;">Eixo Y (altura)</h3>
+                <ul style="font-size: 1.2em;">
+                    <li>y = 0 → base (chão)</li>
+                    <li>y = 2 → 2 unidades altura</li>
+                    <li>y = 5 → mais alto</li>
+                    <li>Ordem: baixo → cima ⬆️</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Exemplo Prático -->
+    <div class="slide">
+        <h2>Exemplo: Vaso 🏺</h2>
+        <div class="code-example">{
+  "nome": "Vaso",
+  "pontos": [
+    {"x": 0.1, "y": 0},    // Base
+    {"x": 1.5, "y": 1},    // Expande
+    {"x": 1.2, "y": 2.5},  // Cintura
+    {"x": 1.8, "y": 4}     // Topo largo
+  ]
+}</div>
+        <p>4 pontos simples = Forma 3D complexa! 🎯</p>
+    </div>
+
+    <!-- Slide 7: Desafios -->
+    <div class="slide">
+        <h2>Desafios 🎯</h2>
+        <ul>
+            <li><span class="emoji">🟢</span> <span class="highlight">Iniciante:</span> Copo, Tigela</li>
+            <li><span class="emoji">🟡</span> <span class="highlight">Intermédio:</span> Garrafa, Taça</li>
+            <li><span class="emoji">🔴</span> <span class="highlight">Avançado:</span> Peças de Xadrez, Candeeiro</li>
+            <li><span class="emoji">🌟</span> <span class="highlight">Mestre:</span> Foguetão, Criação Original</li>
+            <li><span class="emoji">❄️</span> <span class="highlight">Bonus:</span> Padrões Fractais!</li>
+        </ul>
+    </div>
+
+    <!-- Slide 8: Modo Fractal -->
+    <div class="slide">
+        <h2>Modo Fractal ❄️</h2>
+        <p>Repetição da forma em padrão circular!</p>
+        <div class="visual">
+            ⚪ → ⚪⚪⚪⚪⚪ → ⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪
+        </div>
+        <p>1 forma simples → <span class="highlight">Padrão complexo</span></p>
+        <p>É MAGIA! ✨🔮✨</p>
+    </div>
+
+    <!-- Slide 9: Dicas -->
+    <div class="slide">
+        <h2>Dicas Importantes 💡</h2>
+        <ul>
+            <li>✅ <span class="highlight">Experimenta</span> livremente</li>
+            <li>✅ Muda valores e vê o que acontece</li>
+            <li>✅ Pede ajuda quando precisares</li>
+            <li>✅ <span class="highlight">Partilha</span> descobertas</li>
+            <li>❌ Não desistas ao primeiro erro</li>
+            <li>❌ x negativo não funciona!</li>
+        </ul>
+        <p style="margin-top: 40px; font-size: 1.8em;">
+            <span class="highlight">Errar é parte do processo! 🚀</span>
+        </p>
+    </div>
+
+    <!-- Slide 10: Vamos começar! -->
+    <div class="slide">
+        <h1>Vamos Começar! 🎨</h1>
+        <div class="visual" style="font-size: 6em;">
+            🚀
+        </div>
+        <p style="font-size: 2em;">Divirtam-se a criar!</p>
+        <p style="font-size: 1.5em; margin-top: 40px;">
+            A vossa <span class="highlight">imaginação</span> é o limite! ✨
+        </p>
+    </div>
+
+    <!-- Navegação -->
+    <div class="navigation">
+        <button onclick="previousSlide()">◀ Anterior</button>
+        <button onclick="nextSlide()">Seguinte ▶</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateSlideNumber() {
+            document.getElementById('slideNumber').textContent = 
+                `${currentSlide + 1} / ${totalSlides}`;
+        }
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateSlideNumber();
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Navegação por teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Inicializar
+        updateSlideNumber();
+    </script>
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clube de Código - Modelador 3D por JSON</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: #0a0e27;
+            color: #fff;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #viewport {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Painel lateral */
+        #sidebar {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100vh;
+            background: rgba(15, 20, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 2px solid #00ff88;
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar.hidden {
+            transform: translateX(100%);
+        }
+
+        #toggle-sidebar {
+            position: absolute;
+            top: 20px;
+            right: 420px;
+            background: #00ff88;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px 0 0 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: right 0.3s ease;
+            z-index: 10;
+        }
+
+        #toggle-sidebar.moved {
+            right: 20px;
+        }
+
+        h1 {
+            color: #00ff88;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        h2 {
+            color: #00ff88;
+            margin: 20px 0 10px;
+            font-size: 18px;
+            border-bottom: 1px solid #00ff88;
+            padding-bottom: 5px;
+        }
+
+        /* Editor JSON */
+        #json-editor {
+            width: 100%;
+            min-height: 300px;
+            background: #1a1f3a;
+            border: 2px solid #00ff88;
+            border-radius: 5px;
+            padding: 15px;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        /* Botões */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #00ff88;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #0a0e27;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        button:hover {
+            background: #00cc66;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: #4a5568;
+            color: white;
+        }
+
+        button.secondary:hover {
+            background: #5a6578;
+        }
+
+        button.danger {
+            background: #ff4444;
+            color: white;
+        }
+
+        button.danger:hover {
+            background: #cc0000;
+        }
+
+        /* Controles */
+        .control-group {
+            margin-bottom: 20px;
+            background: #1a1f3a;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #2a3f5a;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+            accent-color: #00ff88;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            background: #0a0e27;
+            border: 1px solid #00ff88;
+            border-radius: 3px;
+            color: #00ff88;
+            font-size: 14px;
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            background: #0a0e27;
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            color: #00ff88;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Informações */
+        #info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(15, 20, 40, 0.9);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #00ff88;
+            font-size: 13px;
+            max-width: 300px;
+        }
+
+        #info h3 {
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+
+        #info p {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+
+        /* Mensagens */
+        #message {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 255, 136, 0.9);
+            color: #0a0e27;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        #message.show {
+            opacity: 1;
+        }
+
+        #message.error {
+            background: rgba(255, 68, 68, 0.9);
+            color: white;
+        }
+
+        /* Exemplos */
+        .example-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .example-btn {
+            background: #2a3f5a;
+            text-align: left;
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        .example-btn:hover {
+            background: #3a4f6a;
+        }
+
+        /* Scrollbar customizada */
+        #sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #sidebar::-webkit-scrollbar-track {
+            background: #0a0e27;
+        }
+
+        #sidebar::-webkit-scrollbar-thumb {
+            background: #00ff88;
+            border-radius: 4px;
+        }
+
+        #sidebar::-webkit-scrollbar-thumb:hover {
+            background: #00cc66;
+        }
+
+        /* Loading */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00ff88;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .loading::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 50px;
+            margin: 20px auto;
+            border: 5px solid #00ff88;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="viewport"></div>
+        
+        <button id="toggle-sidebar" onclick="toggleSidebar()">◀ Painel</button>
+        
+        <div id="sidebar">
+            <h1>🎨 Modelador 3D</h1>
+            
+            <h2>📝 Editor JSON</h2>
+            <textarea id="json-editor" spellcheck="false"></textarea>
+            
+            <div class="btn-group">
+                <button onclick="carregarJSON()">🔄 Carregar</button>
+                <button onclick="exportarJSON()" class="secondary">💾 Exportar</button>
+            </div>
+
+            <h2>📚 Exemplos</h2>
+            <div class="example-list">
+                <button class="example-btn" onclick="carregarExemplo('vaso')">🏺 Vaso</button>
+                <button class="example-btn" onclick="carregarExemplo('taca')">🍷 Taça</button>
+                <button class="example-btn" onclick="carregarExemplo('ampulheta')">⏳ Ampulheta</button>
+                <button class="example-btn" onclick="carregarExemplo('sino')">🔔 Sino</button>
+                <button class="example-btn" onclick="carregarExemplo('fractal')">❄️ Fractal</button>
+            </div>
+
+            <h2>🎮 Controles</h2>
+            
+            <div class="control-group">
+                <label>Cor do Objeto</label>
+                <input type="color" id="cor-objeto" value="#00ff88" onchange="alterarCor()">
+            </div>
+
+            <div class="control-group">
+                <label>Segmentos: <span id="segmentos-valor">20</span></label>
+                <input type="range" id="segmentos" min="8" max="64" value="20" oninput="alterarSegmentos()">
+            </div>
+
+            <div class="control-group">
+                <label>Repetições Fractais: <span id="repeticoes-valor">0</span></label>
+                <input type="range" id="repeticoes" min="0" max="5" value="0" oninput="alterarRepeticoes()">
+                <small style="color: #888;">0 = sem fractal</small>
+            </div>
+
+            <div class="control-group">
+                <label>Escala Fractal: <span id="escala-fractal-valor">0.5</span></label>
+                <input type="range" id="escala-fractal" min="0.2" max="0.9" step="0.1" value="0.5" oninput="alterarEscalaFractal()">
+            </div>
+
+            <div class="control-group">
+                <label>Rotação Automática</label>
+                <div class="btn-group">
+                    <button onclick="iniciarRotacao()">▶️ Iniciar</button>
+                    <button onclick="pararRotacao()" class="secondary">⏸️ Parar</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <button onclick="resetarCamera()" class="secondary">🎥 Resetar Câmera</button>
+                <button onclick="limparCena()" class="danger">🗑️ Limpar Cena</button>
+            </div>
+
+            <h2>💾 Ficheiros</h2>
+            <div class="btn-group">
+                <button onclick="importarFicheiro()">📂 Importar JSON</button>
+                <button onclick="exportarFicheiro()" class="secondary">📥 Descarregar JSON</button>
+            </div>
+            <input type="file" id="file-input" accept=".json" style="display:none" onchange="lerFicheiro()">
+        </div>
+
+        <div id="info">
+            <h3>ℹ️ Controlos</h3>
+            <p>🖱️ <strong>Arrastar:</strong> Rodar câmera</p>
+            <p>🔍 <strong>Scroll:</strong> Zoom</p>
+            <p>📝 <strong>Edita o JSON</strong> e clica "Carregar"</p>
+        </div>
+
+        <div id="message"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

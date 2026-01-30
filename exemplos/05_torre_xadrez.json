@@ -1,0 +1,16 @@
+{
+  "nome": "Peça de Xadrez - Torre",
+  "descricao": "Torre de xadrez. Perfeito para criar um conjunto de peças! Cria também um rei, rainha, bispo...",
+  
+  "pontos": [
+    {"x": 1.2, "y": 0},
+    {"x": 1.0, "y": 0.5},
+    {"x": 0.6, "y": 1.5},
+    {"x": 0.7, "y": 2.5},
+    {"x": 0.9, "y": 3.0},
+    {"x": 1.0, "y": 3.3},
+    {"x": 0.8, "y": 3.5},
+    {"x": 1.0, "y": 3.7},
+    {"x": 1.0, "y": 4.0}
+  ]
+}

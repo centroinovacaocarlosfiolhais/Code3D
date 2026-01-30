@@ -1,0 +1,15 @@
+{
+  "nome": "Candeeiro",
+  "descricao": "Candeeiro com base larga, corpo fino e cúpula. Experimenta ativar o modo fractal para criar um lustre!",
+  
+  "pontos": [
+    {"x": 2.0, "y": 0},
+    {"x": 1.8, "y": 0.3},
+    {"x": 0.4, "y": 1.0},
+    {"x": 0.3, "y": 3.0},
+    {"x": 0.5, "y": 3.3},
+    {"x": 1.8, "y": 4.0},
+    {"x": 2.2, "y": 4.5},
+    {"x": 1.9, "y": 4.8}
+  ]
+}

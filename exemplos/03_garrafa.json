@@ -1,0 +1,13 @@
+{
+  "nome": "Garrafa",
+  "descricao": "Garrafa com corpo largo e gargalo. Vê como x diminui para criar o gargalo estreito!",
+  
+  "pontos": [
+    {"x": 1.0, "y": 0},
+    {"x": 2.2, "y": 0.5},
+    {"x": 2.0, "y": 2.5},
+    {"x": 1.5, "y": 3.5},
+    {"x": 0.6, "y": 4.5},
+    {"x": 0.7, "y": 5.0}
+  ]
+}
