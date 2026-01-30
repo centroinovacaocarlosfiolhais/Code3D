@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introdução - Modelador 3D por JSON</title>
+    <title>Criação de Modelos 3D com JSON 🎨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Space+Mono:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -11,328 +12,1083 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --neon-blue: #00f7ff;
+            --neon-pink: #ff006e;
+            --neon-purple: #8b5cf6;
+            --neon-green: #39ff14;
+            --dark-bg: #0a0e27;
+            --darker-bg: #050714;
+            --text-light: #e0e7ff;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a2f4a 100%);
-            color: white;
-            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text-light);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-100px) translateX(50px); }
+            50% { transform: translateY(-50px) translateX(-50px); }
+            75% { transform: translateY(-150px) translateX(100px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .slide {
-            display: none;
-            width: 100vw;
-            height: 100vh;
-            padding: 60px;
+            min-height: 100vh;
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 60px 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
         .slide.active {
-            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-content {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 30px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 247, 255, 0.2);
+            max-width: 1200px;
+            width: 100%;
         }
 
         h1 {
-            font-size: 4em;
-            color: #00ff88;
-            margin-bottom: 30px;
+            font-family: 'Righteous', cursive;
+            font-size: 4.5em;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-align: center;
-            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite alternate;
+            text-shadow: 0 0 30px rgba(0, 247, 255, 0.5);
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1) drop-shadow(0 0 20px rgba(0, 247, 255, 0.3)); }
+            to { filter: brightness(1.2) drop-shadow(0 0 40px rgba(255, 0, 110, 0.5)); }
         }
 
         h2 {
+            font-family: 'Righteous', cursive;
             font-size: 3em;
-            color: #00ff88;
-            margin-bottom: 40px;
-            text-align: center;
+            color: var(--neon-blue);
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
         }
 
-        p {
-            font-size: 1.5em;
+        h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.8em;
+            color: var(--neon-purple);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p, li {
+            font-size: 1.3em;
             line-height: 1.8;
-            max-width: 900px;
-            text-align: center;
-            margin: 20px 0;
+            margin-bottom: 15px;
         }
 
-        .code-example {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #00ff88;
-            border-radius: 10px;
+        .subtitle {
+            font-size: 1.8em;
+            color: var(--neon-pink);
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--neon-green);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1em;
+            overflow-x: auto;
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.2);
+            position: relative;
+        }
+
+        .code-block::before {
+            content: '</>';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: var(--neon-green);
+            opacity: 0.3;
+            font-size: 2em;
+        }
+
+        .highlight {
+            color: var(--neon-pink);
+            font-weight: bold;
+        }
+
+        .json-key {
+            color: var(--neon-blue);
+        }
+
+        .json-value {
+            color: var(--neon-green);
+        }
+
+        .diagram {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px dashed var(--neon-purple);
+            border-radius: 20px;
             padding: 30px;
             margin: 30px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 1.3em;
-            color: #00ff88;
-            white-space: pre;
-            text-align: left;
+            text-align: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5em;
         }
 
-        .visual {
-            font-size: 4em;
+        .arrow {
+            color: var(--neon-pink);
+            font-size: 2em;
+            margin: 0 20px;
+        }
+
+        .grid-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
             margin: 30px 0;
+        }
+
+        .example-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(0, 247, 255, 0.1));
+            border: 2px solid var(--neon-purple);
+            border-radius: 20px;
+            padding: 25px;
             text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .example-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.4);
+            border-color: var(--neon-pink);
+        }
+
+        .example-card h4 {
+            color: var(--neon-blue);
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+
+        .easy { background: linear-gradient(135deg, #10b981, #34d399); }
+        .medium { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+        .hard { background: linear-gradient(135deg, #ef4444, #f87171); }
+        .master { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+
+        .tip-box {
+            background: linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(139, 92, 246, 0.2));
+            border-left: 5px solid var(--neon-pink);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .tip-box strong {
+            color: var(--neon-pink);
+            font-size: 1.3em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(255, 0, 110, 0.2));
+            border-left: 5px solid #ef4444;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
         }
 
         .navigation {
             position: fixed;
-            bottom: 40px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 20px;
             z-index: 1000;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            border-radius: 50px;
+            border: 2px solid rgba(139, 92, 246, 0.5);
         }
 
-        button {
-            background: #00ff88;
-            color: #0a0e27;
+        .nav-btn {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
             border: none;
+            color: white;
             padding: 15px 30px;
-            font-size: 1.2em;
-            border-radius: 5px;
+            font-size: 1.1em;
+            border-radius: 25px;
             cursor: pointer;
+            font-family: 'Poppins', sans-serif;
             font-weight: bold;
-            transition: all 0.3s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        button:hover {
-            background: #00cc66;
-            transform: scale(1.05);
+        .nav-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
         }
 
-        .slide-number {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            font-size: 1.5em;
-            color: #00ff88;
-            opacity: 0.5;
+        .slide-counter {
+            color: var(--neon-blue);
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2em;
+            align-self: center;
         }
 
         ul {
-            font-size: 1.5em;
-            line-height: 2;
-            text-align: left;
-            max-width: 800px;
+            list-style: none;
+            padding-left: 0;
         }
 
-        li {
-            margin: 15px 0;
+        ul li::before {
+            content: '▸';
+            color: var(--neon-pink);
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+
+        .checklist li::before {
+            content: '☑';
+            color: var(--neon-green);
+        }
+
+        .coord-system {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--neon-blue);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .axis {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid var(--neon-purple);
+            border-radius: 10px;
         }
 
         .emoji {
             font-size: 1.5em;
+            margin-right: 10px;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            max-width: 1200px;
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            h2 { font-size: 2em; }
+            .slide-content { padding: 30px; }
+            .navigation { padding: 15px 20px; }
+            .nav-btn { padding: 10px 20px; font-size: 1em; }
+        }
+
+        .bezier-visual {
             margin: 40px 0;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            border: 2px solid var(--neon-purple);
         }
 
-        .box {
-            background: rgba(0, 255, 136, 0.1);
-            border: 2px solid #00ff88;
-            border-radius: 10px;
-            padding: 30px;
+        .point {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: var(--neon-pink);
+            border-radius: 50%;
+            margin: 5px;
+            box-shadow: 0 0 20px var(--neon-pink);
+            animation: pulse 2s infinite;
         }
 
-        .highlight {
-            color: #00ff88;
-            font-weight: bold;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
         }
     </style>
 </head>
 <body>
-    <div class="slide-number" id="slideNumber">1 / 10</div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <!-- SLIDE 1: Título -->
+        <div class="slide active" data-slide="1">
+            <div class="slide-content">
+                <h1>🎨 CRIAÇÃO DE MODELOS 3D COM JSON</h1>
+                <p class="subtitle">Clube de Código - Centro de Inovação Carlos Fiolhais</p>
+                
+                <div class="tip-box">
+                    <p style="font-size: 1.5em; text-align: center;">
+                        <span class="emoji">🚀</span> Hoje vamos criar objetos 3D incríveis usando JSON!<br>
+                        <span class="emoji">💡</span> Não precisas de programar JavaScript complexo<br>
+                        <span class="emoji">✨</span> Apenas editar alguns números e ver a magia acontecer!
+                    </p>
+                </div>
 
-    <!-- Slide 1: Título -->
-    <div class="slide active">
-        <h1>🎨 Modelador 3D por JSON</h1>
-        <p style="font-size: 2em;">Clube de Código</p>
-        <p>Centro de Inovação Carlos Fiolhais</p>
-        <div class="visual">
-            🔮 ✨ 🎯
+                <div style="text-align: center; margin-top: 40px; font-size: 1.4em;">
+                    <p>Prepara-te para criar:</p>
+                    <p>🏺 Vasos • 🍷 Taças • 🚀 Foguetões • 👽 Alienígenas • ✨ E muito mais!</p>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- Slide 2: O que é JSON? -->
-    <div class="slide">
-        <h2>O que é JSON? 📝</h2>
-        <p><span class="highlight">JSON</span> = JavaScript Object Notation</p>
-        <p>Uma forma simples de estruturar dados</p>
-        <div class="code-example">{
-  "nome": "João",
-  "idade": 15,
-  "hobbies": ["programação", "jogos"]
-}</div>
-        <p>Fácil de ler por <span class="highlight">humanos</span> e <span class="highlight">máquinas</span>!</p>
-    </div>
+        <!-- SLIDE 2: O que é JSON? -->
+        <div class="slide" data-slide="2">
+            <div class="slide-content">
+                <h2>📦 O que é JSON?</h2>
+                
+                <h3>JSON = JavaScript Object Notation</h3>
+                <p>É uma forma <span class="highlight">simples e organizada</span> de guardar informação, como uma ficha de dados!</p>
 
-    <!-- Slide 3: Como funciona? -->
-    <div class="slide">
-        <h2>Como funciona? 🔄</h2>
-        <h3 style="color: #00ff88;">Revolução de Sólidos</h3>
-        <div class="visual">
-            📄 → 🔄 → 🏺
+                <div class="code-block">
+<pre>{
+  <span class="json-key">"nome"</span>: <span class="json-value">"João"</span>,
+  <span class="json-key">"idade"</span>: <span class="json-value">15</span>,
+  <span class="json-key">"hobbies"</span>: [<span class="json-value">"programação"</span>, <span class="json-value">"jogos"</span>, <span class="json-value">"música"</span>]
+}</pre>
+                </div>
+
+                <div class="tip-box">
+                    <strong>💡 Pensa nisso como:</strong>
+                    <ul>
+                        <li>Uma <span class="highlight">receita</span> de cozinha (ingredientes + quantidades)</li>
+                        <li>Um <span class="highlight">perfil</span> de jogo (nome, nível, items)</li>
+                        <li>Uma <span class="highlight">ficha</span> de personagem (características organizadas)</li>
+                    </ul>
+                </div>
+
+                <h3>🎯 Porque é que é fixe?</h3>
+                <ul>
+                    <li><span class="highlight">Fácil de ler</span> por humanos e computadores</li>
+                    <li><span class="highlight">Organizado</span> - tudo tem o seu lugar</li>
+                    <li><span class="highlight">Universal</span> - funciona em qualquer linguagem de programação</li>
+                    <li><span class="highlight">Simples</span> - vais dominar isto em minutos!</li>
+                </ul>
+            </div>
         </div>
-        <p>Imagina um <span class="highlight">oleiro</span> a fazer um vaso...</p>
-        <p>Ele molda o barro enquanto o torno gira 360°</p>
-        <p>É <span class="highlight">exatamente</span> isso que fazemos aqui!</p>
-    </div>
 
-    <!-- Slide 4: Curvas Bézier -->
-    <div class="slide">
-        <h2>Curvas Bézier 〰️</h2>
-        <p>Pontos de controlo que definem uma curva suave</p>
-        <div class="code-example">y (altura)
+        <!-- SLIDE 3: Como funciona? -->
+        <div class="slide" data-slide="3">
+            <div class="slide-content">
+                <h2>🌀 Como funciona a Revolução de Sólidos?</h2>
+                
+                <div class="tip-box">
+                    <strong>🏺 Imagina um oleiro a fazer um vaso:</strong>
+                    <p style="font-size: 1.2em; margin-top: 15px;">
+                        1️⃣ Tem um pedaço de barro plano (a nossa curva 2D)<br>
+                        2️⃣ Coloca-o num torno que gira 360° (revolução)<br>
+                        3️⃣ À medida que gira, cria a forma 3D do vaso!
+                    </p>
+                </div>
+
+                <div class="diagram">
+                    <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
+                        <div>
+                            <div style="color: var(--neon-pink);">Curva 2D</div>
+                            <pre style="font-size: 1.2em; margin: 15px;">
+    *
+   / 
+  *   
+ /    
+*     
+|     
+*     </pre>
+                        </div>
+                        
+                        <span class="arrow">⟹</span>
+                        <div>
+                            <div style="color: var(--neon-blue);">Rodar 360°</div>
+                            <div style="font-size: 3em; margin: 15px;">🔄</div>
+                        </div>
+                        
+                        <span class="arrow">⟹</span>
+                        <div>
+                            <div style="color: var(--neon-green);">Objeto 3D</div>
+                            <div style="font-size: 3em; margin: 15px;">🏺</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>✨ Exemplos do dia-a-dia:</h3>
+                <div class="grid-examples">
+                    <div class="example-card">
+                        <div style="font-size: 3em;">🥤</div>
+                        <h4>Taça de Sumo</h4>
+                        <p>Curva elegante rodada 360°</p>
+                    </div>
+                    <div class="example-card">
+                        <div style="font-size: 3em;">⚽</div>
+                        <h4>Bola</h4>
+                        <p>Semicírculo rodado = esfera!</p>
+                    </div>
+                    <div class="example-card">
+                        <div style="font-size: 3em;">💡</div>
+                        <h4>Lâmpada</h4>
+                        <p>Curva complexa em revolução</p>
+                    </div>
+                    <div class="example-card">
+                        <div style="font-size: 3em;">🔔</div>
+                        <h4>Sino</h4>
+                        <p>Forma côncava rodada</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Curvas Bézier -->
+        <div class="slide" data-slide="4">
+            <div class="slide-content">
+                <h2>📐 Curvas de Bézier - A Magia das Curvas Suaves</h2>
+                
+                <div class="tip-box">
+                    <strong>🎨 O que são Curvas de Bézier?</strong>
+                    <p style="font-size: 1.2em; margin-top: 15px;">
+                        São curvas matemáticas criadas por <span class="highlight">pontos de controlo</span>!<br>
+                        Inventadas por Pierre Bézier nos anos 60 para desenhar carros na Renault 🚗
+                    </p>
+                </div>
+
+                <h3>📍 Como funcionam os Pontos de Controlo?</h3>
+                <div class="bezier-visual">
+                    <p style="font-size: 1.3em; margin-bottom: 20px;">Cada ponto tem 2 coordenadas:</p>
+                    <div style="background: rgba(139, 92, 246, 0.2); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                        <p><span class="highlight">x</span> = distância do centro (largura)</p>
+                        <p><span class="highlight">y</span> = altura do chão</p>
+                    </div>
+
+                    <div class="code-block" style="text-align: left;">
+<pre>y (altura)
 ↑
-5 |           *  ← ponto 4
+5 |           <span class="point"></span>  ← ponto 4 (x:1.8, y:5)
 4 |         /
-3 |       *    ← ponto 3
+3 |       <span class="point"></span>    ← ponto 3 (x:1.2, y:3)
 2 |     /
-1 |   *        ← ponto 2
-0 | *          ← ponto 1
-  └─────────→ x (raio)</div>
-        <p>Muda os valores → A forma muda! ✨</p>
-    </div>
+1 |   <span class="point"></span>        ← ponto 2 (x:1.5, y:1)
+0 | <span class="point"></span>          ← ponto 1 (x:0.1, y:0)
+  └─────────────→ x (raio/largura)
+  0 1 2 3</pre>
+                    </div>
+                </div>
 
-    <!-- Slide 5: Sistema de Coordenadas -->
-    <div class="slide">
-        <h2>Sistema de Coordenadas 📐</h2>
-        <div class="grid">
-            <div class="box">
-                <h3 style="color: #00ff88;">Eixo X (largura)</h3>
-                <ul style="font-size: 1.2em;">
-                    <li>x = 0 → centro fechado</li>
-                    <li>x = 1 → 1 unidade do centro</li>
-                    <li>x = 2 → mais largo</li>
-                    <li style="color: #ff4444;">⚠️ x não pode ser negativo!</li>
+                <h3>🎯 A curva passa SUAVEMENTE por todos os pontos!</h3>
+                <ul>
+                    <li>Quanto <span class="highlight">mais pontos</span>, mais detalhada a forma</li>
+                    <li>Mudas um número, <span class="highlight">a forma muda instantaneamente</span>!</li>
+                    <li>É como <span class="highlight">esculpir</span> com números 🎨</li>
                 </ul>
-            </div>
-            <div class="box">
-                <h3 style="color: #00ff88;">Eixo Y (altura)</h3>
-                <ul style="font-size: 1.2em;">
-                    <li>y = 0 → base (chão)</li>
-                    <li>y = 2 → 2 unidades altura</li>
-                    <li>y = 5 → mais alto</li>
-                    <li>Ordem: baixo → cima ⬆️</li>
-                </ul>
+
+                <div class="warning-box">
+                    <strong>⚠️ Regra importante:</strong> Os pontos devem estar <span class="highlight">ordenados de baixo para cima</span> (y crescente)!
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Slide 6: Exemplo Prático -->
-    <div class="slide">
-        <h2>Exemplo: Vaso 🏺</h2>
-        <div class="code-example">{
-  "nome": "Vaso",
-  "pontos": [
-    {"x": 0.1, "y": 0},    // Base
-    {"x": 1.5, "y": 1},    // Expande
-    {"x": 1.2, "y": 2.5},  // Cintura
-    {"x": 1.8, "y": 4}     // Topo largo
-  ]
-}</div>
-        <p>4 pontos simples = Forma 3D complexa! 🎯</p>
-    </div>
+        <!-- SLIDE 5: Sistema de Coordenadas -->
+        <div class="slide" data-slide="5">
+            <div class="slide-content">
+                <h2>🎯 Sistema de Coordenadas - O Mapa do Nosso Mundo 3D</h2>
+                
+                <div class="coord-system">
+                    <div class="axis">
+                        <h3 style="color: var(--neon-pink);">📏 Eixo X (Horizontal/Largura)</h3>
+                        <ul>
+                            <li><code>x = 0</code> → No <span class="highlight">centro</span> (completamente fechado, como uma ponta)</li>
+                            <li><code>x = 1</code> → 1 unidade do centro (pequena largura)</li>
+                            <li><code>x = 2</code> → 2 unidades do centro (mais largo)</li>
+                            <li><code>x = 5</code> → 5 unidades do centro (muito largo!)</li>
+                        </ul>
+                        <div class="warning-box" style="margin-top: 15px;">
+                            <strong>⚠️ IMPORTANTE:</strong> X nunca pode ser negativo! (x ≥ 0)
+                        </div>
+                    </div>
 
-    <!-- Slide 7: Desafios -->
-    <div class="slide">
-        <h2>Desafios 🎯</h2>
-        <ul>
-            <li><span class="emoji">🟢</span> <span class="highlight">Iniciante:</span> Copo, Tigela</li>
-            <li><span class="emoji">🟡</span> <span class="highlight">Intermédio:</span> Garrafa, Taça</li>
-            <li><span class="emoji">🔴</span> <span class="highlight">Avançado:</span> Peças de Xadrez, Candeeiro</li>
-            <li><span class="emoji">🌟</span> <span class="highlight">Mestre:</span> Foguetão, Criação Original</li>
-            <li><span class="emoji">❄️</span> <span class="highlight">Bonus:</span> Padrões Fractais!</li>
-        </ul>
-    </div>
+                    <div class="axis">
+                        <h3 style="color: var(--neon-blue);">📏 Eixo Y (Vertical/Altura)</h3>
+                        <ul>
+                            <li><code>y = 0</code> → No <span class="highlight">chão</span> (base do objeto)</li>
+                            <li><code>y = 1</code> → 1 unidade de altura</li>
+                            <li><code>y = 3</code> → 3 unidades de altura</li>
+                            <li><code>y = 10</code> → 10 unidades de altura (super alto!)</li>
+                        </ul>
+                    </div>
+                </div>
 
-    <!-- Slide 8: Modo Fractal -->
-    <div class="slide">
-        <h2>Modo Fractal ❄️</h2>
-        <p>Repetição da forma em padrão circular!</p>
-        <div class="visual">
-            ⚪ → ⚪⚪⚪⚪⚪ → ⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪
+                <h3>🎮 Dica de Gamer:</h3>
+                <div class="tip-box">
+                    <p style="font-size: 1.2em;">
+                        <span class="emoji">🎮</span> Pensa no X como o <span class="highlight">controlo horizontal</span> do comando<br>
+                        <span class="emoji">🎮</span> Pensa no Y como o <span class="highlight">controlo vertical</span> do comando<br>
+                        <span class="emoji">✨</span> Juntos, controlam onde cada ponto está no espaço!
+                    </p>
+                </div>
+
+                <div class="diagram">
+                    <h3>Exemplo Prático:</h3>
+                    <div class="code-block">
+<pre><span class="json-key">"pontos"</span>: [
+  {<span class="json-key">"x"</span>: <span class="json-value">0</span>,   <span class="json-key">"y"</span>: <span class="json-value">0</span>},   ← Base fechada (ponta)
+  {<span class="json-key">"x"</span>: <span class="json-value">2</span>,   <span class="json-key">"y"</span>: <span class="json-value">1</span>},   ← Alarga para 2 unidades
+  {<span class="json-key">"x"</span>: <span class="json-value">1.5</span>, <span class="json-key">"y"</span>: <span class="json-value">3</span>},   ← Afunila um pouco
+  {<span class="json-key">"x"</span>: <span class="json-value">2.5</span>, <span class="json-key">"y"</span>: <span class="json-value">5</span>}    ← Alarga no topo
+]</pre>
+                    </div>
+                    <p style="margin-top: 20px; font-size: 1.3em;">Isto cria um vaso! 🏺</p>
+                </div>
+            </div>
         </div>
-        <p>1 forma simples → <span class="highlight">Padrão complexo</span></p>
-        <p>É MAGIA! ✨🔮✨</p>
-    </div>
 
-    <!-- Slide 9: Dicas -->
-    <div class="slide">
-        <h2>Dicas Importantes 💡</h2>
-        <ul>
-            <li>✅ <span class="highlight">Experimenta</span> livremente</li>
-            <li>✅ Muda valores e vê o que acontece</li>
-            <li>✅ Pede ajuda quando precisares</li>
-            <li>✅ <span class="highlight">Partilha</span> descobertas</li>
-            <li>❌ Não desistas ao primeiro erro</li>
-            <li>❌ x negativo não funciona!</li>
-        </ul>
-        <p style="margin-top: 40px; font-size: 1.8em;">
-            <span class="highlight">Errar é parte do processo! 🚀</span>
-        </p>
-    </div>
+        <!-- SLIDE 6: Exemplos Inspiradores -->
+        <div class="slide" data-slide="6">
+            <div class="slide-content">
+                <h2>🌟 Galeria de Inspiração - O que Podes Criar!</h2>
+                
+                <div class="grid-examples">
+                    <div class="example-card">
+                        <div style="font-size: 4em;">🥤</div>
+                        <h4>Copo Simples</h4>
+                        <span class="difficulty-badge easy">🟢 Fácil</span>
+                        <p>4 pontos, forma cilíndrica básica</p>
+                    </div>
 
-    <!-- Slide 10: Vamos começar! -->
-    <div class="slide">
-        <h1>Vamos Começar! 🎨</h1>
-        <div class="visual" style="font-size: 6em;">
-            🚀
+                    <div class="example-card">
+                        <div style="font-size: 4em;">🍜</div>
+                        <h4>Tigela</h4>
+                        <span class="difficulty-badge easy">🟢 Fácil</span>
+                        <p>Curva côncava, perfeito para começar</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 4em;">🍾</div>
+                        <h4>Garrafa</h4>
+                        <span class="difficulty-badge medium">🟡 Médio</span>
+                        <p>Gargalo estreito + corpo largo</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 4em;">🥤</div>
+                        <h4>Taça de Sumo</h4>
+                        <span class="difficulty-badge medium">🟡 Médio</span>
+                        <p>Elegante e sofisticada!</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 4em;">💡</div>
+                        <h4>Candeeiro</h4>
+                        <span class="difficulty-badge hard">🔴 Difícil</span>
+                        <p>Múltiplas curvas complexas</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 4em;">♟️</div>
+                        <h4>Peça de Xadrez</h4>
+                        <span class="difficulty-badge hard">🔴 Difícil</span>
+                        <p>Detalhes intrincados</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 4em;">🚀</div>
+                        <h4>Foguetão</h4>
+                        <span class="difficulty-badge master">🟣 Mestre</span>
+                        <p>Aerodinâmico e futurista!</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 4em;">🎄</div>
+                        <h4>Árvore de Natal</h4>
+                        <span class="difficulty-badge master">🟣 Mestre</span>
+                        <p>Usa fractais para magia!</p>
+                    </div>
+                </div>
+
+                <div class="tip-box" style="margin-top: 40px;">
+                    <strong>💭 A tua imaginação é o limite!</strong>
+                    <p style="font-size: 1.3em; margin-top: 15px;">
+                        Instrumentos musicais 🎸 • Naves espaciais 🛸 • Monstros alienígenas 👾<br>
+                        Troféus 🏆 • Torres 🗼 • Castelos 🏰 • O que quiseres criar!
+                    </p>
+                </div>
+            </div>
         </div>
-        <p style="font-size: 2em;">Divirtam-se a criar!</p>
-        <p style="font-size: 1.5em; margin-top: 40px;">
-            A vossa <span class="highlight">imaginação</span> é o limite! ✨
-        </p>
+
+        <!-- SLIDE 7: Desafios -->
+        <div class="slide" data-slide="7">
+            <div class="slide-content">
+                <h2>🎯 Desafios Progressivos - Escolhe o Teu Nível!</h2>
+                
+                <div style="background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; border-radius: 20px; padding: 30px; margin: 30px 0;">
+                    <h3 style="color: #10b981;">🟢 Nível Iniciante - Aquece os Motores!</h3>
+                    <ul>
+                        <li><strong>Copo Simples:</strong> 4 pontos, forma cilíndrica</li>
+                        <li><strong>Tigela:</strong> Curva suave para dentro</li>
+                        <li><strong>Vaso Básico:</strong> Base estreita, meio largo</li>
+                    </ul>
+                    <p style="margin-top: 15px; font-style: italic;">⏱️ Tempo estimado: 10-15 minutos</p>
+                </div>
+
+                <div style="background: rgba(245, 158, 11, 0.2); border: 2px solid #f59e0b; border-radius: 20px; padding: 30px; margin: 30px 0;">
+                    <h3 style="color: #f59e0b;">🟡 Nível Intermédio - Sobe de Nível!</h3>
+                    <ul>
+                        <li><strong>Garrafa com Gargalo:</strong> Transições suaves</li>
+                        <li><strong>Taça de Sumo:</strong> Haste fina + taça larga</li>
+                        <li><strong>Caneca:</strong> Com pança arredondada</li>
+                    </ul>
+                    <p style="margin-top: 15px; font-style: italic;">⏱️ Tempo estimado: 20-30 minutos</p>
+                </div>
+
+                <div style="background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444; border-radius: 20px; padding: 30px; margin: 30px 0;">
+                    <h3 style="color: #ef4444;">🔴 Nível Avançado - Domina a Arte!</h3>
+                    <ul>
+                        <li><strong>Peças de Xadrez:</strong> Rei, rainha, torre...</li>
+                        <li><strong>Candeeiro:</strong> Base + cúpula complexa</li>
+                        <li><strong>Instrumento Musical:</strong> Trompete, saxofone...</li>
+                    </ul>
+                    <p style="margin-top: 15px; font-style: italic;">⏱️ Tempo estimado: 30-45 minutos</p>
+                </div>
+
+                <div style="background: rgba(139, 92, 246, 0.2); border: 2px solid #8b5cf6; border-radius: 20px; padding: 30px; margin: 30px 0;">
+                    <h3 style="color: #8b5cf6;">🟣 Nível Mestre - Criador Supremo!</h3>
+                    <ul>
+                        <li><strong>Foguetão Espacial:</strong> Aerodinâmico e detalhado</li>
+                        <li><strong>Criação Original:</strong> Inventa algo único!</li>
+                        <li><strong>Usa Fractais:</strong> Padrões matemáticos complexos</li>
+                    </ul>
+                    <p style="margin-top: 15px; font-style: italic;">⏱️ Tempo estimado: 45+ minutos</p>
+                </div>
+
+                <div class="tip-box">
+                    <strong>🎮 Estratégia de Jogo:</strong>
+                    <p style="font-size: 1.2em; margin-top: 15px;">
+                        Começa pelo nível Iniciante mesmo que te sintas confiante!<br>
+                        Cada nível ensina-te técnicas para o próximo 📈<br>
+                        Não há pressa - diverte-te no processo! 😊
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Dicas Importantes -->
+        <div class="slide" data-slide="8">
+            <div class="slide-content">
+                <h2>💡 Dicas de Mestre - Truques e Segredos!</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0;">
+                    <div class="tip-box">
+                        <strong>✅ FAZER (Boas Práticas)</strong>
+                        <ul style="margin-top: 15px;">
+                            <li><strong>Experimenta livremente!</strong> Não tenhas medo de errar</li>
+                            <li><strong>Muda valores</strong> e observa o resultado</li>
+                            <li><strong>Pede ajuda</strong> quando precisares</li>
+                            <li><strong>Partilha descobertas</strong> com os colegas</li>
+                            <li><strong>Guarda</strong> as tuas criações favoritas</li>
+                            <li><strong>Começa simples</strong> e aumenta a complexidade</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>❌ EVITAR (Armadilhas Comuns)</strong>
+                        <ul style="margin-top: 15px;">
+                            <li><strong>X negativo</strong> → Não funciona!</li>
+                            <li><strong>Pontos desordenados</strong> → Y deve crescer</li>
+                            <li><strong>Menos de 3 pontos</strong> → Precisas de pelo menos 3</li>
+                            <li><strong>Desistir ao primeiro erro</strong> → Persistência é chave!</li>
+                            <li><strong>Copiar sem entender</strong> → Experimenta tu próprio</li>
+                            <li><strong>Ter pressa</strong> → Aproveita a jornada!</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>🔧 Truques Profissionais:</h3>
+                <div class="grid-examples">
+                    <div class="example-card">
+                        <div style="font-size: 2.5em;">📏</div>
+                        <h4>Simetria Perfeita</h4>
+                        <p>Usa os mesmos valores de X em alturas diferentes para criar formas simétricas</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 2.5em;">🎨</div>
+                        <h4>Transições Suaves</h4>
+                        <p>Muda X gradualmente entre pontos para curvas suaves</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 2.5em;">⚡</div>
+                        <h4>Efeito Dramático</h4>
+                        <p>Usa mudanças bruscas de X para criar arestas marcadas</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 2.5em;">🔄</div>
+                        <h4>Fractais</h4>
+                        <p>Ativa repetições e ajusta a escala para padrões infinitos!</p>
+                    </div>
+                </div>
+
+                <div class="tip-box" style="margin-top: 30px; text-align: center;">
+                    <strong style="font-size: 1.5em;">🌟 Lema do Criador:</strong>
+                    <p style="font-size: 1.3em; margin-top: 15px;">
+                        "Cada erro é uma descoberta disfarçada!<br>
+                        A perfeição vem da experimentação!" 🚀
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: Recursos e Ferramentas -->
+        <div class="slide" data-slide="9">
+            <div class="slide-content">
+                <h2>🛠️ Caixa de Ferramentas - Controla Tudo!</h2>
+                
+                <h3>🎨 Opções de Personalização:</h3>
+                
+                <div class="grid-examples">
+                    <div class="example-card">
+                        <div style="font-size: 3em;">🌈</div>
+                        <h4>Cor do Objeto</h4>
+                        <p>Escolhe a cor perfeita para a tua criação. Experimenta cores vibrantes!</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 3em;">⚙️</div>
+                        <h4>Segmentos</h4>
+                        <p>Controla a suavidade da forma. Mais segmentos = mais suave!</p>
+                        <code style="color: var(--neon-pink);">16-64 segmentos</code>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 3em;">🔄</div>
+                        <h4>Rotação Automática</h4>
+                        <p>Faz o teu objeto girar automaticamente. Perfeito para apresentações!</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 3em;">✨</div>
+                        <h4>Modo Fractal</h4>
+                        <p>Cria padrões matemáticos infinitos! Magia pura! 🪄</p>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 40px;">🔮 Funcionalidades Especiais:</h3>
+                
+                <div class="code-block">
+<pre><span class="json-key">"configuracao"</span>: {
+  <span class="json-key">"cor"</span>: <span class="json-value">"#FF006E"</span>,           <span style="opacity: 0.6;">// Rosa neon!</span>
+  <span class="json-key">"segmentos"</span>: <span class="json-value">32</span>,          <span style="opacity: 0.6;">// Boa suavidade</span>
+  <span class="json-key">"rotacao"</span>: <span class="json-value">true</span>,         <span style="opacity: 0.6;">// Gira sozinho</span>
+  <span class="json-key">"fractal"</span>: {
+    <span class="json-key">"ativo"</span>: <span class="json-value">true</span>,
+    <span class="json-key">"repeticoes"</span>: <span class="json-value">3</span>,      <span style="opacity: 0.6;">// Níveis de fractal</span>
+    <span class="json-key">"escala"</span>: <span class="json-value">0.5</span>          <span style="opacity: 0.6;">// Tamanho de cada repetição</span>
+  }
+}</pre>
+                </div>
+
+                <div class="tip-box">
+                    <strong>🎯 Dica Pro:</strong>
+                    <p style="font-size: 1.2em; margin-top: 15px;">
+                        Experimenta diferentes combinações de segmentos e cores!<br>
+                        32-48 segmentos é ideal para a maioria dos objetos<br>
+                        Fractais ficam incríveis com 2-4 repetições! ✨
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: Vamos Começar! -->
+        <div class="slide" data-slide="10">
+            <div class="slide-content">
+                <h2>🚀 Preparados para Criar? Vamos Lá!</h2>
+                
+                <div class="tip-box" style="background: linear-gradient(135deg, rgba(0, 247, 255, 0.2), rgba(139, 92, 246, 0.2)); border-left: 5px solid var(--neon-blue);">
+                    <strong style="font-size: 1.8em;">📋 Checklist Pré-Voo:</strong>
+                    <ul class="checklist" style="font-size: 1.3em; margin-top: 20px;">
+                        <li>Aplicação aberta e funcionando?</li>
+                        <li>Vês o exemplo do vaso na tela?</li>
+                        <li>Consegues editar o código JSON?</li>
+                        <li>Sabes onde estão os controlos?</li>
+                        <li>Tens um caderno para anotações? (opcional)</li>
+                    </ul>
+                </div>
+
+                <h3 style="margin-top: 40px;">🎯 Objetivos da Sessão:</h3>
+                <div class="grid-examples">
+                    <div class="example-card">
+                        <div style="font-size: 3em;">🧠</div>
+                        <h4>Aprender JSON</h4>
+                        <p>Dominar a sintaxe e estrutura</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 3em;">📐</div>
+                        <h4>Coordenadas 3D</h4>
+                        <p>Pensar espacialmente</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 3em;">🎨</div>
+                        <h4>Criar Objetos</h4>
+                        <p>Pelo menos 3 criações únicas</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 3em;">🌟</div>
+                        <h4>Divertir-se!</h4>
+                        <p>O mais importante de tudo!</p>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(139, 92, 246, 0.3)); border-radius: 25px; padding: 40px; margin: 40px 0; text-align: center;">
+                    <p style="font-size: 2em; margin-bottom: 20px;">🎮 Regras do Jogo:</p>
+                    <p style="font-size: 1.4em; line-height: 2;">
+                        <strong>1.</strong> Não há respostas erradas, só experiências diferentes! 🌈<br>
+                        <strong>2.</strong> Pede ajuda sempre que precisares! 🤝<br>
+                        <strong>3.</strong> Partilha as tuas descobertas! 💬<br>
+                        <strong>4.</strong> Diverte-te ao máximo! 🎉
+                    </p>
+                </div>
+
+                <div class="tip-box" style="text-align: center;">
+                    <strong style="font-size: 2em;">🌟 Mensagem Final:</strong>
+                    <p style="font-size: 1.5em; margin-top: 20px; line-height: 1.8;">
+                        Cada grande criação começou com uma tentativa simples.<br>
+                        Hoje, vais começar a tua jornada de criador 3D!<br>
+                        <span style="color: var(--neon-pink); font-size: 1.2em;">VAMOS CRIAR COISAS INCRÍVEIS! 🚀✨</span>
+                    </p>
+                </div>
+
+                <h3 style="margin-top: 50px; text-align: center; font-size: 2.5em; color: var(--neon-blue);">
+                    ❓ Alguma dúvida antes de começar?
+                </h3>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: QR Code -->
+        <div class="slide" data-slide="11">
+            <div class="slide-content" style="text-align: center;">
+                <h2>🌐 Acede à Aplicação!</h2>
+                
+                <div class="tip-box" style="background: linear-gradient(135deg, rgba(0, 247, 255, 0.3), rgba(139, 92, 246, 0.3)); border: 3px solid var(--neon-blue);">
+                    <p style="font-size: 1.8em; margin-bottom: 30px;">
+                        <span class="emoji">💻</span> Acede à aplicação agora!<br>
+                        <span class="emoji">🚀</span> Clica no botão para começar!
+                    </p>
+                    
+                    <div style="background: rgba(0, 0, 0, 0.5); padding: 40px; border-radius: 20px; margin: 30px auto; border: 2px solid var(--neon-purple);">
+                        <p style="font-size: 1.3em; color: var(--text-light); margin-bottom: 20px;">
+                            🔗 Link da Aplicação:
+                        </p>
+                        <a href="https://centroinovacaocarlosfiolhais.github.io/Code3D/" 
+                           target="_blank" 
+                           style="font-size: 1.8em; color: var(--neon-green); font-family: 'Space Mono', monospace; text-decoration: none; display: block; margin-bottom: 40px; word-break: break-all;">
+                            centroinovacaocarlosfiolhais.github.io/Code3D/
+                        </a>
+                        
+                        <a href="https://centroinovacaocarlosfiolhais.github.io/Code3D/" 
+                           target="_blank" 
+                           style="display: inline-block; background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple)); 
+                                  color: white; padding: 25px 60px; font-size: 2em; font-weight: bold; 
+                                  border-radius: 50px; text-decoration: none; font-family: 'Righteous', cursive;
+                                  box-shadow: 0 10px 40px rgba(255, 0, 110, 0.5); 
+                                  transition: transform 0.3s ease, box-shadow 0.3s ease;
+                                  border: 3px solid var(--neon-blue);"
+                           onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 15px 50px rgba(139, 92, 246, 0.7)';"
+                           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 10px 40px rgba(255, 0, 110, 0.5)';">
+                            🚀 COMEÇAR! 🚀
+                        </a>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(139, 92, 246, 0.3)); border-radius: 25px; padding: 40px; margin: 50px 0;">
+                    <h3 style="font-size: 2.5em; color: var(--neon-pink); margin-bottom: 20px;">
+                        ✨ Bora Criar! ✨
+                    </h3>
+                    <p style="font-size: 1.5em; line-height: 2;">
+                        A tua jornada de criador 3D começa AGORA! 🎨<br>
+                        Diverte-te e cria coisas incríveis! 🚀<br>
+                        <span style="color: var(--neon-blue); font-size: 1.3em; font-weight: bold;">
+                            O limite é a tua imaginação! 🌟
+                        </span>
+                    </p>
+                </div>
+
+                <div class="grid-examples" style="margin-top: 40px;">
+                    <div class="example-card">
+                        <div style="font-size: 3em;">💪</div>
+                        <h4>Experimenta</h4>
+                        <p>Não tenhas medo de errar!</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 3em;">🤝</div>
+                        <h4>Colabora</h4>
+                        <p>Partilha ideias com os colegas!</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 3em;">🎯</div>
+                        <h4>Persiste</h4>
+                        <p>Cada tentativa é aprendizagem!</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div style="font-size: 3em;">😊</div>
+                        <h4>Diverte-te</h4>
+                        <p>É isso que mais importa!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Navegação -->
     <div class="navigation">
-        <button onclick="previousSlide()">◀ Anterior</button>
-        <button onclick="nextSlide()">Seguinte ▶</button>
+        <button class="nav-btn" onclick="previousSlide()">◀ Anterior</button>
+        <span class="slide-counter" id="counter">1 / 10</span>
+        <button class="nav-btn" onclick="nextSlide()">Próximo ▶</button>
     </div>
 
     <script>
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
-
-        function updateSlideNumber() {
-            document.getElementById('slideNumber').textContent = 
-                `${currentSlide + 1} / ${totalSlides}`;
+        // Create animated particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            particlesContainer.appendChild(particle);
         }
 
-        function showSlide(n) {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (n + totalSlides) % totalSlides;
-            slides[currentSlide].classList.add('active');
-            updateSlideNumber();
+        let currentSlide = 1;
+        const totalSlides = 11;
+
+        function updateSlides() {
+            document.querySelectorAll('.slide').forEach((slide, index) => {
+                if (index + 1 === currentSlide) {
+                    slide.classList.add('active');
+                    slide.style.display = 'flex';
+                } else {
+                    slide.classList.remove('active');
+                    slide.style.display = 'none';
+                }
+            });
+            document.getElementById('counter').textContent = `${currentSlide} / ${totalSlides}`;
+            
+            // Scroll to top when changing slides
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function nextSlide() {
-            showSlide(currentSlide + 1);
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlides();
+            }
         }
 
         function previousSlide() {
-            showSlide(currentSlide - 1);
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlides();
+            }
         }
 
-        // Navegação por teclado
+        // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
                 nextSlide();
             } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
                 previousSlide();
             }
         });
 
-        // Inicializar
-        updateSlideNumber();
+        // Touch gestures for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) previousSlide();
+        }
+
+        // Initialize
+        updateSlides();
     </script>
 </body>
 </html>

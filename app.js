@@ -39,7 +39,8 @@ function init() {
     // Configurar renderer
     renderer = new THREE.WebGLRenderer({ 
         antialias: true,
-        alpha: true 
+        alpha: true,
+        preserveDrawingBuffer: true // Necessário para exportar imagens
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -135,6 +136,19 @@ function criarGeometriaRevolucao(config) {
     // Obter pontos da curva
     const segmentos = parseInt(document.getElementById('segmentos').value);
     const pontosCurva = curva.getPoints(segmentos);
+
+    // Verificar se o primeiro e último ponto estão no centro (x = 0)
+    // Se não estiverem, forçar o fechamento das tampas
+    const primeiroPonto = pontosCurva[0];
+    const ultimoPonto = pontosCurva[pontosCurva.length - 1];
+    
+    // Se os pontos não estão no centro, ajustar para criar tampas
+    if (primeiroPonto.x > 0.01) {
+        pontosCurva.unshift(new THREE.Vector2(0, primeiroPonto.y));
+    }
+    if (ultimoPonto.x > 0.01) {
+        pontosCurva.push(new THREE.Vector2(0, ultimoPonto.y));
+    }
 
     // Criar geometria de revolução (lathe)
     const geometry = new THREE.LatheGeometry(
@@ -236,7 +250,8 @@ function carregarJSON() {
             color: cor,
             shininess: 80,
             specular: 0x222222,
-            flatShading: false
+            flatShading: false,
+            side: THREE.DoubleSide // Renderizar ambos os lados
         });
 
         // Verificar se deve criar fractal
@@ -493,6 +508,53 @@ function exportarFicheiro() {
         mostrarMensagem("Ficheiro descarregado!");
     } catch (error) {
         mostrarMensagem("Erro: JSON inválido!", true);
+    }
+}
+
+function exportarPNG() {
+    if (!objetoAtual) {
+        mostrarMensagem("Nenhum objeto para exportar!", true);
+        return;
+    }
+
+    try {
+        // Guardar cor de fundo atual
+        const corFundoOriginal = scene.background;
+        const fogOriginal = scene.fog;
+        
+        // Definir fundo transparente
+        scene.background = null;
+        scene.fog = null;
+        
+        // Renderizar uma frame
+        renderer.render(scene, camera);
+        
+        // Capturar imagem
+        const dataURL = renderer.domElement.toDataURL('image/png');
+        
+        // Restaurar configurações originais
+        scene.background = corFundoOriginal;
+        scene.fog = fogOriginal;
+        
+        // Criar link de download
+        const a = document.createElement('a');
+        a.href = dataURL;
+        
+        // Nome do arquivo baseado na configuração ou timestamp
+        const nomeArquivo = configuracaoAtual?.nome 
+            ? configuracaoAtual.nome.toLowerCase().replace(/\s+/g, '_')
+            : 'objeto_3d';
+        a.download = `${nomeArquivo}_${Date.now()}.png`;
+        
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        mostrarMensagem("✓ Imagem PNG exportada!");
+        
+    } catch (error) {
+        console.error(error);
+        mostrarMensagem("Erro ao exportar PNG: " + error.message, true);
     }
 }
 
