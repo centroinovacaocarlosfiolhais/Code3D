@@ -589,10 +589,21 @@ function exportarSTL() {
             return;
         }
 
+        // Guardar escala original
+        const escalaOriginal = objetoAtual.scale.clone();
+        
+        // Escalar objeto 10x (1000%) para tamanho adequado para impressão 3D
+        objetoAtual.scale.multiplyScalar(10);
+        objetoAtual.updateMatrixWorld(true);
+
         const exporter = new THREE.STLExporter();
         
         // Exportar como binário (mais compacto)
         const stlString = exporter.parse(objetoAtual, { binary: true });
+        
+        // Restaurar escala original
+        objetoAtual.scale.copy(escalaOriginal);
+        objetoAtual.updateMatrixWorld(true);
         
         // Criar blob e download
         const blob = new Blob([stlString], { type: 'application/octet-stream' });
@@ -611,7 +622,7 @@ function exportarSTL() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        mostrarMensagem("✓ Ficheiro STL exportado!");
+        mostrarMensagem("✓ Ficheiro STL exportado (escala 10x)!");
         
     } catch (error) {
         console.error(error);
