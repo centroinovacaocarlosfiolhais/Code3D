@@ -488,12 +488,15 @@ function exportarJSON() {
     const jsonText = document.getElementById('json-editor').value;
     
     try {
-        // Validar JSON
-        JSON.parse(jsonText);
+        // Remover comentários antes de validar
+        const jsonLimpo = removerComentariosJSON(jsonText);
+        JSON.parse(jsonLimpo);
         
-        // Copiar para clipboard
+        // Copiar JSON original (com comentários) para clipboard
         navigator.clipboard.writeText(jsonText).then(() => {
             mostrarMensagem("JSON copiado para clipboard!");
+        }).catch(() => {
+            mostrarMensagem("JSON validado! (Clipboard indisponível)", false);
         });
     } catch (error) {
         mostrarMensagem("Erro: JSON inválido!", true);
@@ -504,10 +507,11 @@ function exportarFicheiro() {
     const jsonText = document.getElementById('json-editor').value;
     
     try {
-        // Validar JSON
-        const config = JSON.parse(jsonText);
+        // Remover comentários antes de validar
+        const jsonLimpo = removerComentariosJSON(jsonText);
+        const config = JSON.parse(jsonLimpo);
         
-        // Criar blob e download
+        // Criar blob e download com JSON original (com comentários)
         const blob = new Blob([jsonText], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -642,23 +646,16 @@ let cameraTarget = new THREE.Vector3(0, 0, 0);
 function configurarControlesCamara() {
     const canvas = renderer.domElement;
 
-    // Detectar tecla space
-    window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') {
-            isPanning = true;
-            e.preventDefault();
-        }
-    });
-
-    window.addEventListener('keyup', (e) => {
-        if (e.code === 'Space') {
-            isPanning = false;
-        }
+    // Prevenir menu de contexto no botão direito
+    canvas.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
     });
 
     canvas.addEventListener('mousedown', (e) => {
         isDragging = true;
+        isPanning = (e.button === 2); // Botão direito = pan
         previousMousePosition = { x: e.clientX, y: e.clientY };
+        e.preventDefault();
     });
 
     canvas.addEventListener('mousemove', (e) => {
@@ -668,7 +665,7 @@ function configurarControlesCamara() {
         const deltaY = e.clientY - previousMousePosition.y;
 
         if (isPanning) {
-            // Modo PAN (Space + arrastar)
+            // Modo PAN (Botão direito + arrastar)
             const panSpeed = 0.01;
             const right = new THREE.Vector3();
             const up = new THREE.Vector3(0, 1, 0);
@@ -686,7 +683,7 @@ function configurarControlesCamara() {
             
             camera.lookAt(cameraTarget);
         } else {
-            // Modo ROTAÇÃO (arrastar normal)
+            // Modo ROTAÇÃO (botão esquerdo)
             const angulo = Math.atan2(
                 camera.position.z - cameraTarget.z, 
                 camera.position.x - cameraTarget.x
@@ -711,6 +708,7 @@ function configurarControlesCamara() {
 
     canvas.addEventListener('mouseup', () => {
         isDragging = false;
+        isPanning = false;
     });
 
     canvas.addEventListener('wheel', (e) => {
