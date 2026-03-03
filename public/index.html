@@ -78,7 +78,7 @@
         #app {
             display: grid;
             grid-template-rows: 46px 1fr;
-            grid-template-columns: 1fr 320px;
+            grid-template-columns: 1fr 640px;
             height: 100vh;
         }
 
@@ -197,31 +197,32 @@
         }
         #coords .label { color: var(--amber3); }
 
-        /* Toggle sidebar button */
+        /* Toggle sidebar button — fixed, always tracks sidebar left edge */
         #toggle-sidebar {
-            position: absolute;
-            top: 12px;
-            right: 0;
+            position: fixed;
+            top: 58px;
+            right: 640px;
             background: var(--bg3);
             border: 1px solid var(--border2);
             border-right: none;
-            padding: 6px 10px;
+            padding: 7px 11px;
             border-radius: var(--radius) 0 0 var(--radius);
             cursor: pointer;
             font-family: var(--font-mono);
             font-size: 10px;
             letter-spacing: 1px;
             color: var(--amber);
-            transition: all 0.15s;
-            z-index: 50;
+            transition: right 0.3s ease, background 0.15s, border-color 0.15s, box-shadow 0.15s;
+            z-index: 200;
         }
         #toggle-sidebar:hover {
             background: var(--bg4);
             border-color: var(--amber);
             box-shadow: var(--glow-amber);
         }
-        #toggle-sidebar.moved {
-            right: 320px;
+        /* When sidebar is hidden, button sits flush at right edge */
+        #toggle-sidebar.collapsed {
+            right: 0;
         }
 
         /* ================================
@@ -275,16 +276,16 @@
            ================================ */
         #json-editor {
             width: 100%;
-            min-height: 220px;
-            max-height: 280px;
+            min-height: 440px;
+            max-height: 560px;
             background: var(--bg0);
             border: 1px solid var(--border2);
             border-radius: var(--radius);
-            padding: 10px 12px;
-            color: var(--amber2);
+            padding: 12px 14px;
+            color: var(--text);
             font-family: var(--font-mono);
-            font-size: 11px;
-            line-height: 1.6;
+            font-size: 14px;
+            line-height: 1.7;
             resize: vertical;
             outline: none;
             transition: border-color 0.15s;
@@ -567,8 +568,6 @@
         <div id="viewport-wrap">
             <div id="viewport"></div>
 
-            <button id="toggle-sidebar" onclick="toggleSidebar()">◀ PANEL</button>
-
             <div id="coords">
                 <div><span class="label">ROT  </span> <span id="coord-rot">LMB + DRAG</span></div>
                 <div><span class="label">PAN  </span> <span>RMB + DRAG</span></div>
@@ -578,6 +577,9 @@
                 </div>
             </div>
         </div>
+
+        <!-- Toggle button — fixed, outside both panels -->
+        <button id="toggle-sidebar" onclick="toggleSidebar()">◀ PANEL</button>
 
         <!-- ========================
              SIDEBAR
@@ -770,18 +772,18 @@
             }
         }
 
-        // Toggle sidebar — also shift toggle button
+        // Toggle sidebar — fixed button tracks sidebar edge
         const _toggleSidebar = toggleSidebar;
         window.toggleSidebar = function() {
             _toggleSidebar();
-            const btn = document.getElementById('toggle-sidebar');
+            const btn     = document.getElementById('toggle-sidebar');
             const sidebar = document.getElementById('sidebar');
             if (sidebar.classList.contains('hidden')) {
                 btn.textContent = '▶ PANEL';
-                btn.classList.remove('moved');
+                btn.classList.add('collapsed');
             } else {
                 btn.textContent = '◀ PANEL';
-                btn.classList.add('moved');
+                btn.classList.remove('collapsed');
             }
         };
     </script>
