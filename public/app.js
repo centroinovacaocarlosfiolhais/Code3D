@@ -33,8 +33,8 @@ function init() {
         0.1,
         1000
     );
-    camera.position.set(-1.5, 3, 8);
-    camera.lookAt(-1.5, 0, 0);
+    camera.position.set(1.5, 3, 8);
+    camera.lookAt(1.5, 0, 0);
 
     // Configurar renderer
     renderer = new THREE.WebGLRenderer({ 
@@ -448,8 +448,8 @@ function pararRotacao() {
 }
 
 function resetarCamera() {
-    camera.position.set(-1.5, 3, 8);
-    cameraTarget.set(-1.5, 0, 0);
+    camera.position.set(1.5, 3, 8);
+    cameraTarget.set(1.5, 0, 0);
     camera.lookAt(cameraTarget);
     mostrarMensagem("Câmera resetada");
 }
@@ -809,10 +809,11 @@ function gerarFolhaA4(nomeCriador) {
         }
 
         // ── RODAPÉ ───────────────────────────────────────────
-        ctx.fillStyle = '#cccccc';
-        ctx.font = '16px "Share Tech Mono", monospace';
+        const rodapeY = H - 20;
+        ctx.fillStyle = '#bbbbbb';
+        ctx.font = '15px "Share Tech Mono", monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('code3d.up.railway.app  ·  Clube de Código  ·  ' + dataStr, W / 2, H - 24);
+        ctx.fillText('Centro de Inovação Carlos Fiolhais  ·  Code3D desenvolvido por David Marques  ·  CC BY-NC-ND 4.0  ·  ' + dataStr, W / 2, rodapeY);
 
         // ── ABRIR JANELA DE IMPRESSÃO ────────────────────────
         const dataURLfinal = canvas.toDataURL('image/png', 1.0);
@@ -847,13 +848,29 @@ function gerarFolhaA4(nomeCriador) {
 }
 
 // ========================================
-// CONTROLES DE CÂMERA
+// FOCAL LENGTH / FOV CONTROL
 // ========================================
+
+// FOV range: 5° (almost flat/ortho) → 60° (wide angle)
+const FOV_MIN = 5;
+const FOV_MAX = 60;
+
+function ajustarFocal(valor) {
+    // slider 0 = FOV_MIN (flat), slider 100 = FOV_MAX (wide)
+    const fov = FOV_MIN + (valor / 100) * (FOV_MAX - FOV_MIN);
+    camera.fov = fov;
+    camera.updateProjectionMatrix();
+
+    const label = document.getElementById('focal-value');
+    if (label) label.textContent = Math.round(fov) + '°';
+}
+
+
 
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
 let isPanning = false;
-let cameraTarget = new THREE.Vector3(-1.5, 0, 0);
+let cameraTarget = new THREE.Vector3(1.5, 0, 0);
 
 function configurarControlesCamara() {
     const canvas = renderer.domElement;
