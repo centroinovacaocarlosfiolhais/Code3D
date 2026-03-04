@@ -763,7 +763,7 @@
             </div>
 
             <!-- PWA INSTALL -->
-            <div class="section" id="pwa-section" style="display:none; margin-top: auto;">
+            <div class="section" style="margin-top: auto;">
                 <div class="section-label">Instalar App</div>
                 <div class="info-box" style="margin-bottom: 10px; font-size:10px; line-height:1.7;">
                     <div>Instala o <span class="val">Code3D</span> como app</div>
@@ -773,6 +773,7 @@
                 <button id="pwa-install-btn" class="btn success" style="width:100%; font-size:12px; padding: 10px;" onclick="instalarPWA()">
                     ⊕ INSTALAR CODE3D
                 </button>
+                <div id="pwa-hint" style="display:none; margin-top:8px; font-size:9px; color:var(--dim); line-height:1.7; letter-spacing:0.5px;"></div>
             </div>
 
         </div><!-- /sidebar -->
@@ -924,24 +925,51 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             _pwaPrompt = e;
-            // Show install section in sidebar
-            document.getElementById('pwa-section').style.display = 'block';
+            // Native prompt available — update button to signal readiness
+            const btn = document.getElementById('pwa-install-btn');
+            btn.textContent = '⊕ INSTALAR CODE3D';
+            btn.style.opacity = '1';
+            document.getElementById('pwa-hint').style.display = 'none';
         });
 
         window.addEventListener('appinstalled', () => {
-            document.getElementById('pwa-section').style.display = 'none';
             _pwaPrompt = null;
+            const btn = document.getElementById('pwa-install-btn');
+            btn.textContent = '✓ APP INSTALADA';
+            btn.disabled = true;
+            btn.classList.remove('success');
+            document.getElementById('pwa-hint').style.display = 'none';
         });
 
         function instalarPWA() {
-            if (!_pwaPrompt) return;
-            _pwaPrompt.prompt();
-            _pwaPrompt.userChoice.then((choice) => {
-                if (choice.outcome === 'accepted') {
-                    document.getElementById('pwa-section').style.display = 'none';
+            if (_pwaPrompt) {
+                // Native install prompt available
+                _pwaPrompt.prompt();
+                _pwaPrompt.userChoice.then((choice) => {
+                    if (choice.outcome === 'accepted') {
+                        const btn = document.getElementById('pwa-install-btn');
+                        btn.textContent = '✓ APP INSTALADA';
+                        btn.disabled = true;
+                        btn.classList.remove('success');
+                    }
+                    _pwaPrompt = null;
+                });
+            } else {
+                // No native prompt — show manual instructions per browser
+                const hint = document.getElementById('pwa-hint');
+                const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+                const isFirefox = /firefox/i.test(navigator.userAgent);
+                const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+                if (isIOS || isSafari) {
+                    hint.innerHTML = '📱 iOS/Safari:<br>Toca em <span style="color:var(--amber2)">Partilhar ↑</span><br>→ "Adicionar ao Ecrã Inicial"';
+                } else if (isFirefox) {
+                    hint.innerHTML = '🦊 Firefox:<br>Clica no ícone <span style="color:var(--amber2)">🏠+</span> na barra<br>de endereço para instalar.';
+                } else {
+                    hint.innerHTML = '💻 Chrome/Edge:<br>Clica no ícone <span style="color:var(--amber2)">⊕</span> na barra<br>de endereço para instalar.<br><span style="color:var(--muted)">Ou recarrega a página.</span>';
                 }
-                _pwaPrompt = null;
-            });
+                hint.style.display = 'block';
+            }
         }
 
     </script>
