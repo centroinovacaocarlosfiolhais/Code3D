@@ -697,6 +697,11 @@
                     <button class="btn sm primary" onclick="exportarPNG()">📸 PNG</button>
                     <button class="btn sm" onclick="exportarSTL()">⬡ STL</button>
                 </div>
+                <div class="btn-group" style="margin-top:6px">
+                    <button class="btn primary" onclick="exportarA4()" style="font-size:12px; padding:8px 10px; letter-spacing:1px;">
+                        🖨 PRINT A4 — GALERIA
+                    </button>
+                </div>
                 <input type="file" id="file-input" accept=".json" onchange="lerFicheiro()">
             </div>
 
@@ -724,6 +729,90 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/STLExporter.js"></script>
     <script src="app.js"></script>
+
+    <!-- ========================
+         MODAL — NOME DO CRIADOR
+         ======================== -->
+    <div id="modal-a4" style="
+        display: none;
+        position: fixed; inset: 0; z-index: 9000;
+        background: rgba(5,6,8,0.85);
+        backdrop-filter: blur(6px);
+        align-items: center; justify-content: center;
+    ">
+        <div style="
+            background: var(--bg2);
+            border: 1px solid var(--amber);
+            box-shadow: var(--glow-amber), 0 20px 60px rgba(0,0,0,0.8);
+            border-radius: var(--radius);
+            padding: 36px 40px;
+            width: 440px;
+            font-family: var(--font-mono);
+        ">
+            <!-- Header -->
+            <div style="
+                font-family: var(--font-ui);
+                font-size: 20px; font-weight: 700;
+                letter-spacing: 2px; text-transform: uppercase;
+                color: var(--amber); margin-bottom: 6px;
+            ">🖨 Print A4 — Galeria</div>
+
+            <div style="font-size: 11px; color: var(--dim); margin-bottom: 24px; letter-spacing: 0.5px;">
+                Modelo 3D + JSON · Pronto para imprimir e colocar na parede
+            </div>
+
+            <!-- Input -->
+            <div style="font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); margin-bottom: 8px;">
+                Nome do Criador
+            </div>
+            <input
+                id="input-criador"
+                type="text"
+                placeholder="ex: João Silva"
+                maxlength="40"
+                onkeydown="if(event.key==='Enter') confirmarA4(); if(event.key==='Escape') cancelarA4();"
+                style="
+                    width: 100%;
+                    font-family: var(--font-mono);
+                    font-size: 18px;
+                    background: var(--bg0);
+                    border: 1px solid var(--border2);
+                    border-radius: var(--radius);
+                    color: var(--text);
+                    padding: 10px 14px;
+                    outline: none;
+                    letter-spacing: 1px;
+                    transition: border-color 0.15s;
+                "
+                onfocus="this.style.borderColor='var(--amber)'; this.style.boxShadow='var(--glow-amber)'"
+                onblur="this.style.borderColor='var(--border2)'; this.style.boxShadow='none'"
+            >
+
+            <!-- Buttons -->
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button onclick="cancelarA4()" style="
+                    flex:1; font-family: var(--font-mono); font-size: 11px;
+                    background: var(--bg3); border: 1px solid var(--border2);
+                    color: var(--dim); padding: 10px; border-radius: var(--radius);
+                    cursor: pointer; letter-spacing: 1px;
+                    transition: all 0.15s;
+                " onmouseover="this.style.borderColor='var(--border2)'; this.style.color='var(--text)'"
+                   onmouseout="this.style.borderColor='var(--border2)'; this.style.color='var(--dim)'">
+                    CANCELAR
+                </button>
+                <button onclick="confirmarA4()" style="
+                    flex:2; font-family: var(--font-mono); font-size: 12px;
+                    background: var(--amber3); border: 1px solid var(--amber);
+                    color: var(--amber2); padding: 10px; border-radius: var(--radius);
+                    cursor: pointer; letter-spacing: 1px; font-weight: bold;
+                    transition: all 0.15s;
+                " onmouseover="this.style.boxShadow='var(--glow-amber)'"
+                   onmouseout="this.style.boxShadow='none'">
+                    🖨 GERAR FOLHA A4
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Service Worker registration -->
     <script>

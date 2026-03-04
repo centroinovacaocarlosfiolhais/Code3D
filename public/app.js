@@ -33,8 +33,8 @@ function init() {
         0.1,
         1000
     );
-    camera.position.set(0, 3, 8);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(-1.5, 3, 8);
+    camera.lookAt(-1.5, 0, 0);
 
     // Configurar renderer
     renderer = new THREE.WebGLRenderer({ 
@@ -448,8 +448,8 @@ function pararRotacao() {
 }
 
 function resetarCamera() {
-    camera.position.set(0, 3, 8);
-    cameraTarget.set(0, 0, 0);
+    camera.position.set(-1.5, 3, 8);
+    cameraTarget.set(-1.5, 0, 0);
     camera.lookAt(cameraTarget);
     mostrarMensagem("Câmera resetada");
 }
@@ -635,13 +635,225 @@ function exportarSTL() {
 }
 
 // ========================================
+// EXPORTAR A4 — GALERIA DE PROJETOS
+// ========================================
+
+function exportarA4() {
+    if (!objetoAtual) {
+        mostrarMensagem("Nenhum objeto para exportar!", true);
+        return;
+    }
+
+    // Abrir modal para pedir nome do criador
+    document.getElementById('modal-a4').style.display = 'flex';
+    document.getElementById('input-criador').value = '';
+    document.getElementById('input-criador').focus();
+}
+
+function confirmarA4() {
+    const nomeCriador = document.getElementById('input-criador').value.trim() || 'Anónimo';
+    document.getElementById('modal-a4').style.display = 'none';
+    gerarFolhaA4(nomeCriador);
+}
+
+function cancelarA4() {
+    document.getElementById('modal-a4').style.display = 'none';
+}
+
+function gerarFolhaA4(nomeCriador) {
+    // A4 a 150dpi: 1240 × 1754px
+    const W = 1240;
+    const H = 1754;
+    const PAD = 60;
+
+    // Capturar viewport com fundo transparente
+    const corFundoOriginal = scene.background;
+    const fogOriginal = scene.fog;
+    scene.background = null;
+    scene.fog = null;
+    renderer.render(scene, camera);
+    const modeloDataURL = renderer.domElement.toDataURL('image/png');
+    scene.background = corFundoOriginal;
+    scene.fog = fogOriginal;
+
+    // Criar canvas A4
+    const canvas = document.createElement('canvas');
+    canvas.width  = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // Fundo branco
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Linha divisória horizontal a meio
+    const meioY = H / 2;
+
+    // ── METADE SUPERIOR: modelo 3D ──────────────────────────
+
+    // Fundo cinza muito claro para a área da imagem
+    ctx.fillStyle = '#f4f4f4';
+    ctx.fillRect(PAD, PAD, W - PAD * 2, meioY - PAD * 2);
+
+    // Título principal (nome do criador)
+    ctx.fillStyle = '#111111';
+    ctx.font = 'bold 52px "Share Tech Mono", monospace, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(nomeCriador.toUpperCase(), PAD, PAD - 12);
+
+    // Subtítulo (nome do objeto)
+    const nomeObjeto = configuracaoAtual?.nome || 'Objeto 3D';
+    ctx.fillStyle = '#f5a623';
+    ctx.font = '30px "Share Tech Mono", monospace';
+    ctx.fillText(nomeObjeto, PAD, PAD + 28);
+
+    // Data
+    const dataStr = new Date().toLocaleDateString('pt-PT', { day:'2-digit', month:'long', year:'numeric' });
+    ctx.fillStyle = '#999999';
+    ctx.font = '20px "Share Tech Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(dataStr, W - PAD, PAD + 28);
+    ctx.textAlign = 'left';
+
+    // Desenhar imagem do modelo centrada na metade superior
+    const img = new Image();
+    img.onload = () => {
+        // Área disponível para a imagem
+        const areaX = PAD + 10;
+        const areaY = PAD + 45;
+        const areaW = W - PAD * 2 - 20;
+        const areaH = meioY - PAD * 2 - 55;
+
+        // Manter aspect ratio
+        const ratio = Math.min(areaW / img.width, areaH / img.height);
+        const iW = img.width  * ratio;
+        const iH = img.height * ratio;
+        const iX = areaX + (areaW - iW) / 2;
+        const iY = areaY + (areaH - iH) / 2;
+
+        ctx.drawImage(img, iX, iY, iW, iH);
+
+        // ── LINHA DIVISÓRIA ──────────────────────────────────
+        ctx.strokeStyle = '#e0e0e0';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(PAD, meioY);
+        ctx.lineTo(W - PAD, meioY);
+        ctx.stroke();
+
+        // Etiqueta da secção JSON
+        ctx.fillStyle = '#111111';
+        ctx.font = 'bold 18px "Share Tech Mono", monospace';
+        ctx.fillText('// JSON SOURCE', PAD, meioY + 38);
+
+        ctx.fillStyle = '#f5a623';
+        ctx.font = '14px "Share Tech Mono", monospace';
+        ctx.fillText('Code3D — Centro de Inovação Carlos Fiolhais', PAD, meioY + 62);
+
+        // ── METADE INFERIOR: JSON ────────────────────────────
+        const jsonRaw    = document.getElementById('json-editor').value;
+        const jsonLinhas = jsonRaw.split('\n');
+
+        const jsonX    = PAD;
+        const jsonY    = meioY + 85;
+        const jsonMaxH = H - meioY - 85 - PAD;
+        const fontSize = 17;
+        const lineH    = fontSize * 1.55;
+
+        // Quantas linhas cabem
+        const maxLinhas = Math.floor(jsonMaxH / lineH);
+
+        ctx.font = `${fontSize}px "Share Tech Mono", monospace`;
+
+        jsonLinhas.slice(0, maxLinhas).forEach((linha, i) => {
+            const y = jsonY + i * lineH;
+
+            // Colorir por tipo de token (básico)
+            if (linha.trim().startsWith('//')) {
+                ctx.fillStyle = '#999999'; // comentário
+            } else if (/"[^"]+"\s*:/.test(linha)) {
+                // Linha com chave — desenhar chave em âmbar, valor em verde
+                const partes = linha.match(/^(\s*)(")([^"]+)(")\s*:\s*(.*)$/);
+                if (partes) {
+                    const indent = partes[1];
+                    const chave  = `"${partes[3]}"`;
+                    const resto  = `: ${partes[5]}`;
+
+                    ctx.fillStyle = '#999999';
+                    ctx.fillText(indent, jsonX, y);
+                    const indW = ctx.measureText(indent).width;
+
+                    ctx.fillStyle = '#f5a623';
+                    ctx.fillText(chave, jsonX + indW, y);
+                    const chaveW = ctx.measureText(chave).width;
+
+                    ctx.fillStyle = '#444444';
+                    ctx.fillText(resto, jsonX + indW + chaveW, y);
+                    return;
+                }
+                ctx.fillStyle = '#444444';
+            } else if (/[\[\]{},]/.test(linha) && !linha.includes('"')) {
+                ctx.fillStyle = '#bbbbbb'; // estrutura
+            } else {
+                ctx.fillStyle = '#444444'; // valor
+            }
+
+            ctx.fillText(linha, jsonX, y);
+        });
+
+        // Se JSON foi cortado, mostrar "..."
+        if (jsonLinhas.length > maxLinhas) {
+            ctx.fillStyle = '#aaaaaa';
+            ctx.font = 'italic 16px "Share Tech Mono", monospace';
+            ctx.fillText(`... +${jsonLinhas.length - maxLinhas} linhas`, jsonX, jsonY + maxLinhas * lineH);
+        }
+
+        // ── RODAPÉ ───────────────────────────────────────────
+        ctx.fillStyle = '#cccccc';
+        ctx.font = '16px "Share Tech Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('code3d.up.railway.app  ·  Clube de Código  ·  ' + dataStr, W / 2, H - 24);
+
+        // ── ABRIR JANELA DE IMPRESSÃO ────────────────────────
+        const dataURLfinal = canvas.toDataURL('image/png', 1.0);
+        const win = window.open('', '_blank');
+        win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <title>Code3D — ${nomeObjeto} — ${nomeCriador}</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#fff; display:flex; justify-content:center; align-items:flex-start; }
+    img  { width:210mm; height:297mm; display:block; }
+    @media print {
+      body { margin:0; }
+      img  { width:210mm; height:297mm; page-break-after:avoid; }
+    }
+  </style>
+</head>
+<body>
+  <img src="${dataURLfinal}">
+  <script>
+    window.onload = () => { window.print(); }
+  <\/script>
+</body>
+</html>`);
+        win.document.close();
+
+        mostrarMensagem("✓ Folha A4 gerada!");
+    };
+
+    img.src = modeloDataURL;
+}
+
+// ========================================
 // CONTROLES DE CÂMERA
 // ========================================
 
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
 let isPanning = false;
-let cameraTarget = new THREE.Vector3(0, 0, 0);
+let cameraTarget = new THREE.Vector3(-1.5, 0, 0);
 
 function configurarControlesCamara() {
     const canvas = renderer.domElement;
