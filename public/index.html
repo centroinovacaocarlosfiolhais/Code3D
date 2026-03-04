@@ -197,34 +197,6 @@
         }
         #coords .label { color: var(--amber3); }
 
-        /* Toggle sidebar button — fixed, always tracks sidebar left edge */
-        #toggle-sidebar {
-            position: fixed;
-            top: 58px;
-            right: 640px;
-            background: var(--bg3);
-            border: 1px solid var(--border2);
-            border-right: none;
-            padding: 7px 11px;
-            border-radius: var(--radius) 0 0 var(--radius);
-            cursor: pointer;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 1px;
-            color: var(--amber);
-            transition: right 0.3s ease, background 0.15s, border-color 0.15s, box-shadow 0.15s;
-            z-index: 200;
-        }
-        #toggle-sidebar:hover {
-            background: var(--bg4);
-            border-color: var(--amber);
-            box-shadow: var(--glow-amber);
-        }
-        /* When sidebar is hidden, button sits flush at right edge */
-        #toggle-sidebar.collapsed {
-            right: 0;
-        }
-
         /* ================================
            SIDEBAR
            ================================ */
@@ -236,10 +208,6 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s ease;
-        }
-        #sidebar.hidden {
-            transform: translateX(100%);
         }
 
         /* Scrollbar */
@@ -652,9 +620,6 @@
             </div>
         </div>
 
-        <!-- Toggle button — fixed, outside both panels -->
-        <button id="toggle-sidebar" onclick="toggleSidebar()">◀ PANEL</button>
-
         <!-- ========================
              SIDEBAR
              ======================== -->
@@ -935,20 +900,6 @@
             }
         }
 
-        // Toggle sidebar — fixed button tracks sidebar edge
-        const _toggleSidebar = toggleSidebar;
-        window.toggleSidebar = function() {
-            _toggleSidebar();
-            const btn     = document.getElementById('toggle-sidebar');
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar.classList.contains('hidden')) {
-                btn.textContent = '▶ PANEL';
-                btn.classList.add('collapsed');
-            } else {
-                btn.textContent = '◀ PANEL';
-                btn.classList.remove('collapsed');
-            }
-        };
     </script>
 </body>
 </html>

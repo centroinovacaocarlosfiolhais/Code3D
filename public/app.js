@@ -29,24 +29,30 @@ function init() {
     // Configurar câmera
     camera = new THREE.PerspectiveCamera(
         60,
-        window.innerWidth / window.innerHeight,
+        1, // aspect set correctly after renderer init below
         0.1,
         1000
     );
-    camera.position.set(1.5, 3, 8);
-    camera.lookAt(1.5, 0, 0);
+    camera.position.set(0, 3, 8);
+    camera.lookAt(0, 0, 0);
 
     // Configurar renderer
+    const vp = document.getElementById('viewport-wrap');
+
     renderer = new THREE.WebGLRenderer({ 
         antialias: true,
         alpha: true,
         preserveDrawingBuffer: true // Necessário para exportar imagens
     });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(vp.clientWidth, vp.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.getElementById('viewport').appendChild(renderer.domElement);
+
+    // Set correct aspect ratio now that viewport size is known
+    camera.aspect = vp.clientWidth / vp.clientHeight;
+    camera.updateProjectionMatrix();
 
     // Adicionar luzes
     configurarLuzes();
@@ -448,8 +454,8 @@ function pararRotacao() {
 }
 
 function resetarCamera() {
-    camera.position.set(1.5, 3, 8);
-    cameraTarget.set(1.5, 0, 0);
+    camera.position.set(0, 3, 8);
+    cameraTarget.set(0, 0, 0);
     camera.lookAt(cameraTarget);
     mostrarMensagem("Câmera resetada");
 }
@@ -885,7 +891,7 @@ function ajustarFocal(valor) {
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
 let isPanning = false;
-let cameraTarget = new THREE.Vector3(1.5, 0, 0);
+let cameraTarget = new THREE.Vector3(0, 0, 0);
 
 function configurarControlesCamara() {
     const canvas = renderer.domElement;
@@ -988,24 +994,13 @@ function mostrarMensagem(texto, erro = false) {
     }, 3000);
 }
 
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const button = document.getElementById('toggle-sidebar');
-    
-    sidebar.classList.toggle('hidden');
-    button.classList.toggle('moved');
-    
-    if (sidebar.classList.contains('hidden')) {
-        button.textContent = '▶ Painel';
-    } else {
-        button.textContent = '◀ Painel';
-    }
-}
+
 
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    const vp = document.getElementById('viewport-wrap');
+    camera.aspect = vp.clientWidth / vp.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(vp.clientWidth, vp.clientHeight);
 }
 
 // ========================================
