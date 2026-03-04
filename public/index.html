@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CODE3D — Modelador JSON</title>
 
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#f5a623">
@@ -12,7 +18,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Code3D">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -757,6 +762,19 @@
                 </div>
             </div>
 
+            <!-- PWA INSTALL -->
+            <div class="section" id="pwa-section" style="display:none; margin-top: auto;">
+                <div class="section-label">Instalar App</div>
+                <div class="info-box" style="margin-bottom: 10px; font-size:10px; line-height:1.7;">
+                    <div>Instala o <span class="val">Code3D</span> como app</div>
+                    <div>no teu dispositivo para acesso</div>
+                    <div>offline e ecrã completo.</div>
+                </div>
+                <button id="pwa-install-btn" class="btn success" style="width:100%; font-size:12px; padding: 10px;" onclick="instalarPWA()">
+                    ⊕ INSTALAR CODE3D
+                </button>
+            </div>
+
         </div><!-- /sidebar -->
 
     </div><!-- /app -->
@@ -898,6 +916,32 @@
                 el.textContent = '—';
                 el.style.color = 'var(--dim)';
             }
+        }
+
+        // ── PWA Install prompt ───────────────────────────────
+        let _pwaPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            _pwaPrompt = e;
+            // Show install section in sidebar
+            document.getElementById('pwa-section').style.display = 'block';
+        });
+
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('pwa-section').style.display = 'none';
+            _pwaPrompt = null;
+        });
+
+        function instalarPWA() {
+            if (!_pwaPrompt) return;
+            _pwaPrompt.prompt();
+            _pwaPrompt.userChoice.then((choice) => {
+                if (choice.outcome === 'accepted') {
+                    document.getElementById('pwa-section').style.display = 'none';
+                }
+                _pwaPrompt = null;
+            });
         }
 
     </script>
