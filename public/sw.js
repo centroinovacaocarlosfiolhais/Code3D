@@ -1,4 +1,4 @@
-const CACHE_NAME = 'code3d-v7';
+const CACHE_NAME = 'code3d-v8';
 
 // Ficheiros a guardar em cache na instalação
 const PRECACHE = [

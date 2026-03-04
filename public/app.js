@@ -24,7 +24,7 @@ function init() {
     // Criar cena
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x050608);
-    scene.fog = new THREE.Fog(0x050608, 12, 55);
+    scene.fog = null; // fog managed dynamically in wheel handler
 
     // Configurar câmera
     camera = new THREE.PerspectiveCamera(
@@ -692,28 +692,30 @@ function gerarFolhaA4(nomeCriador) {
 
     // ── METADE SUPERIOR: modelo 3D ──────────────────────────
 
-    // Fundo cinza muito claro para a área da imagem
+    const TOP_MARGIN = 72;  // ~12mm top margin at 150dpi
+
+    // Gray background for image area — starts below title block
     ctx.fillStyle = '#f4f4f4';
-    ctx.fillRect(PAD, PAD, W - PAD * 2, meioY - PAD * 2);
+    ctx.fillRect(PAD, TOP_MARGIN + 60, W - PAD * 2, meioY - TOP_MARGIN - 60 - PAD);
 
     // Título principal (nome do criador)
     ctx.fillStyle = '#111111';
-    ctx.font = 'bold 52px "Share Tech Mono", monospace, monospace';
+    ctx.font = 'bold 52px "Share Tech Mono", monospace';
     ctx.textAlign = 'left';
-    ctx.fillText(nomeCriador.toUpperCase(), PAD, PAD - 12);
+    ctx.fillText(nomeCriador.toUpperCase(), PAD, TOP_MARGIN);
 
     // Subtítulo (nome do objeto)
     const nomeObjeto = configuracaoAtual?.nome || 'Objeto 3D';
     ctx.fillStyle = '#f5a623';
     ctx.font = '30px "Share Tech Mono", monospace';
-    ctx.fillText(nomeObjeto, PAD, PAD + 28);
+    ctx.fillText(nomeObjeto, PAD, TOP_MARGIN + 40);
 
     // Data
     const dataStr = new Date().toLocaleDateString('pt-PT', { day:'2-digit', month:'long', year:'numeric' });
     ctx.fillStyle = '#999999';
     ctx.font = '20px "Share Tech Mono", monospace';
     ctx.textAlign = 'right';
-    ctx.fillText(dataStr, W - PAD, PAD + 28);
+    ctx.fillText(dataStr, W - PAD, TOP_MARGIN + 40);
     ctx.textAlign = 'left';
 
     // Desenhar imagem do modelo centrada na metade superior
@@ -721,9 +723,9 @@ function gerarFolhaA4(nomeCriador) {
     img.onload = () => {
         // Área disponível para a imagem
         const areaX = PAD + 10;
-        const areaY = PAD + 45;
+        const areaY = TOP_MARGIN + 65;
         const areaW = W - PAD * 2 - 20;
-        const areaH = meioY - PAD * 2 - 55;
+        const areaH = meioY - TOP_MARGIN - 65 - PAD;
 
         // Manter aspect ratio
         const ratio = Math.min(areaW / img.width, areaH / img.height);
@@ -865,7 +867,7 @@ function gerarFolhaA4(nomeCriador) {
 // ========================================
 
 // FOV range: 5° (almost flat/ortho) → 60° (wide angle)
-const FOV_MIN = 5;
+const FOV_MIN = 15;
 const FOV_MAX = 60;
 
 function ajustarFocal(valor) {
@@ -964,6 +966,9 @@ function configurarControlesCamara() {
         const novaDistancia = Math.max(1, Math.min(80, distancia + delta));
         direction.normalize().multiplyScalar(novaDistancia);
         camera.position.copy(cameraTarget).add(direction);
+
+        // Keep fog well beyond the camera so the model never fades
+        scene.fog = new THREE.Fog(0x050608, novaDistancia * 2.5, novaDistancia * 6);
         
         camera.lookAt(cameraTarget);
     });
