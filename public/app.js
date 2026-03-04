@@ -61,7 +61,6 @@ function init() {
     const gridHelper = new THREE.GridHelper(20, 20, 0x283550, 0x1a2030);
     gridHelper.material.opacity = 0.3;
     gridHelper.material.transparent = true;
-    gridHelper.position.y = 2;
     scene.add(gridHelper);
 
     // Adicionar eixos
