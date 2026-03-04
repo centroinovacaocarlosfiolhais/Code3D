@@ -61,6 +61,7 @@ function init() {
     const gridHelper = new THREE.GridHelper(20, 20, 0x283550, 0x1a2030);
     gridHelper.material.opacity = 0.3;
     gridHelper.material.transparent = true;
+    gridHelper.position.y = -2;
     scene.add(gridHelper);
 
     // Adicionar eixos
@@ -243,6 +244,29 @@ function carregarJSON() {
 
         // Guardar configuração
         configuracaoAtual = config;
+
+        // Aplicar configurações do painel se presentes no JSON
+        if (config.cor) {
+            document.getElementById('cor-objeto').value = config.cor;
+        }
+        if (config.segmentos !== undefined) {
+            document.getElementById('segmentos').value = config.segmentos;
+            document.getElementById('segmentos-valor').textContent = config.segmentos;
+        }
+        if (config.fractal) {
+            if (config.fractal.repeticoes !== undefined) {
+                document.getElementById('repeticoes').value = config.fractal.repeticoes;
+                document.getElementById('repeticoes-valor').textContent = config.fractal.repeticoes;
+            }
+            if (config.fractal.raio !== undefined) {
+                document.getElementById('raio-fractal').value = config.fractal.raio;
+                document.getElementById('raio-fractal-valor').textContent = config.fractal.raio;
+            }
+            if (config.fractal.escala !== undefined) {
+                document.getElementById('escala-fractal').value = config.fractal.escala;
+                document.getElementById('escala-fractal-valor').textContent = config.fractal.escala;
+            }
+        }
 
         // Criar geometria base
         const geometry = criarGeometriaRevolucao(config);
@@ -490,16 +514,30 @@ function lerFicheiro() {
     }
 }
 
-function exportarJSON() {
+// Constrói o JSON completo com estado atual do painel
+function construirJSONCompleto() {
     const jsonText = document.getElementById('json-editor').value;
-    
+    const jsonLimpo = removerComentariosJSON(jsonText);
+    const config = JSON.parse(jsonLimpo);
+
+    // Injectar estado atual dos controlos
+    config.cor       = document.getElementById('cor-objeto').value;
+    config.segmentos = parseInt(document.getElementById('segmentos').value);
+    config.fractal   = {
+        repeticoes: parseInt(document.getElementById('repeticoes').value),
+        raio:       parseFloat(document.getElementById('raio-fractal').value),
+        escala:     parseFloat(document.getElementById('escala-fractal').value)
+    };
+
+    return config;
+}
+
+function exportarJSON() {
     try {
-        // Remover comentários antes de validar
-        const jsonLimpo = removerComentariosJSON(jsonText);
-        JSON.parse(jsonLimpo);
-        
-        // Copiar JSON original (com comentários) para clipboard
-        navigator.clipboard.writeText(jsonText).then(() => {
+        const config = construirJSONCompleto();
+        const jsonFinal = JSON.stringify(config, null, 2);
+
+        navigator.clipboard.writeText(jsonFinal).then(() => {
             mostrarMensagem("JSON copiado para clipboard!");
         }).catch(() => {
             mostrarMensagem("JSON validado! (Clipboard indisponível)", false);
@@ -510,29 +548,26 @@ function exportarJSON() {
 }
 
 function exportarFicheiro() {
-    const jsonText = document.getElementById('json-editor').value;
-    
     try {
-        // Remover comentários antes de validar
-        const jsonLimpo = removerComentariosJSON(jsonText);
-        const config = JSON.parse(jsonLimpo);
-        
-        // Criar blob e download com JSON original (com comentários)
-        const blob = new Blob([jsonText], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
+        const config = construirJSONCompleto();
+        const jsonFinal = JSON.stringify(config, null, 2);
+
+        const blob = new Blob([jsonFinal], { type: 'application/json' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
         a.download = (config.nome || 'objeto') + '.json';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        
+
         mostrarMensagem("Ficheiro descarregado!");
     } catch (error) {
         mostrarMensagem("Erro: JSON inválido!", true);
     }
 }
+
 
 function exportarPNG() {
     if (!objetoAtual) {
