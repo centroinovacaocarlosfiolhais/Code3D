@@ -203,8 +203,61 @@
         #coords .label { color: var(--amber3); }
 
         /* ================================
-           SIDEBAR
+           MOBILE RESPONSIVE  (≤ 768px)
            ================================ */
+        @media (max-width: 768px) {
+            /* Stack vertically: titlebar → viewport → sidebar */
+            #app {
+                grid-template-columns: 1fr;
+                grid-template-rows: 40px 50vw 1fr;
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+
+            #titlebar {
+                grid-column: 1;
+                grid-row: 1;
+                gap: 8px;
+                padding: 0 10px;
+            }
+            /* Hide less important titlebar tags on small screens */
+            #titlebar .sep,
+            #titlebar .tag,
+            #titlebar .status-badge { display: none; }
+
+            #viewport-wrap {
+                grid-column: 1;
+                grid-row: 2;
+                height: 50vw;
+                min-height: 220px;
+            }
+
+            #sidebar {
+                grid-column: 1;
+                grid-row: 3;
+                border-left: none;
+                border-top: 1px solid var(--border);
+                overflow-y: visible; /* let the page scroll */
+            }
+
+            /* Reduce JSON editor height on mobile */
+            #json-editor {
+                min-height: 220px;
+                max-height: 340px;
+                font-size: 12px;
+            }
+
+            /* FOV slider: hide on mobile (touch controls are enough) */
+            #focal-ctrl { display: none; }
+
+            /* Coords box: smaller */
+            #coords { font-size: 9px; padding: 5px 8px; }
+
+            /* Message toast: full width */
+            #message { width: 90%; text-align: center; }
+        }
+
         #sidebar {
             grid-column: 2;
             grid-row: 2;

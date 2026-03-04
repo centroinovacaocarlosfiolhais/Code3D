@@ -1032,10 +1032,13 @@ function mostrarMensagem(texto, erro = false) {
 
 
 function onWindowResize() {
-    const vp = document.getElementById('viewport-wrap');
-    camera.aspect = vp.clientWidth / vp.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(vp.clientWidth, vp.clientHeight);
+    // Small delay lets CSS finish reflowing (important on mobile orientation change)
+    setTimeout(() => {
+        const vp = document.getElementById('viewport-wrap');
+        camera.aspect = vp.clientWidth / vp.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(vp.clientWidth, vp.clientHeight);
+    }, 50);
 }
 
 // ========================================
