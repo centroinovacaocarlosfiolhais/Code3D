@@ -664,7 +664,8 @@ function gerarFolhaA4(nomeCriador) {
     // A4 a 150dpi: 1240 × 1754px
     const W = 1240;
     const H = 1754;
-    const PAD = 60;
+    const PAD = 48;
+    const FOOTER_H = 44;  // reserved at bottom for footer
 
     // Capturar viewport com fundo transparente
     const corFundoOriginal = scene.background;
@@ -755,10 +756,10 @@ function gerarFolhaA4(nomeCriador) {
         const jsonLinhas = jsonRaw.split('\n');
 
         const jsonX    = PAD;
-        const jsonY    = meioY + 85;
-        const jsonMaxH = H - meioY - 85 - PAD;
-        const fontSize = 17;
-        const lineH    = fontSize * 1.55;
+        const jsonY    = meioY + 80;
+        const jsonMaxH = H - meioY - 80 - FOOTER_H - PAD;
+        const fontSize = 16;
+        const lineH    = fontSize * 1.5;
 
         // Quantas linhas cabem
         const maxLinhas = Math.floor(jsonMaxH / lineH);
@@ -809,9 +810,11 @@ function gerarFolhaA4(nomeCriador) {
         }
 
         // ── RODAPÉ ───────────────────────────────────────────
-        const rodapeY = H - 20;
+        const rodapeY = H - 16;
+        ctx.fillStyle = '#dddddd';
+        ctx.fillRect(PAD, H - FOOTER_H, W - PAD * 2, 1); // separator line
         ctx.fillStyle = '#bbbbbb';
-        ctx.font = '15px "Share Tech Mono", monospace';
+        ctx.font = '14px "Share Tech Mono", monospace';
         ctx.textAlign = 'center';
         ctx.fillText('Centro de Inovação Carlos Fiolhais  ·  Code3D desenvolvido por David Marques  ·  CC BY-NC-ND 4.0  ·  ' + dataStr, W / 2, rodapeY);
 
@@ -823,12 +826,22 @@ function gerarFolhaA4(nomeCriador) {
 <head>
   <title>Code3D — ${nomeObjeto} — ${nomeCriador}</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:#fff; display:flex; justify-content:center; align-items:flex-start; }
-    img  { width:210mm; height:297mm; display:block; }
+    @page { size: A4 portrait; margin: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 210mm; height: 297mm;
+      overflow: hidden;
+      background: #fff;
+    }
+    img {
+      display: block;
+      width: 210mm; height: 297mm;
+      page-break-inside: avoid;
+      page-break-after: avoid;
+    }
     @media print {
-      body { margin:0; }
-      img  { width:210mm; height:297mm; page-break-after:avoid; }
+      html, body { width: 210mm; height: 297mm; overflow: hidden; }
+      img { width: 210mm; height: 297mm; }
     }
   </style>
 </head>
@@ -948,7 +961,7 @@ function configurarControlesCamara() {
         direction.subVectors(camera.position, cameraTarget);
         const distancia = direction.length();
 
-        const novaDistancia = Math.max(3, Math.min(20, distancia + delta));
+        const novaDistancia = Math.max(1, Math.min(80, distancia + delta));
         direction.normalize().multiplyScalar(novaDistancia);
         camera.position.copy(cameraTarget).add(direction);
         
