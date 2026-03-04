@@ -34,7 +34,7 @@ function init() {
         1000
     );
     camera.position.set(0, 3, 8);
-    camera.lookAt(0, 0, 0);
+    camera.lookAt(0, 2, 0);
 
     // Configurar renderer
     const vp = document.getElementById('viewport-wrap');
@@ -479,7 +479,7 @@ function pararRotacao() {
 
 function resetarCamera() {
     camera.position.set(0, 3, 8);
-    cameraTarget.set(0, 0, 0);
+    cameraTarget.set(0, 2, 0);
     camera.lookAt(cameraTarget);
     mostrarMensagem("Câmera resetada");
 }
@@ -926,7 +926,7 @@ function ajustarFocal(valor) {
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
 let isPanning = false;
-let cameraTarget = new THREE.Vector3(0, 0, 0);
+let cameraTarget = new THREE.Vector3(0, 2, 0);
 
 function configurarControlesCamara() {
     const canvas = renderer.domElement;
