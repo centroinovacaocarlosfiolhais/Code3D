@@ -1,318 +1,165 @@
-# 🎤 NOTAS DE APRESENTAÇÃO - Modelador 3D por JSON
-
-## 📽️ SLIDE 1 - Título (2 min)
-**Título:** Criação de Modelos 3D com JSON  
-**Subtítulo:** Clube de Código - Centro de Inovação Carlos Fiolhais
-
-**O que dizer:**
-"Hoje vamos criar objetos 3D, mas em vez de programar em JavaScript complexo, vamos usar JSON - uma forma muito mais simples de estruturar dados. Vão conseguir criar formas incríveis apenas editando alguns números!"
+# 🎤 Notas de Apresentação — Pixel3D
+## Script slide-a-slide para o dinamizador
 
 ---
 
-## 📽️ SLIDE 2 - O que é JSON? (3 min)
-
-**Conceito:** JSON = JavaScript Object Notation
-
-**Exemplo visual:**
-```json
-{
-  "nome": "João",
-  "idade": 15,
-  "hobbies": ["programação", "jogos", "música"]
-}
-```
+## Slide 1 — Título (1 min)
 
 **O que dizer:**
-"JSON é como uma receita ou uma ficha - tem campos com nomes e valores. É fácil de ler por humanos e por máquinas. Hoje vamos usar JSON para descrever formas 3D!"
+> *"Hoje vamos criar mundos 3D — bloco a bloco, como no Minecraft, mas com uma paleta de 16 cores retro. No final, cada um vai ter um GIF animado do seu modelo para partilhar."*
 
-**Mostrar:** Abrir editor JSON na aplicação
+**O que mostrar:** Abrir `index.html` no projetor por 20 segundos antes de avançar.
 
 ---
 
-## 📽️ SLIDE 3 - Como funciona? (5 min)
+## Slide 2 — O que são Voxels? (2 min)
 
-**Conceito:** Revolução de Sólidos
+**Analogia principal:**
+> *"Um pixel é um quadradinho numa imagem 2D. Um voxel é um cubinho num espaço 3D. É exatamente o mesmo princípio, só que com uma dimensão a mais."*
+
+**Pergunta para a sala:**
+> *"Que jogos conhecem que usam esta técnica?"* (Minecraft, Roblox, Terraria)
+
+**O que dizer:**
+> *"A limitação — usar só cubos — é uma escolha artística. Quando aceitamos uma restrição, somos forçados a ser mais criativos dentro dela."*
+
+---
+
+## Slide 3 — Coordenadas XYZ (2 min)
 
 **Analogia:**
-"Imaginem um oleiro a fazer um vaso. Ele tem um pedaço de barro e um torno que gira 360°. À medida que o torno gira, o oleiro molda o barro criando a forma do vaso. É exatamente isso que fazemos aqui!"
+> *"Imaginem que estão a dar indicações a alguém num edifício: 'vai ao piso 3 (Y), entra pelo corredor da esquerda (X), terceira porta à frente (Z)'. É exatamente assim que o computador sabe onde colocar cada bloco."*
 
-**Diagrama:**
-```
-    Curva 2D          →    Rodar 360°    →    Objeto 3D
-    
-       *                                         ⚪
-      /                                        ⚪  ⚪
-     *                                       ⚪      ⚪
-    /                                       ⚪        ⚪
-   *                                         ⚪      ⚪
-   |                                          ⚪  ⚪
-   *                                            ⚪
-```
+**O que apontar:**
+- X = horizontal (como na régua)
+- Y = vertical (como os pisos de um edifício)
+- Z = profundidade (como a distância a que estás)
 
-**Mostrar:** Demo ao vivo - criar vaso e rodar
+**Exercício rápido:**
+> *"No modelo do Humanóide — onde acham que está a cabeça? Que valor de Y tem?"* (resposta: ~Y=10-12)
 
 ---
 
-## 📽️ SLIDE 4 - Curvas Bézier (4 min)
-
-**Conceito:** Pontos de controlo que definem uma curva suave
-
-**Visual:**
-```
-y (altura)
-↑
-5 |           *  ← ponto 4
-4 |         /
-3 |       *    ← ponto 3
-2 |     /
-1 |   *        ← ponto 2
-0 | *          ← ponto 1 (base)
-  └─────────────→ x (raio)
-  0 1 2 3
-```
+## Slide 4 — A Paleta PICO-8 (1 min)
 
 **O que dizer:**
-"Cada ponto tem duas coordenadas: x (distância do centro) e y (altura). A curva passa suavemente por estes pontos. Quando mudamos os valores, a forma muda!"
+> *"Só 16 cores. Parece pouco, mas é mais do que suficiente para criar tudo o que vos vier à cabeça. Os artistas de pixel art profissionais trabalham com paletas ainda mais pequenas."*
 
-**Mostrar:** Editar valores de x e ver forma mudar
+**Dica para a sala:**
+> *"Antes de começar, escolham 3-4 cores que vão usar. Consistência é mais eficaz do que variedade!"*
 
 ---
 
-## 📽️ SLIDE 5 - Sistema de Coordenadas (3 min)
+## Slide 5 — A Interface (2 min)
 
-**Eixo X (horizontal):**
-- x = 0 → centro (fechado)
-- x = 1 → 1 unidade do centro
-- x = 2 → 2 unidades do centro (mais largo)
-- ⚠️ x não pode ser negativo!
+**Percorrer visualmente o painel:**
+- Paleta (clicar numa cor, mostrar o label que muda)
+- Ferramentas (mostrar cada uma)
+- Templates (carregar "Foguetão" ao vivo)
+- Botão de exportar
 
-**Eixo Y (vertical):**
-- y = 0 → base (chão)
-- y = 1 → 1 unidade de altura
-- y = 5 → 5 unidades de altura (mais alto)
+**Demonstrar:**
+> *"Clique esquerdo numa face → adiciona bloco. Clique direito → remove sempre. O bloco azul transparente mostra onde o próximo vai aparecer."*
+
+---
+
+## Slide 6 — O Ficheiro .TXT (2 min)
+
+**Este é o momento pedagógico central — não o saltes!**
 
 **O que dizer:**
-"X controla a largura. Maior x = mais largo. X=0 fecha completamente (como uma ponta). Y controla a altura. Os pontos devem estar ordenados de baixo (y pequeno) para cima (y grande)."
+> *"Quando guardam o ficheiro .TXT, estão a ver como o computador armazena o vosso modelo. Não como uma imagem — como dados. Cada letra representa um bloco numa posição específica."*
+
+**Mostrar ao vivo:**
+- Exportar .TXT do modelo atual
+- Abrir num editor de texto
+- Identificar uma camada reconhecível (ex: a cabeça)
+
+**Ligação ao conceito de programação:**
+> *"Em programação, isto chama-se um array 3D: uma lista dentro de uma lista dentro de outra lista. Quando sabem onde está cada bloco, sabem navegar um array 3D — que é uma das estruturas de dados mais usadas em jogos e gráficos."*
 
 ---
 
-## 📽️ SLIDE 6 - Demo Ao Vivo (5 min)
+## Slide 7 — Demo Ao Vivo (5 min)
 
-**Passo a passo:**
+**Criar ao vivo no projetor — objeto simples (chapéu, cogumelo, cubo com detalhes)**
 
-1. **Abrir aplicação** (projetar no ecrã)
+**Script passo a passo:**
 
-2. **Mostrar exemplo do vaso:**
-   ```json
-   {
-     "pontos": [
-       {"x": 0.1, "y": 0},
-       {"x": 1.5, "y": 1},
-       {"x": 1.2, "y": 2.5},
-       {"x": 1.8, "y": 4}
-     ]
-   }
-   ```
+1. *"Começo com o Cubo Base."*
+2. *"Vou usar vermelho para a cor principal."* (selecionar cor 9)
+3. *"Clico numa face..."* (adicionar bloco — fazer comentário sobre o ghost block)
+4. *"Ups, cliquei no sítio errado."* (clique direito para remover — normalizar o erro)
+5. *"Rodo a câmera para ver como está por trás."* (arrastar)
+6. *"Vou adicionar um detalhe em branco."* (mudar cor, adicionar)
+7. *"Exportar GIF!"* (mostrar o resultado a girar)
+8. *"Acham que conseguem fazer melhor em 35 minutos?"*
 
-3. **Modificar ao vivo:**
-   - Mudar x de 1.5 para 2.5 → "Vejam como ficou mais largo!"
-   - Mudar y de 4 para 6 → "Agora ficou mais alto!"
-
-4. **Mostrar controles:**
-   - Cor
-   - Segmentos
-   - Rotação automática
-
-5. **Introduzir fractais:**
-   - Ativar 2 repetições
-   - Ajustar escala
-   - "Uau! De uma forma simples criámos um padrão complexo!"
+**Timing:** máximo 5 minutos. Imperfeito está bem — é mais honesto!
 
 ---
 
-## 📽️ SLIDE 7 - Exemplos Inspiradores (2 min)
+## Slide 8 — Desafios (1 min)
 
-**Mostrar rapidamente:**
-1. Copo → Tigela → Garrafa (progressão)
-2. Taça de vinho (elegância)
-3. Candeeiro (complexidade)
-4. Fractal (magia matemática!)
-5. Árvore de Natal (criatividade)
+**Leitura rápida dos 4 níveis.**
 
 **O que dizer:**
-"Estes são apenas exemplos. A vossa imaginação é o limite! Podem criar vasos, instrumentos musicais, naves espaciais, monstros alienígenas... o que quiserem!"
+> *"Não há obrigação de chegar ao nível 4. O objetivo é criar algo com intenção — e entender como o computador guarda esse 'algo'. Comecem pelo nível 1 e avancem ao vosso ritmo."*
 
 ---
 
-## 📽️ SLIDE 8 - Desafios (1 min)
+## Slide 9 — Dicas (1 min)
 
-**Progressão de dificuldade:**
-
-🟢 **Iniciante:**
-- Copo simples
-- Tigela
-
-🟡 **Intermédio:**
-- Garrafa com gargalo
-- Taça de vinho
-
-🔴 **Avançado:**
-- Peças de xadrez
-- Candeeiro + fractal
-
-🌟 **Mestre:**
-- Foguetão
-- Criação original
-
-**O que dizer:**
-"Vamos começar pelos desafios mais simples e depois podem avançar ao vosso ritmo. Não há pressa - o importante é experimentar e aprender!"
+**Destacar as 3 mais importantes:**
+1. *"Rodar a câmera resolve 90% dos problemas de colocação"*
+2. *"Guardar JSON frequentemente — não há Ctrl+Z!"*
+3. *"A silhueta é mais importante do que os detalhes"*
 
 ---
 
-## 📽️ SLIDE 9 - Dicas Importantes (2 min)
+## Slide 10 — Vamos Começar! (30 seg)
 
-**Lista de verificação:**
+**Checklist coletiva:**
+- Todos têm a app aberta?
+- Todos veem o Humanóide?
+- Alguém tem dúvidas antes de começar?
 
-✅ **Fazer:**
-- Experimentar livremente
-- Mudar valores e ver o que acontece
-- Pedir ajuda quando precisares
-- Partilhar descobertas com colegas
-- Guardar as tuas criações favoritas
-
-❌ **Evitar:**
-- x negativo (não funciona!)
-- Pontos fora de ordem (y deve crescer)
-- Menos de 3 pontos
-- Desistir ao primeiro erro
-
-**Frase motivacional:**
-"Errar é parte do processo! Cada erro é uma oportunidade de aprender algo novo."
+**Frase de arranque:**
+> *"Bloco a bloco, criam o vosso mundo. Vamos lá!"*
 
 ---
 
-## 📽️ SLIDE 10 - Vamos Começar! (1 min)
+## Durante a Atividade
 
-**Checklist:**
-- [ ] Todos têm a aplicação aberta?
-- [ ] Todos vêem o exemplo do vaso?
-- [ ] Todos conseguem editar o JSON?
-- [ ] Alguma dúvida antes de começar?
+### Frases para quando alguém está frustrado:
+- *"O clique direito desfaz. Não há erro permanente!"*
+- *"Tenta rodar a câmera — a face clicada pode não ser a que querias"*
+- *"Simplifica — o que é o elemento mais essencial do teu modelo?"*
 
-**O que dizer:**
-"Perfeito! Vamos começar pelos desafios mais simples. Lembrem-se: não há respostas erradas, apenas experiências diferentes. Divirtam-se!"
+### Frases para quando alguém acaba cedo:
+- *"Consegues fazer o mesmo com metade dos blocos?"*
+- *"E se adicionasses um segundo objeto à cena?"*
+- *"Exporta o .TXT e tenta perceber onde está cada parte do teu modelo"*
 
----
-
-## 🎯 DURANTE A ATIVIDADE
-
-### Circular pela sala e:
-
-1. **Observar dificuldades comuns:**
-   - JSON mal formatado (falta vírgula, etc.)
-   - Pontos fora de ordem
-   - Valores de x negativos
-   - Frustração por não conseguir resultado desejado
-
-2. **Fazer perguntas orientadoras:**
-   - "O que queres que aconteça aqui?"
-   - "Como é que o x afeta a forma?"
-   - "Já tentaste aumentar/diminuir este valor?"
-
-3. **Celebrar sucessos:**
-   - "Uau, isso ficou incrível! Mostra aos colegas!"
-   - "Boa! Como é que conseguiste essa forma?"
-
-4. **Encorajar colaboração:**
-   - "O João fez uma coisa interessante, vai ver!"
-   - "Podem trabalhar juntos neste desafio!"
+### Frases para a galeria final:
+- *"O que é? 10 palavras ou menos."*
+- *"Qual foi a decisão mais difícil?"*
+- *"Se tivesses mais 10 minutos, o que adicionavas?"*
 
 ---
 
-## 🎬 CONCLUSÃO (15 min)
+## Gestão de Tempo
 
-### Galeria de Criações:
+| Fase | Tempo ideal | Sinal de alerta |
+|------|-------------|-----------------|
+| Exploração | 20 min | Se passarem 25 sem ninguém ter mais de 20 blocos |
+| Desafios | 35 min | Avisar aos 25 min e aos 5 min do fim |
+| Galeria | 15 min | Máximo 3 min por modelo projetado |
 
-1. **Projetar** 3-5 criações mais interessantes
-2. **Autor explica**: "Como fizeste?" "O que foi mais difícil?"
-3. **Votação informal**: Criação mais criativa?
+**Se estiverem adiantados:** introduzir o conceito de "eficiência de blocos" — criar algo reconhecível com o mínimo possível.
 
-### Reflexão em Grupo:
-
-**Perguntas:**
-- O que aprenderam sobre JSON?
-- O que descobriram sobre coordenadas 3D?
-- Qual foi a parte mais divertida?
-- O que gostariam de criar numa próxima sessão?
-
-### Recursos para Levar:
-
-- Ficheiros JSON guardados
-- Link para a aplicação (se online)
-- Lista de desafios extra
-- Sugestão: continuar em casa!
+**Se estiverem atrasados:** focar em 1 desafio de nível 1 completo + exportar PNG. Qualidade sobre quantidade.
 
 ---
 
-## 💬 FRASES ÚTEIS DURANTE A SESSÃO
-
-**Quando alguém está frustrado:**
-- "Às vezes demora algumas tentativas. Vamos experimentar juntos?"
-- "O erro é parte do processo de aprendizagem!"
-
-**Quando alguém está a ter sucesso:**
-- "Fantástico! Como é que pensaste nisso?"
-- "Podes explicar aos outros como fizeste?"
-
-**Quando há confusão técnica:**
-- "Vamos voltar ao exemplo mais simples e construir a partir daí."
-- "Lembra-te: x controla largura, y controla altura."
-
-**Para encorajar experimentação:**
-- "O que achas que vai acontecer se mudares isto?"
-- "Experimenta valores muito diferentes - pode dar algo surpreendente!"
-
----
-
-## ⏱️ GESTÃO DE TEMPO
-
-**Se estiverem adiantados:**
-- Introduzir modo fractal mais cedo
-- Desafio extra: criar conjunto de objetos relacionados
-- Explorar código JavaScript (para interessados)
-
-**Se estiverem atrasados:**
-- Focar nos desafios 1 e 2
-- Fazer demo coletiva em vez de individual
-- Simplificar desafios (menos pontos de controlo)
-
-**Se houver grande disparidade de ritmos:**
-- Criar pares (rápido + devagar)
-- Oferecer desafios extra aos rápidos
-- Dar apoio individual aos que precisam
-
----
-
-## 🎯 OBJETIVOS DE APRENDIZAGEM - CHECKLIST
-
-No final, os participantes devem conseguir:
-
-**Técnico:**
-- [ ] Editar JSON sem erros de sintaxe
-- [ ] Entender sistema de coordenadas x,y
-- [ ] Criar formas 3D intencionalmente (não aleatoriamente)
-- [ ] Usar controles da interface
-
-**Conceptual:**
-- [ ] Entender revolução de sólidos
-- [ ] Relacionar valores com formas resultantes
-- [ ] Pensar em 3D (espacialmente)
-
-**Atitudinal:**
-- [ ] Confortável com experimentação
-- [ ] Persistente perante erros
-- [ ] Criativo na exploração
-
----
-
-**Boa sessão! 🎨✨**
+*Pixel3D · Clube de Código · Centro de Inovação Carlos Fiolhais*

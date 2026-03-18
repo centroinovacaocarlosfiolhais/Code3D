@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel3D — Apresentação · CICF</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0e1f;
+            --panel: rgba(14,20,48,0.85);
+            --accent: #00ff88;
+            --pink: #ff004d;
+            --blue: #29adff;
+            --yellow: #ffec27;
+            --purple: #7e2553;
+            --text: #e8eeff;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+        .particle {
+            position: absolute; width: 2px; height: 2px; background: var(--accent);
+            border-radius: 50%; opacity: 0.2; animation: float 18s infinite;
+        }
+        @keyframes float {
+            0%,100% { transform: translate(0,0); }
+            33% { transform: translate(60px,-120px); }
+            66% { transform: translate(-40px,-60px); }
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+        .slide {
+            min-height: 100vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 20px 100px;
+        }
+        .slide.active { display: flex; }
+        .card {
+            background: var(--panel);
+            backdrop-filter: blur(20px);
+            border: 1.5px solid rgba(0,255,136,0.2);
+            border-radius: 28px;
+            padding: 56px 60px;
+            max-width: 1100px;
+            width: 100%;
+            box-shadow: 0 24px 64px rgba(0,255,136,0.12);
+        }
+        h1 {
+            font-size: 3.8em;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            text-align: center;
+            background: linear-gradient(135deg, var(--accent), var(--blue), var(--pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 0 24px rgba(0,255,136,0.3));
+        }
+        h2 {
+            font-size: 2.4em; font-weight: 800; color: var(--accent);
+            margin-bottom: 28px; letter-spacing: -0.01em;
+            text-shadow: 0 0 20px rgba(0,255,136,0.4);
+        }
+        h3 { font-size: 1.4em; font-weight: 700; color: var(--blue); margin: 24px 0 12px; }
+        p, li { font-size: 1.15em; line-height: 1.75; margin-bottom: 10px; }
+        .subtitle { font-size: 1.4em; color: rgba(255,255,255,0.55); text-align: center; margin-bottom: 36px; }
+        .hi { color: var(--pink); font-weight: 700; }
+        .hl { color: var(--yellow); font-weight: 700; }
+        .tip {
+            background: rgba(0,255,136,0.07);
+            border-left: 4px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+        .tip strong { color: var(--accent); font-size: 1.1em; display: block; margin-bottom: 8px; }
+        .warn {
+            background: rgba(255,0,77,0.08);
+            border-left: 4px solid var(--pink);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin: 18px 0;
+        }
+        .warn strong { color: var(--pink); }
+        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
+        .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 20px 0; }
+        .card-mini {
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 18px;
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card-mini:hover { transform: translateY(-5px); border-color: var(--blue); }
+        .card-mini .icon { font-size: 2.4em; margin-bottom: 10px; }
+        .card-mini h4 { font-size: 1em; font-weight: 700; color: var(--blue); margin-bottom: 6px; }
+        .card-mini p { font-size: 0.9em; opacity: 0.7; margin: 0; }
+        ul { list-style: none; padding: 0; }
+        ul li { padding-left: 20px; position: relative; }
+        ul li::before { content: '▸'; color: var(--pink); position: absolute; left: 0; font-size: 1.2em; }
+        .level {
+            border-radius: 14px;
+            padding: 22px;
+            margin: 14px 0;
+        }
+        .level h3 { margin: 0 0 10px; }
+        .level ul li { font-size: 1.05em; margin-bottom: 4px; }
+        .l-green { background: rgba(0,228,54,0.08); border: 1.5px solid rgba(0,228,54,0.3); }
+        .l-yellow { background: rgba(255,236,39,0.07); border: 1.5px solid rgba(255,236,39,0.28); }
+        .l-red { background: rgba(255,0,77,0.07); border: 1.5px solid rgba(255,0,77,0.28); }
+        .l-purple { background: rgba(126,37,83,0.15); border: 1.5px solid rgba(200,100,200,0.3); }
+        .badge {
+            display: inline-block;
+            padding: 4px 14px; border-radius: 20px;
+            font-size: 0.8em; font-weight: 700; margin-bottom: 10px;
+        }
+        .b-green { background: #00e436; color: #0a0e1f; }
+        .b-yellow { background: #ffec27; color: #0a0e1f; }
+        .b-red { background: #ff004d; color: white; }
+        .b-purple { background: #7e2553; color: white; }
+        .code {
+            background: rgba(0,0,0,0.5);
+            border: 1.5px solid rgba(0,228,54,0.35);
+            border-radius: 12px;
+            padding: 20px 22px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+            margin: 18px 0;
+            box-shadow: 0 0 20px rgba(0,228,54,0.1);
+        }
+        .k { color: var(--blue); }
+        .v { color: var(--accent); }
+        .c { color: rgba(255,255,255,0.35); }
+        .checklist li::before { content: '☐'; color: var(--accent); }
+        .diagram {
+            background: rgba(0,0,0,0.4);
+            border: 2px dashed rgba(255,255,255,0.15);
+            border-radius: 14px;
+            padding: 28px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+        }
+        .diagram .arr { color: var(--pink); font-size: 1.8em; margin: 0 16px; }
+        .diagram .step { display: inline-block; text-align: center; }
+        .diagram .step .lbl { font-size: 0.85em; color: rgba(255,255,255,0.5); margin-top: 6px; }
+        .palette-demo { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0; }
+        .color-dot { width: 28px; height: 28px; border-radius: 5px; border: 1.5px solid rgba(255,255,255,0.2); }
+        /* Nav */
+        .nav {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; gap: 12px; align-items: center;
+            background: rgba(10,14,31,0.95);
+            backdrop-filter: blur(12px);
+            padding: 14px 28px;
+            border-radius: 50px;
+            border: 1.5px solid rgba(0,255,136,0.2);
+            z-index: 100;
+        }
+        .nav-btn {
+            background: linear-gradient(135deg, rgba(0,255,136,0.15), rgba(41,173,255,0.15));
+            border: 1.5px solid rgba(0,255,136,0.35);
+            color: var(--accent);
+            padding: 10px 22px;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { background: rgba(0,255,136,0.25); transform: scale(1.05); }
+        .counter { color: var(--blue); font-family: 'Courier New', monospace; font-size: 1em; min-width: 60px; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+<div class="container">
+
+<!-- SLIDE 1 — Título -->
+<div class="slide active" data-n="1">
+<div class="card">
+    <h1>🧱 PIXEL3D</h1>
+    <p class="subtitle">Cria modelos 3D bloco a bloco · Clube de Código · CICF</p>
+    <div class="tip">
+        <p style="font-size:1.35em;text-align:center;line-height:2">
+            <span class="hi">🎮</span> Hoje vais construir modelos 3D como no Minecraft!<br>
+            <span class="hi">🎨</span> Uma paleta de 16 cores e um grid de 16×16×16 blocos<br>
+            <span class="hi">🎞️</span> No final exportas um <strong>GIF animado</strong> para partilhar!
+        </p>
+    </div>
+    <div class="grid4" style="margin-top:32px">
+        <div class="card-mini"><div class="icon">🧱</div><h4>Colocar Blocos</h4><p>Clica para construir</p></div>
+        <div class="card-mini"><div class="icon">🎨</div><h4>16 Cores</h4><p>Paleta PICO-8</p></div>
+        <div class="card-mini"><div class="icon">🏗️</div><h4>16×16×16</h4><p>Grid 3D</p></div>
+        <div class="card-mini"><div class="icon">🎞️</div><h4>GIF Animado</h4><p>Para redes sociais</p></div>
+    </div>
+</div>
+</div>
+
+<!-- SLIDE 2 — O que são Voxels? -->
+<div class="slide" data-n="2">
+<div class="card">
+    <h2>🧱 O que são Voxels?</h2>
+    <p><span class="hi">Voxel</span> = <strong>Vol</strong>ume + Pi<strong>xel</strong> — um ponto no espaço tridimensional.</p>
+    <div class="tip">
+        <strong>💡 Pensa assim:</strong>
+        <ul>
+            <li>Um <span class="hl">pixel</span> é um ponto numa imagem 2D (plano)</li>
+            <li>Um <span class="hl">voxel</span> é um cubo num espaço 3D</li>
+            <li>Juntos, formam qualquer forma 3D que imagines!</li>
+        </ul>
+    </div>
+    <h3>🌍 Onde usamos voxels no dia-a-dia?</h3>
+    <div class="grid3">
+        <div class="card-mini"><div class="icon">⛏️</div><h4>Minecraft</h4><p>O jogo mais famoso com voxels</p></div>
+        <div class="card-mini"><div class="icon">🏥</div><h4>Medicina</h4><p>Tomografias e ressonâncias magnéticas</p></div>
+        <div class="card-mini"><div class="icon">🎮</div><h4>Jogos indie</h4><p>Estética retro popular</p></div>
+    </div>
+    <div class="diagram">
+        <div class="step"><div style="font-size:2.5em">🟥</div><div class="lbl">1 voxel<br>(1 cubo)</div></div>
+        <span class="arr">+</span>
+        <div class="step"><div style="font-size:2.5em">🟥🟥🟥<br>🟥🟥🟥<br>🟥🟥🟥</div><div class="lbl">9 voxels<br>(camada)</div></div>
+        <span class="arr">+</span>
+        <div class="step"><div style="font-size:3em">🤖</div><div class="lbl">~30 voxels<br>(personagem)</div></div>
+    </div>
+</div>
+</div>
+
+<!-- SLIDE 3 — Coordenadas 3D -->
+<div class="slide" data-n="3">
+<div class="card">
+    <h2>📐 Coordenadas 3D — O Mapa do Espaço</h2>
+    <p>Para colocar um bloco no espaço, precisamos de <span class="hi">três coordenadas</span>:</p>
+    <div class="grid3" style="margin:24px 0">
+        <div class="card-mini" style="border-color:rgba(255,0,77,0.4)">
+            <div class="icon">↔️</div>
+            <h4 style="color:#ff004d">X — Largura</h4>
+            <p>Da esquerda para a direita<br><strong>0 a 15</strong></p>
+        </div>
+        <div class="card-mini" style="border-color:rgba(0,255,136,0.4)">
+            <div class="icon">↕️</div>
+            <h4 style="color:#00ff88">Y — Altura</h4>
+            <p>Do chão para o céu<br><strong>0 a 15</strong></p>
+        </div>
+        <div class="card-mini" style="border-color:rgba(41,173,255,0.4)">
+            <div class="icon">↙️↗️</div>
+            <h4 style="color:#29adff">Z — Profundidade</h4>
+            <p>Da frente para trás<br><strong>0 a 15</strong></p>
+        </div>
+    </div>
+    <div class="tip">
+        <strong>🎮 Dica Gamer:</strong>
+        <p>É como um mapa de jogo! X e Z são o mapa 2D, Y é o andar em que estás. No Pixel3D, usas o <span class="hl">seletor de camada (Y)</span> para escolher o "andar" onde constróis.</p>
+    </div>
+    <div class="code">
+<pre><span class="c">// Um bloco na posição (5, 3, 7) significa:</span>
+<span class="k">X</span> = <span class="v">5</span>   <span class="c">// 5 casas da margem esquerda</span>
+<span class="k">Y</span> = <span class="v">3</span>   <span class="c">// 3º andar (camada)</span>
+<span class="k">Z</span> = <span class="v">7</span>   <span class="c">// 7 casas do fundo</span></pre>
+    </div>
+    <div class="warn"><strong>⚠️ O Y = 0 é sempre o chão!</strong> Para construir em cima, aumenta o Y com as setas do Painel.</div>
+</div>
+</div>
+
+<!-- SLIDE 4 — A Interface -->
+<div class="slide" data-n="4">
+<div class="card">
+    <h2>🖥️ A Interface — Conhece as Tuas Ferramentas</h2>
+    <div class="grid2">
+        <div>
+            <h3>🖱️ Controlos do Rato</h3>
+            <ul>
+                <li><span class="hl">Botão esquerdo</span> — Adicionar / Apagar bloco</li>
+                <li><span class="hl">Botão direito + arrastar</span> — Mover câmera (pan)</li>
+                <li><span class="hl">Scroll</span> — Zoom in/out</li>
+                <li><span class="hl">Botão esquerdo + arrastar</span> — Rodar câmera</li>
+            </ul>
+            <h3>⌨️ Atalhos de Teclado</h3>
+            <ul>
+                <li><span class="hl">↑ / ↓</span> — Mudar camada (Y)</li>
+                <li><span class="hl">A</span> — Modo Adicionar</li>
+                <li><span class="hl">E</span> — Modo Apagar</li>
+            </ul>
+        </div>
+        <div>
+            <h3>🎨 Painel Lateral</h3>
+            <ul>
+                <li><span class="hl">Modo</span> — Adicionar ou Apagar blocos</li>
+                <li><span class="hl">Paleta</span> — Escolhe a cor (16 cores PICO-8)</li>
+                <li><span class="hl">Camada Y</span> — Em que altura constróis</li>
+                <li><span class="hl">Templates</span> — Formas prontas para modificar</li>
+                <li><span class="hl">Exportar</span> — GIF, PNG ou TXT</li>
+            </ul>
+            <div class="tip" style="margin-top:16px">
+                <strong>🔑 A lógica é simples:</strong>
+                <p>1. Seleciona a cor<br>2. Escolhe a camada Y<br>3. Clica no grid para colocar blocos</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- SLIDE 5 — A Paleta PICO-8 -->
+<div class="slide" data-n="5">
+<div class="card">
+    <h2>🎨 A Paleta PICO-8 — 16 Cores, Infinitas Possibilidades</h2>
+    <p>O Pixel3D usa a paleta do <span class="hi">PICO-8</span> — uma consola retro virtual com apenas 16 cores. Esta limitação é <span class="hl">intencional</span>!</p>
+    <div class="palette-demo" style="justify-content:center;margin:24px 0">
+        <div class="color-dot" style="background:#000000" title="Preto"></div>
+        <div class="color-dot" style="background:#1D2B53" title="Marinho"></div>
+        <div class="color-dot" style="background:#7E2553" title="Bordô"></div>
+        <div class="color-dot" style="background:#008751" title="Verde"></div>
+        <div class="color-dot" style="background:#AB5236" title="Castanho"></div>
+        <div class="color-dot" style="background:#5F574F" title="Cinza"></div>
+        <div class="color-dot" style="background:#C2C3C7" title="Prata"></div>
+        <div class="color-dot" style="background:#FFF1E8" title="Branco"></div>
+        <div class="color-dot" style="background:#FF004D" title="Vermelho"></div>
+        <div class="color-dot" style="background:#FFA300" title="Laranja"></div>
+        <div class="color-dot" style="background:#FFEC27" title="Amarelo"></div>
+        <div class="color-dot" style="background:#00E436" title="Lima"></div>
+        <div class="color-dot" style="background:#29ADFF" title="Azul"></div>
+        <div class="color-dot" style="background:#83769C" title="Lilás"></div>
+        <div class="color-dot" style="background:#FF77A8" title="Rosa"></div>
+        <div class="color-dot" style="background:#FFCCAA" title="Pêssego"></div>
+    </div>
+    <div class="grid2">
+        <div class="tip">
+            <strong>💡 Porque limitar as cores?</strong>
+            <ul>
+                <li>Obriga a <span class="hl">fazer escolhas criativas</span></li>
+                <li>Cria uma <span class="hl">identidade visual</span> consistente</li>
+                <li>É o mesmo princípio do pixel art retro</li>
+                <li>Todos os modelos ficam <span class="hl">no mesmo universo visual</span></li>
+            </ul>
+        </div>
+        <div class="tip" style="border-left-color: var(--blue)">
+            <strong style="color:var(--blue)">🎮 Curiosidade:</strong>
+            <p>O PICO-8 é uma "consola fantasma" criada em 2015. Tem 128×128 pixels, 16 cores e é usada para criar jogos retro. É muito popular entre game developers iniciantes!</p>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- SLIDE 6 — Demo ao vivo -->
+<div class="slide" data-n="6">
+<div class="card">
+    <h2>🎬 Demo ao Vivo — Passo a Passo</h2>
+    <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="background:rgba(0,255,136,0.12);border:2px solid var(--accent);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1em;flex-shrink:0">1</div>
+            <div>
+                <strong>Abrir a aplicação e explorar o template inicial (Humanóide)</strong>
+                <p style="margin:6px 0 0;opacity:0.7">Rodar a câmera, fazer zoom, observar os blocos coloridos</p>
+            </div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="background:rgba(41,173,255,0.12);border:2px solid var(--blue);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1em;flex-shrink:0">2</div>
+            <div>
+                <strong>Selecionar uma cor e colocar um bloco</strong>
+                <p style="margin:6px 0 0;opacity:0.7">Clicar na paleta → clicar no grid → ver o bloco aparecer</p>
+            </div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="background:rgba(255,236,39,0.12);border:2px solid var(--yellow);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1em;flex-shrink:0">3</div>
+            <div>
+                <strong>Mudar de camada com as setas ↑↓</strong>
+                <p style="margin:6px 0 0;opacity:0.7">Ver o plano verde a mudar de posição — é aqui que constróis!</p>
+            </div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="background:rgba(255,0,77,0.12);border:2px solid var(--pink);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1em;flex-shrink:0">4</div>
+            <div>
+                <strong>Usar o modo Apagar para remover blocos</strong>
+                <p style="margin:6px 0 0;opacity:0.7">Clicar em 🗑️ Apagar → clicar num bloco existente</p>
+            </div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="background:rgba(126,37,83,0.2);border:2px solid #c060a0;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1em;flex-shrink:0">5</div>
+            <div>
+                <strong>Exportar um GIF animado</strong>
+                <p style="margin:6px 0 0;opacity:0.7">Clicar em 🎞️ GIF Animado → aguardar → descarregar → partilhar!</p>
+            </div>
+        </div>
+    </div>
+    <div class="tip" style="margin-top:24px">
+        <strong>🌟 Mensagem principal:</strong>
+        <p>Em 30 segundos já tens o teu primeiro bloco. Em 5 minutos já tens um modelo. A curva de aprendizagem é muito suave!</p>
+    </div>
+</div>
+</div>
+
+<!-- SLIDE 7 — Desafios -->
+<div class="slide" data-n="7">
+<div class="card">
+    <h2>🎯 Desafios — Escolhe o Teu Nível</h2>
+    <div class="level l-green">
+        <span class="badge b-green">🟢 Iniciante</span>
+        <h3 style="color:#00e436;margin-top:0">Personaliza o Template!</h3>
+        <ul>
+            <li>Escolhe um template (Humanóide, Animal, etc.)</li>
+            <li>Muda a cor de pelo menos 5 blocos</li>
+            <li>Adiciona 3 novos blocos</li>
+        </ul>
+        <p style="margin-top:10px;opacity:0.6">⏱️ 10-15 min</p>
+    </div>
+    <div class="level l-yellow">
+        <span class="badge b-yellow">🟡 Intermédio</span>
+        <h3 style="color:#ffec27;margin-top:0">Cria um Animal Reconhecível</h3>
+        <ul>
+            <li>Apaga o template e começa do zero (ou de um template)</li>
+            <li>Cria um animal que qualquer colega reconheça</li>
+            <li>Usa pelo menos 3 camadas (Y) diferentes</li>
+        </ul>
+        <p style="margin-top:10px;opacity:0.6">⏱️ 20-30 min</p>
+    </div>
+    <div class="level l-red">
+        <span class="badge b-red">🔴 Avançado</span>
+        <h3 style="color:#ff004d;margin-top:0">Cria uma Personagem com Detalhes</h3>
+        <ul>
+            <li>Personagem com acessórios (chapéu, arma, mochila…)</li>
+            <li>Usa pelo menos 5 cores diferentes</li>
+            <li>Exporta o GIF e partilha</li>
+        </ul>
+        <p style="margin-top:10px;opacity:0.6">⏱️ 30-40 min</p>
+    </div>
+    <div class="level l-purple">
+        <span class="badge b-purple">🟣 Mestre</span>
+        <h3 style="color:#ff77a8;margin-top:0">Cria algo que não existe na Terra</h3>
+        <ul>
+            <li>Monstro, nave, robot, criatura alienígena…</li>
+            <li>Sem limites — liberdade total!</li>
+            <li>Apresenta à turma</li>
+        </ul>
+        <p style="margin-top:10px;opacity:0.6">⏱️ 40+ min</p>
+    </div>
+</div>
+</div>
+
+<!-- SLIDE 8 — Dicas -->
+<div class="slide" data-n="8">
+<div class="card">
+    <h2>💡 Dicas de Mestre</h2>
+    <div class="grid2">
+        <div>
+            <h3 style="color:#00e436">✅ Boas Práticas</h3>
+            <ul>
+                <li><strong>Começa pelo chão (Y=0)</strong> e vai subindo</li>
+                <li><strong>Usa o plano verde</strong> para orientação — é a camada ativa</li>
+                <li><strong>Roda a câmera</strong> com frequência para ver todos os ângulos</li>
+                <li><strong>Varia as cores</strong> por zonas para criar contraste</li>
+                <li><strong>Simplifica!</strong> Menos blocos = mais impacto visual</li>
+                <li><strong>Experimenta sem medo</strong> — apagar é fácil!</li>
+            </ul>
+        </div>
+        <div>
+            <h3 style="color:#ff004d">❌ Armadilhas Comuns</h3>
+            <ul>
+                <li><strong>Camada errada</strong> — verifica sempre o Y antes de clicar</li>
+                <li><strong>Câmera perdida</strong> — clica em "🎥 Reset" no painel</li>
+                <li><strong>GIF demora</strong> — é normal! São 24 frames a renderizar</li>
+                <li><strong>Demasiados blocos</strong> — pode ficar confuso, simplifica</li>
+                <li><strong>Desistir cedo</strong> — os primeiros 5 minutos são os mais difíceis!</li>
+            </ul>
+        </div>
+    </div>
+    <div class="grid3" style="margin-top:20px">
+        <div class="card-mini">
+            <div class="icon">🗼</div>
+            <h4>Topo ↔ Base</h4>
+            <p>Começa pela base (Y=0) e constrói para cima</p>
+        </div>
+        <div class="card-mini">
+            <div class="icon">🎭</div>
+            <h4>Simetria</h4>
+            <p>Coloca blocos em espelho para personagens equilibradas</p>
+        </div>
+        <div class="card-mini">
+            <div class="icon">🌈</div>
+            <h4>Contraste</h4>
+            <p>Alterna cores escuras e claras para realçar detalhes</p>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- SLIDE 9 — O Ficheiro TXT -->
+<div class="slide" data-n="9">
+<div class="card">
+    <h2>📄 Momento Surpresa — O Ficheiro TXT!</h2>
+    <p>O Pixel3D pode exportar o teu modelo como texto simples. Cada camada aparece como uma <span class="hi">matriz 2D de letras</span>!</p>
+    <div class="code"><pre><span class="c">════════════════════════════════════</span>
+  <span class="v">PIXEL3D — O Teu Modelo Voxel</span>
+<span class="c">════════════════════════════════════</span>
+  Blocos  : 42
+  Grid    : 16×16×16
+
+  <span class="c">Legenda: · = vazio, letra = cor</span>
+
+<span class="k">━━━ Y=0 ━━━</span>
+  · · · · · <span class="v">Z Z Z</span> · · · · · · · ·
+  · · · · <span class="v">Z Z Z Z Z</span> · · · · · ·
+  · · · · · <span class="v">Z Z Z</span> · · · · · · ·
+
+<span class="k">━━━ Y=1 ━━━</span>
+  · · · · · · <span class="v">R R</span> · · · · · · ·
+  · · · · · · <span class="v">R R</span> · · · · · · ·</pre></div>
+    <div class="grid2">
+        <div class="tip">
+            <strong>🧠 O que isto ensina?</strong>
+            <ul>
+                <li><span class="hl">Arrays 2D</span> — uma grelha de valores</li>
+                <li><span class="hl">Indexação</span> — posição [x][z]</li>
+                <li><span class="hl">Representação de dados</span> — o computador guarda assim</li>
+            </ul>
+        </div>
+        <div class="tip" style="border-left-color: var(--blue)">
+            <strong style="color:var(--blue)">🎯 Como usar na sessão:</strong>
+            <p>Exporta o TXT ao vivo e projeta. Mostra que <span class="hl">o teu modelo são apenas números e letras</span>. É o mesmo princípio de qualquer videojogo!</p>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- SLIDE 10 — Vamos começar! -->
+<div class="slide" data-n="10">
+<div class="card">
+    <h2>🚀 Prontos para Construir?</h2>
+    <div class="tip">
+        <strong style="font-size:1.3em">📋 Checklist de Arranque:</strong>
+        <ul class="checklist" style="font-size:1.15em;margin-top:14px">
+            <li>Tens a aplicação aberta no browser?</li>
+            <li>Vês o modelo Humanóide no centro?</li>
+            <li>Consegues rodar a câmera arrastando?</li>
+            <li>Clicaste numa cor da paleta?</li>
+            <li>Colocaste o teu primeiro bloco?</li>
+        </ul>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(0,255,136,0.12),rgba(41,173,255,0.08));border-radius:18px;padding:32px;margin:24px 0;text-align:center">
+        <p style="font-size:1.6em;margin-bottom:16px">🎮 As Regras do Jogo</p>
+        <p style="font-size:1.15em;line-height:2.2">
+            <strong>1.</strong> Não há certo ou errado — só criações diferentes! 🌈<br>
+            <strong>2.</strong> Pede ajuda sempre que precisares! 🤝<br>
+            <strong>3.</strong> Partilha as tuas descobertas! 💬<br>
+            <strong>4.</strong> Exporta o GIF no final para levar para casa! 🎞️
+        </p>
+    </div>
+    <div style="text-align:center;margin-top:8px">
+        <h3 style="font-size:2em;color:var(--accent)">❓ Alguma dúvida antes de começar?</h3>
+    </div>
+</div>
+</div>
+
+<!-- SLIDE 11 — Link -->
+<div class="slide" data-n="11">
+<div class="card" style="text-align:center">
+    <h2>🌐 Acede à Aplicação!</h2>
+    <div style="background:rgba(0,0,0,0.4);border:2px solid var(--blue);border-radius:20px;padding:40px;max-width:600px;margin:20px auto">
+        <p style="font-size:1.1em;color:rgba(255,255,255,0.6);margin-bottom:14px">🔗 Link:</p>
+        <a href="https://centroinovacaocarlosfiolhais.github.io/Pixel3D/"
+           target="_blank"
+           style="font-family:'Courier New',monospace;font-size:1.3em;color:var(--accent);text-decoration:none;display:block;word-break:break-all;margin-bottom:32px">
+            centroinovacaocarlosfiolhais.github.io/Pixel3D/
+        </a>
+        <a href="https://centroinovacaocarlosfiolhais.github.io/Pixel3D/" target="_blank"
+           style="display:inline-block;background:linear-gradient(135deg,var(--pink),var(--purple));
+                  color:white;padding:20px 50px;font-size:1.6em;font-weight:800;
+                  border-radius:50px;text-decoration:none;
+                  box-shadow:0 10px 36px rgba(255,0,77,0.35)">
+            🚀 COMEÇAR!
+        </a>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(255,0,77,0.15),rgba(126,37,83,0.15));border-radius:20px;padding:32px;margin-top:28px">
+        <h3 style="font-size:1.8em;color:var(--pink);margin-bottom:14px">✨ Bora Construir! ✨</h3>
+        <p style="font-size:1.2em;line-height:2">
+            A tua jornada de criador 3D começa AGORA! 🎨<br>
+            16 cores. 16×16×16 blocos. <span style="color:var(--blue);font-weight:800">Infinitas possibilidades.</span><br>
+            O limite é a tua imaginação! 🌟
+        </p>
+    </div>
+    <div class="grid4" style="margin-top:28px">
+        <div class="card-mini"><div class="icon">💪</div><h4>Experimenta</h4><p>Não tenhas medo!</p></div>
+        <div class="card-mini"><div class="icon">🤝</div><h4>Colabora</h4><p>Partilha ideias!</p></div>
+        <div class="card-mini"><div class="icon">🎯</div><h4>Persiste</h4><p>É assim que se aprende!</p></div>
+        <div class="card-mini"><div class="icon">😊</div><h4>Diverte-te</h4><p>É o que mais importa!</p></div>
+    </div>
+</div>
+</div>
+
+</div><!-- /container -->
+
+<!-- Navigation -->
+<div class="nav">
+    <button class="nav-btn" onclick="prev()">◀ Anterior</button>
+    <span class="counter" id="counter">1 / 11</span>
+    <button class="nav-btn" onclick="next()">Próximo ▶</button>
+</div>
+
+<script>
+// Particles
+const pc = document.getElementById('particles');
+for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.top = Math.random() * 100 + '%';
+    p.style.animationDelay = Math.random() * 18 + 's';
+    p.style.animationDuration = (Math.random() * 12 + 12) + 's';
+    pc.appendChild(p);
+}
+
+let cur = 1;
+const total = 11;
+
+function show(n) {
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.querySelector(`[data-n="${n}"]`).classList.add('active');
+    document.getElementById('counter').textContent = `${n} / ${total}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function next() { if (cur < total) show(++cur); }
+function prev() { if (cur > 1) show(--cur); }
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+});
+
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].screenX - tx;
+    if (dx < -50) next();
+    if (dx > 50) prev();
+});
+
+show(1);
+</script>
+</body>
+</html>

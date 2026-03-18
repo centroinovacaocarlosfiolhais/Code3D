@@ -1,254 +1,166 @@
-# 🎓 Guia de Criação de Formas 3D
-
-Este documento explica como criar formas 3D usando JSON!
-
-## 📐 Como Funciona?
-
-A tua forma 3D é criada através de **revolução** de uma curva Bézier.
-
-Imagina que desenhas uma curva numa folha de papel e depois a rodas 360° em torno de um eixo vertical. A forma que se cria é o teu objeto 3D!
-
-```
-    y (altura)
-    ↑
-    |     *  ← Ponto de controlo
-    |    /
-    |   *    ← Outro ponto
-    |  /
-    | *      ← Base
-    |________→ x (distância do centro)
-    0
-```
-
-Quando rodas esta curva 360°, crias um objeto 3D simétrico (como um vaso, taça, etc.)
+# 🎮 Guia do Pixel3D
+## Como criar modelos 3D em voxel
 
 ---
 
-## 📝 Estrutura Básica do JSON
+## O que é um Voxel?
 
-```json
-{
-  "nome": "O nome do teu objeto",
-  "descricao": "Uma descrição do que é",
-  "pontos": [
-    {"x": 0.1, "y": 0},
-    {"x": 1.5, "y": 1},
-    {"x": 1.2, "y": 2},
-    {"x": 1.8, "y": 3}
-  ]
-}
-```
+Um **voxel** é um cubo 3D — é o equivalente 3D de um pixel numa imagem. Assim como uma imagem digital é feita de milhares de pixeis (quadradinhos 2D), um modelo voxel é feito de cubos 3D empilhados.
 
-### Explicação dos Campos:
-
-- **nome**: Como queres chamar ao teu objeto
-- **descricao**: Uma breve descrição (opcional)
-- **pontos**: Lista de pontos que definem a curva
+O jogo **Minecraft** usa exatamente esta técnica!
 
 ---
 
-## 🎯 Entender os Pontos
+## Como Funciona o Pixel3D
 
-Cada ponto tem duas coordenadas:
-
-- **x**: Distância do centro (raio)
-  - Deve ser sempre **≥ 0** (não pode ser negativo!)
-  - Quanto maior, mais longe do centro
-  - x = 0 significa fechado no centro
-  
-- **y**: Altura
-  - Normalmente começa em 0 (base)
-  - Aumenta para cima
-  - Define onde o ponto está na vertical
-
-### 💡 Exemplos:
-
-```json
-{"x": 0.0, "y": 0}    // Base fechada (no centro)
-{"x": 2.0, "y": 5}    // Ponto alto e largo
-{"x": 0.5, "y": 2}    // Ponto médio, mais estreito
-```
+A aplicação dá-te uma grelha de **16 × 16 × 16 posições** (4096 blocos possíveis). Podes colocar um bloco em qualquer posição dessa grelha, escolhendo uma das **16 cores** da paleta.
 
 ---
 
-## 🔥 Dicas Importantes
+## As Coordenadas: X, Y, Z
 
-### 1. Ordem dos Pontos
-Os pontos devem estar ordenados **de baixo para cima** (y crescente):
+Cada bloco tem uma posição no espaço definida por 3 números:
 
-✅ **CORRETO:**
-```json
-{"x": 0.1, "y": 0},   // Base
-{"x": 1.0, "y": 2},   // Meio
-{"x": 0.5, "y": 4}    // Topo
+```
+X → Esquerda / Direita (0 = esquerda, 15 = direita)
+Y → Baixo / Cima     (0 = chão, 15 = topo)
+Z → Frente / Atrás   (0 = frente, 15 = fundo)
 ```
 
-❌ **ERRADO:**
-```json
-{"x": 0.5, "y": 4},   // Topo (errado estar primeiro!)
-{"x": 1.0, "y": 2},
-{"x": 0.1, "y": 0}
-```
+**Exemplo:** Um bloco em X=8, Y=5, Z=8 está no centro da grelha, a meia altura.
 
-### 2. Número Mínimo de Pontos
-- Precisas de **pelo menos 3 pontos**
-- 4 pontos criam uma curva Bézier cúbica (mais suave)
-- Mais pontos = mais controlo sobre a forma
-
-### 3. Criar Formas Interessantes
-
-**Base larga → estreito → largo**: Vaso
-```json
-{"x": 1.5, "y": 0},
-{"x": 0.5, "y": 2},
-{"x": 1.5, "y": 4}
-```
-
-**Estreito → largo → estreito**: Ampulheta
-```json
-{"x": 1.0, "y": 0},
-{"x": 0.3, "y": 2},
-{"x": 1.0, "y": 4}
-```
-
-**Gradualmente crescente**: Cone
-```json
-{"x": 0.0, "y": 0},
-{"x": 2.0, "y": 4}
-```
+**Regra importante:** Y=0 é sempre o chão. Os modelos constroem-se de baixo para cima!
 
 ---
 
-## 🎨 Exemplos Prontos
+## A Interface
 
-### Exemplo 1: Copo Simples
-```json
-{
-  "nome": "Copo Simples",
-  "descricao": "Um copo básico com base plana",
-  "pontos": [
-    {"x": 1.0, "y": 0},    // Base
-    {"x": 1.0, "y": 0.2},  // Parede começa a subir
-    {"x": 1.2, "y": 3},    // Parede sobe e expande ligeiramente
-    {"x": 1.3, "y": 3.5}   // Abertura do topo
-  ]
-}
+### Painel Lateral (lado direito)
+
+**🎨 Paleta** — 16 cores fixas estilo PICO-8. Clica numa cor para a selecionar. A moldura branca mostra qual está ativa.
+
+**🔧 Ferramentas**
+- **➕ Adicionar** — Clica numa face de um bloco existente para adicionar um novo bloco adjacente. Também podes clicar no chão.
+- **❌ Remover** — Remove o bloco em que clicas.
+- **🎨 Pintar** — Muda a cor de um bloco sem o remover.
+
+> 💡 **Dica:** Com qualquer ferramenta ativa, o **clique direito** do rato remove sempre o bloco clicado!
+
+**📦 Templates** — 6 formas prontas como ponto de partida.
+
+**📷 Câmera** — Botão para ativar/parar a rotação automática, e para repor a câmera se ficou num ângulo estranho.
+
+**💾 Guardar** — Exportar em diferentes formatos.
+
+### Ghost Block (Bloco Fantasma)
+Quando a ferramenta ➕ está ativa, aparece um **bloco azul translúcido** que mostra onde o próximo bloco vai ser colocado antes de clicares. Se não aparece onde queres, roda a câmera.
+
+---
+
+## Controlos da Câmera
+
+| Ação | Como fazer |
+|------|------------|
+| Rodar à volta do modelo | Arrastar com **botão esquerdo** |
+| Mover a câmera (pan) | Arrastar com **botão direito** |
+| Zoom | **Scroll** do rato |
+| Repor câmera | Botão "🔄 Repor" no painel |
+
+> 💡 **Regra de ouro:** Quando não consegues adicionar um bloco onde queres, **roda a câmera** para um ângulo diferente e tenta de novo!
+
+---
+
+## A Paleta PICO-8
+
+16 cores fixas — a limitação é intencional! Forçar-te a usar só estas cores cria uma estética coesa e retro.
+
+| # | Cor | Letra no .TXT |
+|---|-----|---------------|
+| 1 | ⬛ Preto | ■ |
+| 2 | 🟦 Azul Escuro | B |
+| 3 | 🟪 Roxo | R |
+| 4 | 🟩 Verde Escuro | G |
+| 5 | 🟫 Castanho | C |
+| 6 | 🩶 Cinzento | Z |
+| 7 | ⬜ Cinzento Claro | L |
+| 8 | 🤍 Branco | W |
+| 9 | 🔴 Vermelho | V |
+| 10 | 🟠 Laranja | O |
+| 11 | 🟡 Amarelo | A |
+| 12 | 🟢 Verde | N |
+| 13 | 🔵 Azul | U |
+| 14 | 🫐 Lavanda | P |
+| 15 | 🩷 Rosa | S |
+| 16 | 🍑 Pêssego | X |
+
+---
+
+## Como Guardar o Teu Trabalho
+
+**PNG** — Screenshot do modelo como imagem estática.
+
+**GIF** — Animação de 360° (o modelo gira completamente). Perfeito para partilhar!
+
+**JSON** — Guarda todos os blocos para poderes continuar em casa ou noutra sessão. Para carregar: botão "📂 Carregar JSON".
+
+**TXT** — Representação do modelo em texto, camada a camada. Usado para aprender como o computador armazena dados 3D.
+
+> ⚠️ O GIF precisa de servidor HTTP para funcionar. O PNG funciona sempre.
+
+---
+
+## O Ficheiro .TXT — O Modelo em Dados
+
+Quando exportas o .TXT, vês como o computador guarda o teu modelo. Cada **camada Y** é mostrada como uma grelha de letras:
+
+```
+── Camada Y=10 ──
+   6789
+ 6 WWWW    ← linha X=6, letras nas colunas Z=6,7,8,9
+ 7 W..W    ← W=Branco, .=Vazio
+ 8 WWWW
 ```
 
-### Exemplo 2: Tigela
-```json
-{
-  "nome": "Tigela",
-  "descricao": "Uma tigela arredondada",
-  "pontos": [
-    {"x": 0.1, "y": 0},    // Base fechada
-    {"x": 2.0, "y": 1},    // Expande rapidamente
-    {"x": 2.2, "y": 1.5},  // Continua a expandir
-    {"x": 2.0, "y": 2}     // Curva para dentro no topo
-  ]
-}
-```
-
-### Exemplo 3: Garrafa
-```json
-{
-  "nome": "Garrafa",
-  "descricao": "Garrafa com corpo largo e gargalo estreito",
-  "pontos": [
-    {"x": 1.0, "y": 0},    // Base
-    {"x": 2.0, "y": 2},    // Corpo largo
-    {"x": 1.8, "y": 3},    // Começa a estreitar
-    {"x": 0.5, "y": 4},    // Gargalo estreito
-    {"x": 0.7, "y": 4.5}   // Abertura do gargalo
-  ]
-}
-```
+Cada letra representa uma cor. O ponto (`.`) é uma posição vazia.
 
 ---
 
-## 🌟 Modo Fractal
+## Dicas de Design
 
-Quando ativas as **Repetições Fractais**, a tua forma é repetida em padrão circular!
+### Para Personagens
+- Usa **3-4 cores** no máximo (pele, roupa, detalhes)
+- A **cabeça** deve ser claramente maior que o corpo
+- **Olhos** de 1-2 blocos fazem toda a diferença
 
-- **0 repetições**: Apenas 1 objeto (normal)
-- **1 repetição**: Objeto principal + 4 cópias à volta
-- **2 repetições**: Objeto principal + 4 cópias + 16 cópias mais pequenas
-- **E assim por diante...**
+### Para Construções
+- Começa pela **estrutura base** (paredes, chão)
+- Adiciona detalhes (janelas, porta) depois
+- Usa **cinzentos** para pedra/betão, **castanho** para madeira
 
-### Controlos Fractal:
-- **Escala Fractal**: Controla o tamanho das cópias (0.2 = muito pequenas, 0.9 = quase do mesmo tamanho)
+### Para Animais
+- Começa pelo **corpo** (bloco maior)
+- Adiciona **cabeça** e **patas** depois
+- A **silhueta** é mais importante do que os detalhes
 
----
-
-## 🚀 Desafios para Experimentar
-
-### Desafio Básico 🟢
-Cria um **vaso de flores** com:
-- Base larga e estável
-- Meio estreito
-- Topo largo para as flores
-
-### Desafio Intermédio 🟡
-Cria uma **taça de vinho** com:
-- Base circular
-- Haste fina e alta
-- Cálice largo no topo
-
-### Desafio Avançado 🔴
-Cria um **candeeiro** com:
-- Base pesada
-- Corpo fino e alto
-- Cúpula larga no topo
-
-### Desafio Fractal 🌈
-Cria uma forma simples e ativa o **modo fractal** com:
-- 3 repetições
-- Escala de 0.4
-Vê que padrão incrível se forma!
+### Truque Profissional: a Silhueta
+Antes de começar, pensa na silhueta do teu objeto. Se fechares os olhos e imaginares a forma, consegues reconhecê-la? Uma boa silhueta torna o modelo reconhecível mesmo sem detalhes.
 
 ---
 
-## ⌨️ Atalhos Úteis
+## Resolução de Problemas
 
-- **Ctrl+Enter** no editor: Carregar JSON
-- **Arrastar com rato**: Rodar câmera
-- **Scroll**: Zoom in/out
-- **▶️ Animar**: Rotação automática
+**"O bloco não aparece onde cliquei"**
+→ Roda a câmera — estavas a clicar numa face que não era a que querias
 
----
+**"A câmera ficou num ângulo estranho"**
+→ Clica em "🔄 Repor" no painel lateral
 
-## ❓ Resolução de Problemas
+**"Quero desfazer"**
+→ Não há Ctrl+Z, mas o clique direito remove blocos. Também podes guardar JSON frequentemente como backup.
 
-**Erro: "Necessário pelo menos 3 pontos"**
-→ Adiciona mais pontos ao array "pontos"
-
-**Objeto fica estranho ou invertido**
-→ Verifica se os pontos estão ordenados por y crescente
-
-**Forma não fecha em cima/baixo**
-→ Usa x muito pequeno (ex: 0.1) ou 0.0 para fechar
-
-**JSON inválido**
-→ Verifica se tens todas as vírgulas e chavetas corretas
+**"O GIF não exporta"**
+→ Usa PNG como alternativa. O GIF precisa de servidor HTTP.
 
 ---
 
-## 💾 Guardar o Teu Trabalho
-
-1. Clica em **"💾 Exportar"** para copiar para clipboard
-2. Ou **"📥 Descarregar JSON"** para guardar ficheiro
-3. Depois usa **"📂 Importar JSON"** para carregar
-
----
-
-## 🎓 Próximos Passos
-
-Depois de dominares o básico:
-1. Experimenta combinar curvas suaves com ângulos retos
-2. Cria formas com muitos pontos para controlo fino
-3. Explora padrões fractais complexos
-4. Partilha as tuas criações com os colegas!
-
----
-
-**Diverte-te a criar! 🎨✨**
+*🎮 Pixel3D · Clube de Código · CICF · v1.0*
