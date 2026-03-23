@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code3D</title>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#f5a623">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Code3D">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ================================
+           DESIGN SYSTEM — Tech/CNC Terminal
+           ================================ */
+        :root {
+            --bg0: #050608;
+            --bg1: #090b0e;
+            --bg2: #0e1116;
+            --bg3: #141820;
+            --bg4: #1a2030;
+            --border:  #1e2840;
+            --border2: #283550;
+            --amber:  #f5a623;
+            --amber2: #ffcc66;
+            --amber3: #a06010;
+            --green:  #39ff6a;
+            --green2: #1a8c3a;
+            --red:    #ff3b3b;
+            --blue:   #2979ff;
+            --cyan:   #00e5ff;
+            --text:   #c8d4e8;
+            --dim:    #556070;
+            --muted:  #2a3345;
+            --font-mono: 'Share Tech Mono', monospace;
+            --font-ui:   'Rajdhani', sans-serif;
+            --radius: 3px;
+            --glow-amber: 0 0 12px rgba(245,166,35,0.3);
+            --glow-green: 0 0 12px rgba(57,255,106,0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            background: var(--bg0);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Scanlines overlay */
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.06) 2px,
+                rgba(0,0,0,0.06) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ================================
+           LAYOUT GRID
+           ================================ */
+        #app {
+            display: grid;
+            grid-template-rows: 46px 1fr;
+            grid-template-columns: 1fr 640px;
+            height: 100vh;
+        }
+
+        /* ================================
+           TITLEBAR
+           ================================ */
+        #titlebar {
+            grid-column: 1 / -1;
+            grid-row: 1;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 16px;
+            z-index: 100;
+        }
+
+        #titlebar .logo {
+            width: 28px; height: 28px;
+            background: var(--amber3);
+            border: 1px solid var(--amber);
+            box-shadow: var(--glow-amber);
+            border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--amber2);
+            letter-spacing: 0;
+            flex-shrink: 0;
+        }
+
+        #titlebar .app-name {
+            font-family: var(--font-ui);
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--amber);
+            flex-shrink: 0;
+        }
+
+        #titlebar .sep {
+            width: 1px; height: 20px;
+            background: var(--border2);
+            flex-shrink: 0;
+        }
+
+        #titlebar .tag {
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--dim);
+            padding: 3px 7px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            flex-shrink: 0;
+        }
+
+        #titlebar .spacer { flex: 1; }
+
+        #titlebar .status-badge {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--dim);
+            text-transform: uppercase;
+        }
+
+        #status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: var(--glow-green);
+            flex-shrink: 0;
+            animation: pulse 2s infinite;
+        }
+        #status-dot.busy  { background: var(--amber); box-shadow: var(--glow-amber); animation: none; }
+        #status-dot.error { background: var(--red);   box-shadow: 0 0 8px rgba(255,59,59,0.5); animation: none; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.4; }
+        }
+
+        /* ================================
+           VIEWPORT (canvas)
+           ================================ */
+        #viewport-wrap {
+            grid-column: 1;
+            grid-row: 2;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg0);
+        }
+
+        #viewport {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Corner coords display */
+        #coords {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--dim);
+            line-height: 1.8;
+            background: rgba(5,6,8,0.7);
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: var(--radius);
+        }
+        #coords .label { color: var(--amber3); }
+
+        #sidebar {
+            grid-column: 2;
+            grid-row: 2;
+            background: var(--bg1);
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scrollbar */
+        #sidebar::-webkit-scrollbar { width: 4px; }
+        #sidebar::-webkit-scrollbar-track { background: var(--bg0); }
+        #sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+        /* Section */
+        .section {
+            border-bottom: 1px solid var(--border);
+            padding: 12px 14px;
+        }
+
+        .section-label {
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--amber3);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .section-label::before {
+            content: '';
+            width: 3px; height: 12px;
+            background: var(--amber);
+            box-shadow: var(--glow-amber);
+            flex-shrink: 0;
+        }
+
+        /* ================================
+           JSON EDITOR
+           ================================ */
+        #json-editor {
+            width: 100%;
+            min-height: 440px;
+            max-height: 560px;
+            background: var(--bg0);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.7;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        #json-editor:focus {
+            border-color: var(--amber);
+            box-shadow: var(--glow-amber);
+        }
+
+        /* ================================
+           BUTTONS
+           ================================ */
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            border: 1px solid var(--border2);
+            background: var(--bg3);
+            color: var(--text);
+            padding: 5px 10px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: all 0.15s;
+            flex: 1;
+            text-align: center;
+        }
+        .btn:hover:not(:disabled) {
+            border-color: var(--amber);
+            color: var(--amber);
+            background: var(--bg4);
+        }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn.primary {
+            background: var(--amber3);
+            border-color: var(--amber);
+            color: var(--amber2);
+        }
+        .btn.primary:hover {
+            box-shadow: var(--glow-amber);
+            background: #b87020;
+        }
+
+        .btn.success {
+            background: var(--green2);
+            border-color: var(--green);
+            color: var(--green);
+        }
+        .btn.success:hover { box-shadow: var(--glow-green); }
+
+        .btn.danger {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        .btn.danger:hover {
+            background: rgba(255,59,59,0.1);
+            box-shadow: 0 0 8px rgba(255,59,59,0.3);
+        }
+
+        .btn.sm { font-size: 10px; padding: 3px 8px; }
+
+        /* ================================
+           EXAMPLES
+           ================================ */
+        .example-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+        }
+
+        .example-btn {
+            background: var(--bg0);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 7px 8px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            color: var(--dim);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s;
+        }
+        .example-btn:hover {
+            border-color: var(--amber);
+            color: var(--amber2);
+            background: var(--bg3);
+        }
+        .example-btn .icon {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        /* ================================
+           CONTROLS
+           ================================ */
+        .control-row {
+            margin-bottom: 10px;
+        }
+
+        .field-label {
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: var(--dim);
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .field-label span {
+            color: var(--amber2);
+            font-size: 10px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            appearance: none;
+            background: var(--bg0);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 12px; height: 12px;
+            background: var(--amber);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--glow-amber);
+        }
+        input[type="range"]:hover {
+            border-color: var(--amber3);
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 30px;
+            border: 1px solid var(--border2);
+            border-radius: var(--radius);
+            cursor: pointer;
+            background: var(--bg0);
+            padding: 2px;
+        }
+        input[type="color"]:hover {
+            border-color: var(--amber);
+        }
+
+        .hint {
+            font-size: 9px;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+            margin-top: 3px;
+        }
+
+        /* ================================
+           ANIMATION CONTROLS
+           ================================ */
+        .anim-row {
+            display: flex; gap: 6px;
+        }
+
+        /* ================================
+           INFO BOX
+           ================================ */
+        .info-box {
+            background: var(--bg0);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 10px;
+            font-size: 10px;
+            line-height: 1.9;
+            color: var(--dim);
+        }
+        .info-box .val { color: var(--amber2); }
+        .info-box .green-val { color: var(--green); }
+
+        /* ================================
+           TOAST MESSAGE
+           ================================ */
+        #message {
+            position: fixed;
+            top: 58px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            background: var(--bg3);
+            border-left: 3px solid var(--amber);
+            color: var(--amber2);
+            padding: 8px 18px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+        #message.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        #message.error {
+            border-left-color: var(--red);
+            color: var(--red);
+        }
+
+        /* ================================
+           PROGRESS BAR (decorative)
+           ================================ */
+        .progress-wrap {
+            height: 3px;
+            background: var(--bg0);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--amber3), var(--amber));
+            box-shadow: var(--glow-amber);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        /* File input hidden */
+        #file-input { display: none; }
+
+        /* ================================
+           FOCAL SLIDER
+           ================================ */
+        #focal-ctrl {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: rgba(5,6,8,0.7);
+            border: 1px solid var(--border);
+            padding: 10px 8px;
+            border-radius: var(--radius);
+            user-select: none;
+        }
+
+        .focal-label {
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--amber3);
+        }
+
+        .focal-value {
+            font-size: 11px;
+            color: var(--amber2);
+            letter-spacing: 1px;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        /* Vertical range slider */
+        #focal-slider {
+            writing-mode: vertical-lr;
+            direction: rtl;
+            -webkit-appearance: slider-vertical;
+            appearance: auto;
+            width: 4px;
+            height: 110px;
+            background: var(--bg0);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+            accent-color: var(--amber);
+        }
+        #focal-slider::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 14px; height: 14px;
+            background: var(--amber);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--glow-amber);
+        }
+        #focal-slider:hover {
+            border-color: var(--amber3);
+        }
+
+        /* ================================
+           KEYBOARD SHORTCUT BADGE
+           ================================ */
+        .kbd {
+            display: inline-block;
+            font-size: 8px;
+            padding: 1px 4px;
+            background: var(--bg4);
+            border: 1px solid var(--border2);
+            border-radius: 2px;
+            color: var(--dim);
+            letter-spacing: 0;
+            vertical-align: middle;
+        }
+        /* ================================
+           MOBILE  (≤ 768px)
+           — must be LAST to override base CSS
+           ================================ */
+        @media (max-width: 768px) {
+            body { overflow-y: auto; }
+
+            #app {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                grid-template-rows: 40px 70vh auto !important;
+                height: auto !important;
+                min-height: 100dvh;
+            }
+
+            #titlebar {
+                grid-column: 1 !important;
+                grid-row: 1 !important;
+                padding: 0 10px;
+            }
+            #titlebar .sep,
+            #titlebar .tag,
+            #titlebar .status-badge { display: none !important; }
+
+            #viewport-wrap {
+                grid-column: 1 !important;
+                grid-row: 2 !important;
+                height: 70vh !important;
+                width: 100% !important;
+            }
+
+            #sidebar {
+                grid-column: 1 !important;
+                grid-row: 3 !important;
+                width: 100% !important;
+                border-left: none !important;
+                border-top: 1px solid var(--border);
+                overflow-y: visible !important;
+            }
+
+            #json-editor {
+                min-height: 200px !important;
+                max-height: 300px !important;
+                font-size: 12px !important;
+            }
+
+            #focal-ctrl { display: none !important; }
+
+            #coords { font-size: 9px; padding: 5px 8px; }
+
+            #message { width: 90%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+
+        <!-- ========================
+             TITLEBAR
+             ======================== -->
+        <div id="titlebar">
+            <div class="logo">3D</div>
+            <span class="app-name">Code3D</span>
+            <div class="sep"></div>
+            <span class="tag">JSON Modeler</span>
+            <span class="tag">Rev.1.0</span>
+            <span class="tag">Bézier + Lathe</span>
+            <div class="spacer"></div>
+            <div class="status-badge">
+                <div id="status-dot"></div>
+                <span id="status-text">READY</span>
+            </div>
+        </div>
+
+        <!-- ========================
+             VIEWPORT
+             ======================== -->
+        <div id="viewport-wrap">
+            <div id="viewport"></div>
+
+            <div id="focal-ctrl">
+                <div class="focal-label">FOV</div>
+                <div class="focal-value" id="focal-value">60°</div>
+                <input
+                    type="range"
+                    id="focal-slider"
+                    min="0" max="100" value="100"
+                    oninput="ajustarFocal(this.value)"
+                    orient="vertical"
+                >
+                <div class="focal-label" style="margin-top:6px">FLAT</div>
+            </div>
+
+            <div id="coords">
+                <div><span class="label">ROT  </span> <span id="coord-rot">LMB + DRAG</span></div>
+                <div><span class="label">PAN  </span> <span>RMB + DRAG</span></div>
+                <div><span class="label">ZOOM </span> <span>SCROLL</span></div>
+                <div style="margin-top:4px; border-top:1px solid var(--muted); padding-top:4px">
+                    <span class="label">OBJ  </span> <span id="obj-status">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================
+             SIDEBAR
+             ======================== -->
+        <div id="sidebar">
+
+            <!-- JSON EDITOR -->
+            <div class="section">
+                <div class="section-label">JSON Editor</div>
+                <textarea id="json-editor" spellcheck="false"></textarea>
+                <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+                <div class="btn-group">
+                    <button class="btn primary" onclick="carregarJSON()">▶ LOAD</button>
+                    <button class="btn" onclick="exportarJSON()">⬆ COPY</button>
+                </div>
+            </div>
+
+            <!-- EXAMPLES -->
+            <div class="section">
+                <div class="section-label">Examples</div>
+                <div class="example-grid">
+                    <button class="example-btn" onclick="carregarExemplo('vaso')">
+                        <span class="icon">🏺</span>Vaso
+                    </button>
+                    <button class="example-btn" onclick="carregarExemplo('taca')">
+                        <span class="icon">🍷</span>Taça
+                    </button>
+                    <button class="example-btn" onclick="carregarExemplo('ampulheta')">
+                        <span class="icon">⏳</span>Ampulheta
+                    </button>
+                    <button class="example-btn" onclick="carregarExemplo('sino')">
+                        <span class="icon">🔔</span>Sino
+                    </button>
+                    <button class="example-btn" onclick="carregarExemplo('fractal')" style="grid-column: 1/-1;">
+                        <span class="icon">❄️</span>Fractal Base
+                    </button>
+                </div>
+            </div>
+
+            <!-- COLOR + SEGMENTS -->
+            <div class="section">
+                <div class="section-label">Material</div>
+
+                <div class="control-row">
+                    <div class="field-label">Object Color</div>
+                    <input type="color" id="cor-objeto" value="#f5a623" onchange="alterarCor()">
+                </div>
+
+                <div class="control-row">
+                    <div class="field-label">
+                        Segments
+                        <span id="segmentos-valor">20</span>
+                    </div>
+                    <input type="range" id="segmentos" min="8" max="64" value="20" oninput="alterarSegmentos()">
+                    <div class="hint">Higher = smoother surface</div>
+                </div>
+            </div>
+
+            <!-- FRACTAL -->
+            <div class="section">
+                <div class="section-label">Fractal Engine</div>
+
+                <div class="control-row">
+                    <div class="field-label">
+                        Repetitions
+                        <span id="repeticoes-valor">0</span>
+                    </div>
+                    <input type="range" id="repeticoes" min="0" max="5" value="0" oninput="alterarRepeticoes()">
+                    <div class="hint">0 = disabled</div>
+                </div>
+
+                <div class="control-row">
+                    <div class="field-label">
+                        Orbit Radius
+                        <span id="raio-fractal-valor">2.5</span>
+                    </div>
+                    <input type="range" id="raio-fractal" min="1" max="5" step="0.1" value="2.5" oninput="alterarRaioFractal()">
+                </div>
+
+                <div class="control-row">
+                    <div class="field-label">
+                        Scale Factor
+                        <span id="escala-fractal-valor">0.5</span>
+                    </div>
+                    <input type="range" id="escala-fractal" min="0.2" max="0.9" step="0.1" value="0.5" oninput="alterarEscalaFractal()">
+                </div>
+            </div>
+
+            <!-- ANIMATION -->
+            <div class="section">
+                <div class="section-label">Animation</div>
+                <div class="anim-row">
+                    <button class="btn success" onclick="iniciarRotacao()">▶ START</button>
+                    <button class="btn" onclick="pararRotacao()">⏸ STOP</button>
+                </div>
+            </div>
+
+            <!-- SCENE -->
+            <div class="section">
+                <div class="section-label">Scene</div>
+                <div class="btn-group">
+                    <button class="btn sm" onclick="resetarCamera()">⌖ RESET CAM</button>
+                    <button class="btn sm danger" onclick="limparCena()">✕ CLEAR</button>
+                </div>
+            </div>
+
+            <!-- I/O FILES -->
+            <div class="section">
+                <div class="section-label">File I/O</div>
+                <div class="btn-group">
+                    <button class="btn sm" onclick="importarFicheiro()">⬇ IMPORT JSON</button>
+                    <button class="btn sm" onclick="exportarFicheiro()">⬆ EXPORT JSON</button>
+                </div>
+                <div class="btn-group" style="margin-top:6px">
+                    <button class="btn sm primary" onclick="exportarPNG()">📸 PNG</button>
+                    <button class="btn sm" onclick="exportarSTL()">⬡ STL</button>
+                </div>
+                <div class="btn-group" style="margin-top:6px">
+                    <button class="btn primary" onclick="exportarA4()" style="font-size:12px; padding:8px 10px; letter-spacing:1px;">
+                        🖨 PRINT A4 — GALERIA
+                    </button>
+                </div>
+                <input type="file" id="file-input" accept=".json" onchange="lerFicheiro()">
+            </div>
+
+            <!-- INFO -->
+            <div class="section">
+                <div class="section-label">System</div>
+                <div class="info-box">
+                    <div>RENDERER  <span class="val">WebGL / THREE.js r128</span></div>
+                    <div>METHOD    <span class="val">Bézier → LatheGeometry</span></div>
+                    <div>EXPORT    <span class="val">PNG · STL · JSON</span></div>
+                    <div style="margin-top:4px; border-top:1px solid var(--muted); padding-top:4px">
+                        CLUBE DE CÓDIGO <span class="green-val">● ONLINE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PWA INSTALL -->
+            <div class="section" style="margin-top: auto;">
+                <div class="section-label">Instalar App</div>
+                <div class="info-box" style="margin-bottom: 10px; font-size:10px; line-height:1.7;">
+                    <div>Instala o <span class="val">Code3D</span> como app</div>
+                    <div>no teu dispositivo para acesso</div>
+                    <div>offline e ecrã completo.</div>
+                </div>
+                <button id="pwa-install-btn" class="btn success" style="width:100%; font-size:12px; padding: 10px;" onclick="instalarPWA()">
+                    ⊕ INSTALAR CODE3D
+                </button>
+                <div id="pwa-hint" style="display:none; margin-top:8px; font-size:9px; color:var(--dim); line-height:1.7; letter-spacing:0.5px;"></div>
+            </div>
+
+        </div><!-- /sidebar -->
+
+    </div><!-- /app -->
+
+    <!-- TOAST -->
+    <div id="message"></div>
+
+    <!-- THREE.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/STLExporter.js"></script>
+    <script src="app.js"></script>
+
+    <!-- ========================
+         MODAL — NOME DO CRIADOR
+         ======================== -->
+    <div id="modal-a4" style="
+        display: none;
+        position: fixed; inset: 0; z-index: 9000;
+        background: rgba(5,6,8,0.85);
+        backdrop-filter: blur(6px);
+        align-items: center; justify-content: center;
+    ">
+        <div style="
+            background: var(--bg2);
+            border: 1px solid var(--amber);
+            box-shadow: var(--glow-amber), 0 20px 60px rgba(0,0,0,0.8);
+            border-radius: var(--radius);
+            padding: 36px 40px;
+            width: 440px;
+            font-family: var(--font-mono);
+        ">
+            <!-- Header -->
+            <div style="
+                font-family: var(--font-ui);
+                font-size: 20px; font-weight: 700;
+                letter-spacing: 2px; text-transform: uppercase;
+                color: var(--amber); margin-bottom: 6px;
+            ">🖨 Print A4 — Galeria</div>
+
+            <div style="font-size: 11px; color: var(--dim); margin-bottom: 24px; letter-spacing: 0.5px;">
+                Modelo 3D + JSON · Pronto para imprimir e colocar na parede
+            </div>
+
+            <!-- Input -->
+            <div style="font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); margin-bottom: 8px;">
+                Nome do Criador
+            </div>
+            <input
+                id="input-criador"
+                type="text"
+                placeholder="ex: João Silva"
+                maxlength="40"
+                onkeydown="if(event.key==='Enter') confirmarA4(); if(event.key==='Escape') cancelarA4();"
+                style="
+                    width: 100%;
+                    font-family: var(--font-mono);
+                    font-size: 18px;
+                    background: var(--bg0);
+                    border: 1px solid var(--border2);
+                    border-radius: var(--radius);
+                    color: var(--text);
+                    padding: 10px 14px;
+                    outline: none;
+                    letter-spacing: 1px;
+                    transition: border-color 0.15s;
+                "
+                onfocus="this.style.borderColor='var(--amber)'; this.style.boxShadow='var(--glow-amber)'"
+                onblur="this.style.borderColor='var(--border2)'; this.style.boxShadow='none'"
+            >
+
+            <!-- Buttons -->
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button onclick="cancelarA4()" style="
+                    flex:1; font-family: var(--font-mono); font-size: 11px;
+                    background: var(--bg3); border: 1px solid var(--border2);
+                    color: var(--dim); padding: 10px; border-radius: var(--radius);
+                    cursor: pointer; letter-spacing: 1px;
+                    transition: all 0.15s;
+                " onmouseover="this.style.borderColor='var(--border2)'; this.style.color='var(--text)'"
+                   onmouseout="this.style.borderColor='var(--border2)'; this.style.color='var(--dim)'">
+                    CANCELAR
+                </button>
+                <button onclick="confirmarA4()" style="
+                    flex:2; font-family: var(--font-mono); font-size: 12px;
+                    background: var(--amber3); border: 1px solid var(--amber);
+                    color: var(--amber2); padding: 10px; border-radius: var(--radius);
+                    cursor: pointer; letter-spacing: 1px; font-weight: bold;
+                    transition: all 0.15s;
+                " onmouseover="this.style.boxShadow='var(--glow-amber)'"
+                   onmouseout="this.style.boxShadow='none'">
+                    🖨 GERAR FOLHA A4
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Worker registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('SW registered:', reg.scope))
+                    .catch(err => console.warn('SW registration failed:', err));
+            });
+        }
+    </script>
+
+    <script>
+        // ── Status dot feedback ──────────────────────────────
+        const dot  = document.getElementById('status-dot');
+        const stxt = document.getElementById('status-text');
+
+        function setStatus(state, label) {
+            dot.className = state;
+            stxt.textContent = label;
+        }
+
+        // Patch carregarJSON for status feedback
+        const _carregarJSON = carregarJSON;
+        window.carregarJSON = function() {
+            setStatus('busy', 'COMPUTING');
+            const bar = document.getElementById('progress-bar');
+            bar.style.width = '60%';
+            setTimeout(() => {
+                _carregarJSON();
+                bar.style.width = '100%';
+                setTimeout(() => { bar.style.width = '0%'; }, 600);
+                setStatus('', 'READY');
+                updateObjStatus();
+            }, 80);
+        };
+
+        function updateObjStatus() {
+            const el = document.getElementById('obj-status');
+            if (window.configuracaoAtual) {
+                el.textContent = configuracaoAtual.nome || 'Custom Object';
+                el.style.color = 'var(--amber2)';
+            } else {
+                el.textContent = '—';
+                el.style.color = 'var(--dim)';
+            }
+        }
+
+        // ── PWA Install prompt ───────────────────────────────
+        let _pwaPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            _pwaPrompt = e;
+            // Native prompt available — update button to signal readiness
+            const btn = document.getElementById('pwa-install-btn');
+            btn.textContent = '⊕ INSTALAR CODE3D';
+            btn.style.opacity = '1';
+            document.getElementById('pwa-hint').style.display = 'none';
+        });
+
+        window.addEventListener('appinstalled', () => {
+            _pwaPrompt = null;
+            const btn = document.getElementById('pwa-install-btn');
+            btn.textContent = '✓ APP INSTALADA';
+            btn.disabled = true;
+            btn.classList.remove('success');
+            document.getElementById('pwa-hint').style.display = 'none';
+        });
+
+        function instalarPWA() {
+            if (_pwaPrompt) {
+                // Native install prompt available
+                _pwaPrompt.prompt();
+                _pwaPrompt.userChoice.then((choice) => {
+                    if (choice.outcome === 'accepted') {
+                        const btn = document.getElementById('pwa-install-btn');
+                        btn.textContent = '✓ APP INSTALADA';
+                        btn.disabled = true;
+                        btn.classList.remove('success');
+                    }
+                    _pwaPrompt = null;
+                });
+            } else {
+                // No native prompt — show manual instructions per browser
+                const hint = document.getElementById('pwa-hint');
+                const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+                const isFirefox = /firefox/i.test(navigator.userAgent);
+                const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+                if (isIOS || isSafari) {
+                    hint.innerHTML = '📱 iOS/Safari:<br>Toca em <span style="color:var(--amber2)">Partilhar ↑</span><br>→ "Adicionar ao Ecrã Inicial"';
+                } else if (isFirefox) {
+                    hint.innerHTML = '🦊 Firefox:<br>Clica no ícone <span style="color:var(--amber2)">🏠+</span> na barra<br>de endereço para instalar.';
+                } else {
+                    hint.innerHTML = '💻 Chrome/Edge:<br>Clica no ícone <span style="color:var(--amber2)">⊕</span> na barra<br>de endereço para instalar.<br><span style="color:var(--muted)">Ou recarrega a página.</span>';
+                }
+                hint.style.display = 'block';
+            }
+        }
+
+    </script>
+</body>
+</html>

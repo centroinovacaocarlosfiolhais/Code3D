@@ -13,7 +13,7 @@ const CONFIG_PADRAO = {
     segmentos: 20,
     repeticoes: 0,
     escalaFractal: 0.5,
-    cor: "#00ff88"
+    cor: "#f5a623"
 };
 
 // ========================================
@@ -23,36 +23,42 @@ const CONFIG_PADRAO = {
 function init() {
     // Criar cena
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0e27);
-    scene.fog = new THREE.Fog(0x0a0e27, 10, 50);
+    scene.background = new THREE.Color(0x050608);
+    scene.fog = null; // fog managed dynamically in wheel handler
 
     // Configurar câmera
     camera = new THREE.PerspectiveCamera(
         60,
-        window.innerWidth / window.innerHeight,
+        1, // aspect set correctly after renderer init below
         0.1,
         1000
     );
     camera.position.set(0, 3, 8);
-    camera.lookAt(0, 0, 0);
+    camera.lookAt(0, 2, 0);
 
     // Configurar renderer
+    const vp = document.getElementById('viewport-wrap');
+
     renderer = new THREE.WebGLRenderer({ 
         antialias: true,
         alpha: true,
         preserveDrawingBuffer: true // Necessário para exportar imagens
     });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(vp.clientWidth, vp.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.getElementById('viewport').appendChild(renderer.domElement);
 
+    // Set correct aspect ratio now that viewport size is known
+    camera.aspect = vp.clientWidth / vp.clientHeight;
+    camera.updateProjectionMatrix();
+
     // Adicionar luzes
     configurarLuzes();
 
     // Adicionar grid
-    const gridHelper = new THREE.GridHelper(20, 20, 0x00ff88, 0x1a2f3a);
+    const gridHelper = new THREE.GridHelper(20, 20, 0x283550, 0x1a2030);
     gridHelper.material.opacity = 0.3;
     gridHelper.material.transparent = true;
     scene.add(gridHelper);
@@ -237,6 +243,29 @@ function carregarJSON() {
 
         // Guardar configuração
         configuracaoAtual = config;
+
+        // Aplicar configurações do painel se presentes no JSON
+        if (config.cor) {
+            document.getElementById('cor-objeto').value = config.cor;
+        }
+        if (config.segmentos !== undefined) {
+            document.getElementById('segmentos').value = config.segmentos;
+            document.getElementById('segmentos-valor').textContent = config.segmentos;
+        }
+        if (config.fractal) {
+            if (config.fractal.repeticoes !== undefined) {
+                document.getElementById('repeticoes').value = config.fractal.repeticoes;
+                document.getElementById('repeticoes-valor').textContent = config.fractal.repeticoes;
+            }
+            if (config.fractal.raio !== undefined) {
+                document.getElementById('raio-fractal').value = config.fractal.raio;
+                document.getElementById('raio-fractal-valor').textContent = config.fractal.raio;
+            }
+            if (config.fractal.escala !== undefined) {
+                document.getElementById('escala-fractal').value = config.fractal.escala;
+                document.getElementById('escala-fractal-valor').textContent = config.fractal.escala;
+            }
+        }
 
         // Criar geometria base
         const geometry = criarGeometriaRevolucao(config);
@@ -449,7 +478,7 @@ function pararRotacao() {
 
 function resetarCamera() {
     camera.position.set(0, 3, 8);
-    cameraTarget.set(0, 0, 0);
+    cameraTarget.set(0, 2, 0);
     camera.lookAt(cameraTarget);
     mostrarMensagem("Câmera resetada");
 }
@@ -484,16 +513,30 @@ function lerFicheiro() {
     }
 }
 
-function exportarJSON() {
+// Constrói o JSON completo com estado atual do painel
+function construirJSONCompleto() {
     const jsonText = document.getElementById('json-editor').value;
-    
+    const jsonLimpo = removerComentariosJSON(jsonText);
+    const config = JSON.parse(jsonLimpo);
+
+    // Injectar estado atual dos controlos
+    config.cor       = document.getElementById('cor-objeto').value;
+    config.segmentos = parseInt(document.getElementById('segmentos').value);
+    config.fractal   = {
+        repeticoes: parseInt(document.getElementById('repeticoes').value),
+        raio:       parseFloat(document.getElementById('raio-fractal').value),
+        escala:     parseFloat(document.getElementById('escala-fractal').value)
+    };
+
+    return config;
+}
+
+function exportarJSON() {
     try {
-        // Remover comentários antes de validar
-        const jsonLimpo = removerComentariosJSON(jsonText);
-        JSON.parse(jsonLimpo);
-        
-        // Copiar JSON original (com comentários) para clipboard
-        navigator.clipboard.writeText(jsonText).then(() => {
+        const config = construirJSONCompleto();
+        const jsonFinal = JSON.stringify(config, null, 2);
+
+        navigator.clipboard.writeText(jsonFinal).then(() => {
             mostrarMensagem("JSON copiado para clipboard!");
         }).catch(() => {
             mostrarMensagem("JSON validado! (Clipboard indisponível)", false);
@@ -504,29 +547,26 @@ function exportarJSON() {
 }
 
 function exportarFicheiro() {
-    const jsonText = document.getElementById('json-editor').value;
-    
     try {
-        // Remover comentários antes de validar
-        const jsonLimpo = removerComentariosJSON(jsonText);
-        const config = JSON.parse(jsonLimpo);
-        
-        // Criar blob e download com JSON original (com comentários)
-        const blob = new Blob([jsonText], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
+        const config = construirJSONCompleto();
+        const jsonFinal = JSON.stringify(config, null, 2);
+
+        const blob = new Blob([jsonFinal], { type: 'application/json' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
         a.download = (config.nome || 'objeto') + '.json';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        
+
         mostrarMensagem("Ficheiro descarregado!");
     } catch (error) {
         mostrarMensagem("Erro: JSON inválido!", true);
     }
 }
+
 
 function exportarPNG() {
     if (!objetoAtual) {
@@ -635,13 +675,257 @@ function exportarSTL() {
 }
 
 // ========================================
-// CONTROLES DE CÂMERA
+// EXPORTAR A4 — GALERIA DE PROJETOS
 // ========================================
+
+function exportarA4() {
+    if (!objetoAtual) {
+        mostrarMensagem("Nenhum objeto para exportar!", true);
+        return;
+    }
+
+    // Abrir modal para pedir nome do criador
+    document.getElementById('modal-a4').style.display = 'flex';
+    document.getElementById('input-criador').value = '';
+    document.getElementById('input-criador').focus();
+}
+
+function confirmarA4() {
+    const nomeCriador = document.getElementById('input-criador').value.trim() || 'Anónimo';
+    document.getElementById('modal-a4').style.display = 'none';
+    gerarFolhaA4(nomeCriador);
+}
+
+function cancelarA4() {
+    document.getElementById('modal-a4').style.display = 'none';
+}
+
+function gerarFolhaA4(nomeCriador) {
+    // A4 a 150dpi: 1240 × 1754px
+    const W = 1240;
+    const H = 1754;
+    const PAD = 48;
+    const FOOTER_H = 44;  // reserved at bottom for footer
+
+    // Capturar viewport com fundo transparente
+    const corFundoOriginal = scene.background;
+    const fogOriginal = scene.fog;
+    scene.background = null;
+    scene.fog = null;
+    renderer.render(scene, camera);
+    const modeloDataURL = renderer.domElement.toDataURL('image/png');
+    scene.background = corFundoOriginal;
+    scene.fog = fogOriginal;
+
+    // Criar canvas A4
+    const canvas = document.createElement('canvas');
+    canvas.width  = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // Fundo branco
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Linha divisória horizontal a meio
+    const meioY = H / 2;
+
+    // ── METADE SUPERIOR: modelo 3D ──────────────────────────
+
+    const TOP_MARGIN = 72;  // ~12mm top margin at 150dpi
+
+    // Gray background for image area — starts below title block
+    ctx.fillStyle = '#f4f4f4';
+    ctx.fillRect(PAD, TOP_MARGIN + 60, W - PAD * 2, meioY - TOP_MARGIN - 60 - PAD);
+
+    // Título principal (nome do criador)
+    ctx.fillStyle = '#111111';
+    ctx.font = 'bold 52px "Share Tech Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(nomeCriador.toUpperCase(), PAD, TOP_MARGIN);
+
+    // Subtítulo (nome do objeto)
+    const nomeObjeto = configuracaoAtual?.nome || 'Objeto 3D';
+    ctx.fillStyle = '#f5a623';
+    ctx.font = '30px "Share Tech Mono", monospace';
+    ctx.fillText(nomeObjeto, PAD, TOP_MARGIN + 40);
+
+    // Data
+    const dataStr = new Date().toLocaleDateString('pt-PT', { day:'2-digit', month:'long', year:'numeric' });
+    ctx.fillStyle = '#999999';
+    ctx.font = '20px "Share Tech Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(dataStr, W - PAD, TOP_MARGIN + 40);
+    ctx.textAlign = 'left';
+
+    // Desenhar imagem do modelo centrada na metade superior
+    const img = new Image();
+    img.onload = () => {
+        // Área disponível para a imagem
+        const areaX = PAD + 10;
+        const areaY = TOP_MARGIN + 65;
+        const areaW = W - PAD * 2 - 20;
+        const areaH = meioY - TOP_MARGIN - 65 - PAD;
+
+        // Manter aspect ratio
+        const ratio = Math.min(areaW / img.width, areaH / img.height);
+        const iW = img.width  * ratio;
+        const iH = img.height * ratio;
+        const iX = areaX + (areaW - iW) / 2;
+        const iY = areaY + (areaH - iH) / 2;
+
+        ctx.drawImage(img, iX, iY, iW, iH);
+
+        // ── LINHA DIVISÓRIA ──────────────────────────────────
+        ctx.strokeStyle = '#e0e0e0';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(PAD, meioY);
+        ctx.lineTo(W - PAD, meioY);
+        ctx.stroke();
+
+        // Etiqueta da secção JSON
+        ctx.fillStyle = '#111111';
+        ctx.font = 'bold 18px "Share Tech Mono", monospace';
+        ctx.fillText('// JSON SOURCE', PAD, meioY + 38);
+
+        ctx.fillStyle = '#f5a623';
+        ctx.font = '14px "Share Tech Mono", monospace';
+        ctx.fillText('Code3D — Centro de Inovação Carlos Fiolhais', PAD, meioY + 62);
+
+        // ── METADE INFERIOR: JSON ────────────────────────────
+        const jsonRaw    = document.getElementById('json-editor').value;
+        const jsonLinhas = jsonRaw.split('\n');
+
+        const jsonX    = PAD;
+        const jsonY    = meioY + 80;
+        const jsonMaxH = H - meioY - 80 - FOOTER_H - PAD;
+        const fontSize = 16;
+        const lineH    = fontSize * 1.5;
+
+        // Quantas linhas cabem
+        const maxLinhas = Math.floor(jsonMaxH / lineH);
+
+        ctx.font = `${fontSize}px "Share Tech Mono", monospace`;
+
+        jsonLinhas.slice(0, maxLinhas).forEach((linha, i) => {
+            const y = jsonY + i * lineH;
+
+            // Colorir por tipo de token (básico)
+            if (linha.trim().startsWith('//')) {
+                ctx.fillStyle = '#999999'; // comentário
+            } else if (/"[^"]+"\s*:/.test(linha)) {
+                // Linha com chave — desenhar chave em âmbar, valor em verde
+                const partes = linha.match(/^(\s*)(")([^"]+)(")\s*:\s*(.*)$/);
+                if (partes) {
+                    const indent = partes[1];
+                    const chave  = `"${partes[3]}"`;
+                    const resto  = `: ${partes[5]}`;
+
+                    ctx.fillStyle = '#999999';
+                    ctx.fillText(indent, jsonX, y);
+                    const indW = ctx.measureText(indent).width;
+
+                    ctx.fillStyle = '#f5a623';
+                    ctx.fillText(chave, jsonX + indW, y);
+                    const chaveW = ctx.measureText(chave).width;
+
+                    ctx.fillStyle = '#444444';
+                    ctx.fillText(resto, jsonX + indW + chaveW, y);
+                    return;
+                }
+                ctx.fillStyle = '#444444';
+            } else if (/[\[\]{},]/.test(linha) && !linha.includes('"')) {
+                ctx.fillStyle = '#bbbbbb'; // estrutura
+            } else {
+                ctx.fillStyle = '#444444'; // valor
+            }
+
+            ctx.fillText(linha, jsonX, y);
+        });
+
+        // Se JSON foi cortado, mostrar "..."
+        if (jsonLinhas.length > maxLinhas) {
+            ctx.fillStyle = '#aaaaaa';
+            ctx.font = 'italic 16px "Share Tech Mono", monospace';
+            ctx.fillText(`... +${jsonLinhas.length - maxLinhas} linhas`, jsonX, jsonY + maxLinhas * lineH);
+        }
+
+        // ── RODAPÉ ───────────────────────────────────────────
+        const rodapeY = H - 16;
+        ctx.fillStyle = '#dddddd';
+        ctx.fillRect(PAD, H - FOOTER_H, W - PAD * 2, 1); // separator line
+        ctx.fillStyle = '#bbbbbb';
+        ctx.font = '14px "Share Tech Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Centro de Inovação Carlos Fiolhais  ·  Code3D desenvolvido por David Marques  ·  CC BY-NC-ND 4.0  ·  ' + dataStr, W / 2, rodapeY);
+
+        // ── ABRIR JANELA DE IMPRESSÃO ────────────────────────
+        const dataURLfinal = canvas.toDataURL('image/png', 1.0);
+        const win = window.open('', '_blank');
+        win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <title>Code3D — ${nomeObjeto} — ${nomeCriador}</title>
+  <style>
+    @page { size: A4 portrait; margin: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 210mm; height: 297mm;
+      overflow: hidden;
+      background: #fff;
+    }
+    img {
+      display: block;
+      width: 210mm; height: 297mm;
+      page-break-inside: avoid;
+      page-break-after: avoid;
+    }
+    @media print {
+      html, body { width: 210mm; height: 297mm; overflow: hidden; }
+      img { width: 210mm; height: 297mm; }
+    }
+  </style>
+</head>
+<body>
+  <img src="${dataURLfinal}">
+  <script>
+    window.onload = () => { window.print(); }
+  <\/script>
+</body>
+</html>`);
+        win.document.close();
+
+        mostrarMensagem("✓ Folha A4 gerada!");
+    };
+
+    img.src = modeloDataURL;
+}
+
+// ========================================
+// FOCAL LENGTH / FOV CONTROL
+// ========================================
+
+// FOV range: 5° (almost flat/ortho) → 60° (wide angle)
+const FOV_MIN = 15;
+const FOV_MAX = 60;
+
+function ajustarFocal(valor) {
+    // slider 0 = FOV_MIN (flat), slider 100 = FOV_MAX (wide)
+    const fov = FOV_MIN + (valor / 100) * (FOV_MAX - FOV_MIN);
+    camera.fov = fov;
+    camera.updateProjectionMatrix();
+
+    const label = document.getElementById('focal-value');
+    if (label) label.textContent = Math.round(fov) + '°';
+}
+
+
 
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
 let isPanning = false;
-let cameraTarget = new THREE.Vector3(0, 0, 0);
+let cameraTarget = new THREE.Vector3(0, 2, 0);
 
 function configurarControlesCamara() {
     const canvas = renderer.domElement;
@@ -719,9 +1003,12 @@ function configurarControlesCamara() {
         direction.subVectors(camera.position, cameraTarget);
         const distancia = direction.length();
 
-        const novaDistancia = Math.max(3, Math.min(20, distancia + delta));
+        const novaDistancia = Math.max(1, Math.min(80, distancia + delta));
         direction.normalize().multiplyScalar(novaDistancia);
         camera.position.copy(cameraTarget).add(direction);
+
+        // Keep fog well beyond the camera so the model never fades
+        scene.fog = new THREE.Fog(0x050608, novaDistancia * 2.5, novaDistancia * 6);
         
         camera.lookAt(cameraTarget);
     });
@@ -741,24 +1028,16 @@ function mostrarMensagem(texto, erro = false) {
     }, 3000);
 }
 
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const button = document.getElementById('toggle-sidebar');
-    
-    sidebar.classList.toggle('hidden');
-    button.classList.toggle('moved');
-    
-    if (sidebar.classList.contains('hidden')) {
-        button.textContent = '▶ Painel';
-    } else {
-        button.textContent = '◀ Painel';
-    }
-}
+
 
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    // Small delay lets CSS finish reflowing (important on mobile orientation change)
+    setTimeout(() => {
+        const vp = document.getElementById('viewport-wrap');
+        camera.aspect = vp.clientWidth / vp.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(vp.clientWidth, vp.clientHeight);
+    }, 50);
 }
 
 // ========================================
