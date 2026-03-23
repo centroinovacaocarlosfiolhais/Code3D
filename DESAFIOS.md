@@ -1,127 +1,222 @@
-# 🎮 PIXEL3D — Desafios
+# 🎯 DESAFIOS - Modelador 3D
 
-**Nome:** _________________________ &nbsp;&nbsp; **Data:** _______________
-
----
-
-## 🟢 Nível 1 — Iniciante
-
-### Desafio 1.1 — Modifica um Template
-- Carrega o Humanóide
-- Faz 3 alterações: 1 cor nova, remove 1 bloco, adiciona 1 bloco
-- **Template usado:** _____________
-
-✅ Concluído [ ] &nbsp;&nbsp; **Blocos no final:** ______
+**Nome:** _________________ **Data:** _________________
 
 ---
 
-### Desafio 1.2 — Primeiro PNG
-- Dá um nome ao teu modelo
-- Exporta um PNG
+## 🟢 NÍVEL 1 - Iniciante
 
-✅ Concluído [ ] &nbsp;&nbsp; **Nome do modelo:** ________________
+### Desafio 1.1: O Teu Primeiro Copo
+Cria um copo simples com estas características:
+- Base com raio (x) = 1.0
+- Altura total = 3.5
+- Topo ligeiramente mais largo que a base
 
----
+**Quantos pontos usaste?** _____
 
-## 🟡 Nível 2 — Intermédio
-
-### Desafio 2.1 — Animal Reconhecível
-- Cria um animal sem dizer aos colegas o que é
-- Eles têm de adivinhar!
-
-✅ Concluído [ ] &nbsp;&nbsp; **Que animal?** _______ &nbsp;&nbsp; **Adivinharam?** Sim [ ] Não [ ]
+**Conseguiste? ✓** [ ] Sim [ ] Ainda não
 
 ---
 
-### Desafio 2.2 — Cinco Cores com Intenção
-- Usa **exatamente 5 cores** — cada uma com um motivo
+### Desafio 1.2: Tigela de Cereais
+Cria uma tigela arredondada:
+- Base quase fechada (x ≈ 0.2)
+- Meio bem largo (x ≈ 2.0)
+- Borda curva para dentro no topo
 
-| Cor | Para quê? |
-|-----|----------|
-| | |
-| | |
-| | |
-| | |
-| | |
+**Dica:** Os valores de x devem crescer e depois diminuir ligeiramente!
 
-✅ Concluído [ ]
+**Conseguiste? ✓** [ ] Sim [ ] Ainda não
 
 ---
 
-## 🔴 Nível 3 — Avançado
+## 🟡 NÍVEL 2 - Intermédio
 
-### Desafio 3.1 — Cena Completa
-- Cria 2 objetos relacionados na mesma cena
+### Desafio 2.1: Garrafa de Água
+Cria uma garrafa realista com:
+- Base estável e larga
+- Corpo principal generoso
+- Gargalo estreito (x ≈ 0.5-0.7)
+- Abertura ligeiramente mais larga que o gargalo
 
-**O que tens na cena?**
-```
-1. ______________________
-2. ______________________
-```
+**Requisitos mínimos:** 5 pontos
 
-✅ Concluído [ ] &nbsp;&nbsp; **Total de blocos:** ______
-
----
-
-### Desafio 3.2 — Decifra o .TXT
-- Exporta o ficheiro .TXT do teu modelo
-- Responde:
-
-**Y da camada mais alta:** _____ &nbsp;&nbsp; **Letra da cor mais usada:** _____
-
-✅ Concluído [ ]
+**Conseguiste? ✓** [ ] Sim [ ] Ainda não
 
 ---
 
-## 🟣 Nível 4 — Mestre
+### Desafio 2.2: Taça de Vinho
+Cria uma taça elegante com:
+- Base circular plana
+- Haste fina e alta
+- Cálice em forma de U
 
-### Desafio 4.1 — Inventa algo que não existe
-- Monstro, robô, nave alienígena, criatura fantástica...
-- Exporta o **GIF animado** e mostra aos colegas!
+**Dica:** Divide em 3 secções: base (y=0 a 0.5), haste (y=0.5 a 2.5), cálice (y=2.5 a 4.5)
 
-**O que é?** _______________________
-
-✅ Concluído [ ] &nbsp;&nbsp; **GIF exportado?** Sim [ ] Não [ ]
-
----
-
-### Desafio 4.2 — O Desafio dos 30 Blocos
-- Cria algo reconhecível com **entre 25 e 35 blocos** — nem mais, nem menos!
-
-**O que é?** _______ &nbsp;&nbsp; **Blocos exatos:** _____ &nbsp;&nbsp; **Tentativas:** _____
-
-✅ Concluído [ ]
+**Conseguiste? ✓** [ ] Sim [ ] Ainda não
 
 ---
 
-## 📊 Resultado Final
+## 🔴 NÍVEL 3 - Avançado
 
-| Nível | Concluídos |
-|-------|-----------|
-| 🟢 Iniciante | ___ / 2 |
-| 🟡 Intermédio | ___ / 2 |
-| 🔴 Avançado | ___ / 2 |
-| 🟣 Mestre | ___ / 2 |
-| **Total** | **___ / 8** |
+### Desafio 3.1: Peça de Xadrez
+Escolhe uma peça e recria-a:
+- [ ] Torre (cilíndrica com topo amendoado)
+- [ ] Bispo (elegante com ponta)
+- [ ] Rei (alto com cruz no topo)
+- [ ] Rainha (com coroa)
 
-```
-🥉 1-2: Iniciante — Bom começo!
-🥈 3-5: Construtor — Muito bem!
-🥇 6-7: Arquiteto Voxel — Excelente!
-🏆 8/8: Mestre Pixel — Incrível!
-```
+**Peça escolhida:** _________________
+
+**Conseguiste? ✓** [ ] Sim [ ] Ainda não
 
 ---
 
-## 💡 Dicas Rápidas
+### Desafio 3.2: Candeeiro ou Lustre
+Cria um candeeiro com:
+- Base pesada (grande raio)
+- Corpo/haste fino
+- Cúpula larga no topo
 
-- **Bloco azul translúcido** = onde o bloco vai aparecer → clica para confirmar
-- **Clique direito** = sempre remove o bloco clicado
-- **Arrastar botão esquerdo** = rodar câmera
-- **Scroll** = zoom in/out
-- Se ficares perdido → **🔄 Repor câmera**
-- **Guarda frequentemente!** (botão JSON)
+**EXTRA:** Ativa modo fractal com 2-3 repetições!
+
+**Usaste fractal?** [ ] Sim [ ] Não
+
+**Conseguiste? ✓** [ ] Sim [ ] Ainda não
 
 ---
 
-*🎮 Pixel3D · Clube de Código · CICF*
+## 🌟 NÍVEL 4 - Mestre
+
+### Desafio 4.1: Foguetão Espacial
+Cria um foguetão com:
+- Ponta cónica (começa em x=0)
+- Corpo cilíndrico
+- Base mais larga (motores)
+
+**Altura mínima:** 5.0
+
+**Conseguiste? ✓** [ ] Sim [ ] Ainda não
+
+---
+
+### Desafio 4.2: Criar Algo Original
+Inventa a tua própria forma! Pode ser:
+- Instrumento musical
+- Monumento
+- Criatura alienígena
+- Qualquer coisa da tua imaginação!
+
+**O que criaste?** _________________
+
+**Descreve a tua ideia:**
+_______________________________________________
+_______________________________________________
+_______________________________________________
+
+**Conseguiste? ✓** [ ] Sim [ ] Ainda não
+
+---
+
+## ❄️ DESAFIO FRACTAL
+
+### Cria um Padrão Fractal Épico
+1. Cria uma forma simples (4-5 pontos)
+2. Ativa **Repetições Fractais = 3 ou 4**
+3. Ajusta **Escala Fractal = 0.4**
+4. Experimenta diferentes cores!
+
+**Número de repetições usadas:** _____
+
+**Escala usada:** _____
+
+**Conseguiste? ✓** [ ] Sim [ ] Ainda não
+
+---
+
+## 🏆 DESAFIO FINAL - O Teu Portfólio
+
+Cria 3 objetos diferentes e guarda cada um:
+
+1. **Objeto 1:** _________________
+   - [ ] Guardado (exportado JSON)
+
+2. **Objeto 2:** _________________
+   - [ ] Guardado (exportado JSON)
+
+3. **Objeto 3:** _________________
+   - [ ] Guardado (exportado JSON)
+
+---
+
+## 📊 Reflexão
+
+### O que aprendeste hoje?
+_______________________________________________
+_______________________________________________
+_______________________________________________
+
+### Qual foi o desafio mais difícil?
+_______________________________________________
+_______________________________________________
+
+### Qual foi a tua criação favorita?
+_______________________________________________
+_______________________________________________
+
+### O que gostarias de criar a seguir?
+_______________________________________________
+_______________________________________________
+
+---
+
+## 💡 DICAS IMPORTANTES
+
+**Lembra-te:**
+- x deve ser sempre ≥ 0 (nunca negativo!)
+- Os pontos devem estar ordenados por y (de baixo para cima)
+- Mínimo de 3 pontos, mas podes usar quantos quiseres!
+- x = 0 fecha completamente (como numa ponta)
+- Maior x = mais largo
+
+**Controles:**
+- 🖱️ Arrastar = Rodar câmera
+- 🔍 Scroll = Zoom
+- Editar JSON → Clicar "Carregar"
+
+**Se estiver estranho:**
+- Verifica a ordem dos pontos
+- Confirma que não há x negativos
+- Tenta "Resetar Câmera"
+
+---
+
+## ⭐ AUTO-AVALIAÇÃO
+
+Quantos desafios completaste?
+
+**Nível 1:** ____ / 2  
+**Nível 2:** ____ / 2  
+**Nível 3:** ____ / 2  
+**Nível 4:** ____ / 2  
+**Fractal:** ____ / 1  
+
+**TOTAL:** ____ / 9
+
+### Classificação:
+- 🥉 1-3 desafios: Iniciante - Bom começo!
+- 🥈 4-6 desafios: Intermédio - Muito bem!
+- 🥇 7-8 desafios: Avançado - Excelente!
+- 🏆 9 desafios: Mestre 3D - Incrível!
+
+---
+
+**Assinatura do Facilitador:** _________________
+
+**Comentários:**
+_______________________________________________
+_______________________________________________
+
+---
+
+🎨 **Diverte-te a criar formas 3D incríveis!** ✨

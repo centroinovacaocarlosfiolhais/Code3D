@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CODE3D — Ficha de Projeto · CICF</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cicf-dark:#0D1B2A; --cicf-teal:#00B4D8; --cicf-orange:#FF6B35;
+  --cicf-green:#06D6A0; --cicf-blue:#0057A8; --cicf-purple:#6D62E8;
+  --step-0:#64748B; --step-1:#0057A8; --step-2:#FF6B35; --step-3:#06D6A0; --step-4:#6D62E8;
+  --bg:#F5F7FA; --surface:#fff; --border:#DDE3EC;
+  --text:#1A2A3A; --text-mid:#4A6070; --text-dim:#8BA3B8;
+  --ff-display:'Syne',sans-serif; --ff-body:'Nunito',sans-serif;
+  --radius:12px; --radius-lg:18px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--ff-body);background:var(--bg);color:var(--text);font-size:18px;line-height:1.65;}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 100px;}
+
+/* Print fab */
+.pfab{position:fixed;bottom:28px;right:28px;z-index:200;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.pbtn{display:flex;align-items:center;gap:10px;background:var(--cicf-dark);color:#fff;border:none;border-radius:50px;cursor:pointer;font-family:var(--ff-display);font-size:15px;font-weight:700;padding:14px 24px;box-shadow:0 6px 28px rgba(0,0,0,.3);transition:transform .15s;}
+.pbtn:hover{transform:translateY(-2px);}
+.phint{font-size:12px;color:var(--text-dim);}
+
+/* Header */
+.dh{background:var(--cicf-dark);border-radius:var(--radius-lg);padding:36px 40px;margin-bottom:22px;position:relative;overflow:hidden;}
+.dh::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(0,180,216,.25) 0%,transparent 70%);}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.badge{display:inline-flex;align-items:center;font-family:var(--ff-display);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:20px;}
+.bt{background:rgba(0,180,216,.18);color:#00D4FF;} .bo{background:rgba(255,107,53,.18);color:#FF8C5A;} .bg{background:rgba(6,214,160,.18);color:#06D6A0;}
+.dt{font-family:var(--ff-display);font-size:36px;font-weight:800;color:#fff;line-height:1;margin-bottom:6px;letter-spacing:-1px;}
+.dt span{color:var(--cicf-teal);}
+.ds{font-size:17px;color:rgba(255,255,255,.5);}
+.mr{display:flex;gap:0;margin-top:22px;border:1px solid rgba(255,255,255,.1);border-radius:10px;overflow:hidden;}
+.mc{flex:1;padding:12px 16px;border-right:1px solid rgba(255,255,255,.1);}
+.mc:last-child{border-right:none;}
+.ml{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.35);}
+.mv{font-family:var(--ff-display);font-size:16px;font-weight:700;color:#fff;margin-top:2px;}
+
+/* Philosophy */
+.phil{background:#EFF6FF;border-left:4px solid var(--cicf-blue);border-radius:0 var(--radius) var(--radius) 0;padding:16px 20px;margin-bottom:18px;font-size:15px;line-height:1.6;color:var(--text-mid);font-style:italic;}
+
+/* Driving Question */
+.dq{background:linear-gradient(135deg,rgba(255,107,53,.07),rgba(6,214,160,.05));border:2px solid var(--cicf-orange);border-radius:var(--radius-lg);padding:28px 32px;margin-bottom:18px;position:relative;}
+.dq-label{position:absolute;top:-12px;left:24px;background:var(--cicf-orange);color:#fff;font-family:var(--ff-display);font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:20px;}
+.dq-text{font-family:var(--ff-display);font-size:21px;font-weight:700;line-height:1.35;}
+
+/* Section */
+.sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:16px;overflow:hidden;}
+.sh{display:flex;align-items:center;gap:14px;padding:18px 24px;border-bottom:1px solid var(--border);}
+.si{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.stitle{font-family:var(--ff-display);font-size:18px;font-weight:800;}
+.ssub{font-size:14px;color:var(--text-dim);margin-top:2px;}
+.sb{padding:22px;}
+.pill{display:inline-flex;align-items:center;margin-left:auto;font-family:var(--ff-display);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:20px;flex-shrink:0;}
+
+/* Step colors */
+.sh0{background:rgba(100,116,139,.1);} .sh1{background:rgba(0,87,168,.1);} .sh2{background:rgba(255,107,53,.1);} .sh3{background:rgba(6,214,160,.1);} .sh4{background:rgba(109,98,232,.1);}
+.si0{background:rgba(100,116,139,.18);color:var(--step-0);} .si1{background:rgba(0,87,168,.14);color:var(--step-1);} .si2{background:rgba(255,107,53,.14);color:var(--step-2);} .si3{background:rgba(6,214,160,.14);color:var(--step-3);} .si4{background:rgba(109,98,232,.14);color:var(--step-4);}
+.tc0{color:var(--step-0);} .tc1{color:var(--step-1);} .tc2{color:var(--step-2);} .tc3{color:var(--step-3);} .tc4{color:var(--step-4);}
+.p0{background:rgba(100,116,139,.15);color:var(--step-0);} .p1{background:rgba(0,87,168,.12);color:var(--step-1);} .p2{background:rgba(255,107,53,.12);color:var(--step-2);} .p3{background:rgba(6,214,160,.12);color:var(--step-3);} .p4{background:rgba(109,98,232,.12);color:var(--step-4);}
+
+/* Tasks */
+.tasks{display:flex;flex-direction:column;gap:8px;}
+.task{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;border-radius:8px;background:var(--bg);border:1px solid var(--border);font-size:16px;line-height:1.5;}
+.ta{color:var(--cicf-teal);font-weight:800;flex-shrink:0;margin-top:1px;}
+
+/* Canvas */
+.canvas{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:18px;}
+.ch{background:var(--cicf-dark);color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+.ctitle{font-family:var(--ff-display);font-size:17px;font-weight:800;}
+.csub{font-size:13px;color:rgba(255,255,255,.5);margin-top:2px;}
+.cbadge{background:rgba(0,180,216,.18);color:var(--cicf-teal);font-family:var(--ff-display);font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:1.5px;text-transform:uppercase;}
+.cf{border-bottom:1px solid var(--border);}
+.cf:last-child{border-bottom:none;}
+.fl{background:#F8FAFC;padding:10px 20px;font-family:var(--ff-display);font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.fn{width:22px;height:22px;border-radius:50%;background:var(--cicf-dark);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.vbadge{margin-left:auto;background:rgba(6,214,160,.12);color:var(--cicf-green);font-size:10px;padding:2px 10px;border-radius:10px;}
+.fi{min-height:80px;padding:16px 20px;font-family:var(--ff-body);font-size:16px;color:var(--text);outline:none;line-height:1.6;transition:background .2s;display:block;width:100%;}
+.fi:focus{background:#FFFBF5;}
+.fi:empty::before{content:attr(data-ph);color:var(--text-dim);font-style:italic;pointer-events:none;}
+.cc{padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
+.cr{display:flex;align-items:flex-start;gap:12px;}
+.cr input[type=checkbox]{width:20px;height:20px;flex-shrink:0;margin-top:2px;accent-color:var(--cicf-green);cursor:pointer;}
+.ct-inp{flex:1;min-height:26px;padding:2px 8px;border:none;border-bottom:2px solid var(--border);font-family:var(--ff-body);font-size:16px;color:var(--text);background:transparent;outline:none;transition:border-color .2s;}
+.ct-inp:focus{border-color:var(--cicf-green);}
+
+/* Retro */
+.rg{margin-bottom:20px;}
+.rl{font-family:var(--ff-display);font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);margin-bottom:8px;}
+.rf{width:100%;min-height:64px;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-family:var(--ff-body);font-size:16px;color:var(--text);background:var(--bg);outline:none;line-height:1.6;transition:border-color .2s,background .2s;}
+.rf:focus{border-color:var(--step-4);background:#FFFBFF;}
+.rf:empty::before{content:attr(data-ph);color:var(--text-dim);font-style:italic;pointer-events:none;}
+.conf-row{display:flex;gap:10px;margin-top:8px;align-items:center;flex-wrap:wrap;}
+.cl{font-size:14px;color:var(--text-mid);}
+.cbs{display:flex;gap:6px;}
+.cb{width:38px;height:38px;border-radius:8px;border:2px solid var(--border);background:var(--bg);font-family:var(--ff-display);font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--text-mid);}
+.cb:hover{border-color:var(--cicf-purple);color:var(--cicf-purple);}
+.cb.on{border-color:var(--cicf-purple);background:var(--cicf-purple);color:#fff;}
+
+/* Rubric */
+.rt{width:100%;border-collapse:collapse;font-size:15px;}
+.rt th{background:var(--cicf-dark);color:#fff;font-family:var(--ff-display);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:12px 16px;text-align:left;}
+.rt td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;}
+.rt tr:nth-child(even) td{background:var(--bg);}
+.rt td:first-child{font-family:var(--ff-display);font-weight:700;font-size:15px;}
+
+/* Tips */
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.tip{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;}
+.ti{font-size:20px;flex-shrink:0;}
+.tt{font-size:15px;line-height:1.5;color:var(--text-mid);}
+.tt strong{color:var(--text);display:block;margin-bottom:2px;}
+
+/* Footer */
+.foot{background:var(--cicf-dark);border-radius:var(--radius-lg);padding:20px 28px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.fb{font-family:var(--ff-display);font-size:14px;font-weight:700;color:#fff;}
+.fs{font-size:13px;color:rgba(255,255,255,.4);margin-top:2px;}
+.lic{background:rgba(6,214,160,.12);color:var(--cicf-green);font-family:var(--ff-display);font-size:11px;font-weight:700;padding:6px 14px;border-radius:20px;letter-spacing:1px;border:1px solid rgba(6,214,160,.3);}
+
+/* Editable highlight */
+[contenteditable=true]{cursor:text;}
+[contenteditable=true]:hover{outline:1px dashed #FFD700;outline-offset:2px;}
+[contenteditable=true]:focus{outline:2px solid var(--cicf-orange);outline-offset:2px;background:#FFFEF0;}
+
+/* No-print */
+@media print {
+  .pfab,.no-print{display:none!important;}
+  body{font-size:14px;}
+  .printonly{display:block!important;}
+  [contenteditable]{border:1px solid #ccc!important;border-radius:4px!important;min-height:48px!important;padding:8px!important;}
+}
+</style>
+</head>
+<body>
+<div class="pfab">
+  <button class="pbtn" onclick="doPrint()">🖨️ Imprimir Ficha de Preenchimento</button>
+  <span class="phint">Só imprime Brief Canvas + Retrospetiva</span>
+</div>
+
+<div class="page">
+  <!-- HEADER -->
+  <div class="dh no-print">
+    <div class="badges"><span class="badge bt">🛠 MAKE · CODE</span><span class="badge bo">STEP Learning</span><span class="badge bg">3D for a Cause</span></div>
+    <div class="dt">CODE<span>3D</span></div>
+    <div class="ds">Do JSON ao Objeto 3D — Ficha de Projeto</div>
+    <div class="mr">
+      <div class="mc"><div class="ml">Duração</div><div class="mv">2 horas</div></div>
+      <div class="mc"><div class="ml">Grupo</div><div class="mv">2–4 pessoas</div></div>
+      <div class="mc"><div class="ml">Idades</div><div class="mv">12–16 anos</div></div>
+      <div class="mc"><div class="ml">Tools</div><div class="mv">CODE3D · Impressora 3D</div></div>
+    </div>
+  </div>
+
+  <div class="phil no-print"><em>"Sentir → Compreender → Fazer → Partilhar → Crescer"</em><br>Uma sessão STEP não é uma aula. Tu és co-construtor. O facilitador não te dá as respostas — o grupo define o desafio, o processo e o critério de sucesso.</div>
+
+  <div class="dq no-print"><div class="dq-label">Driving Question</div><div class="dq-text">"Como podemos transformar um conjunto de números numa forma com propósito — e partilhá-la com o mundo?"</div></div>
+
+  <!-- STEPS (instruções — não imprimem) -->
+  <div class="sec no-print">
+    <div class="sh sh0"><div class="si si0">📦</div><div><div class="stitle tc0">Step 0 · Setup — Preparar o Terreno</div><div class="ssub">O facilitador coloca 5 objetos na mesa. Silêncio. Observação.</div></div><span class="pill p0">10 min</span></div>
+    <div class="sb"><div class="tasks">
+      <div class="task"><span class="ta">→</span> Observa os objetos em silêncio durante 2 minutos</div>
+      <div class="task"><span class="ta">→</span> Responde individualmente: <em>O que têm estes objetos em comum?</em></div>
+      <div class="task"><span class="ta">→</span> Partilha com o grupo (1 minuto por pessoa)</div>
+      <div class="task"><span class="ta">→</span> Aguarda a pergunta do facilitador que abre a sessão</div>
+    </div></div>
+  </div>
+
+  <div class="sec no-print">
+    <div class="sh sh1"><div class="si si1">🔍</div><div><div class="stitle tc1">Step 1 · Identificar — Ler o Mundo com Novos Olhos</div><div class="ssub">Explorar a aplicação e preencher o Brief Canvas em grupo</div></div><span class="pill p1">20 min</span></div>
+    <div class="sb"><div class="tasks">
+      <div class="task"><span class="ta" style="color:var(--step-1)">→</span> Abre: <strong>centroinovacaocarlosfiolhais.github.io/Code3D/</strong></div>
+      <div class="task"><span class="ta" style="color:var(--step-1)">→</span> Carrega cada um dos 5 exemplos (Vaso, Taça, Ampulheta, Sino, Fractal)</div>
+      <div class="task"><span class="ta" style="color:var(--step-1)">→</span> Experimenta mudar <strong>apenas um número</strong> de cada vez e observa o resultado</div>
+      <div class="task"><span class="ta" style="color:var(--step-1)">→</span> Com o grupo: o que é x? O que é y? O que é a curva?</div>
+      <div class="task" style="border-color:var(--cicf-blue);background:rgba(0,87,168,.06);"><span class="ta" style="color:var(--step-1)">→</span> <strong>Preenche o Brief Canvas em conjunto ↓</strong></div>
+    </div></div>
+  </div>
+
+  <div class="sec no-print">
+    <div class="sh sh2"><div class="si si2">⚡</div><div><div class="stitle tc2">Step 2 · Desafiar — Mãos à Obra com Propósito</div><div class="ssub">Criar, exportar, imprimir e preparar a publicação open source</div></div><span class="pill p2">50 min</span></div>
+    <div class="sb"><div class="tasks">
+      <div class="task"><span class="ta" style="color:var(--step-2)">→</span> A partir do Brief Canvas, define o objeto (nome + função + destinatário)</div>
+      <div class="task"><span class="ta" style="color:var(--step-2)">→</span> Cria o modelo em JSON — mínimo 5 pontos de controlo</div>
+      <div class="task"><span class="ta" style="color:var(--step-2)">→</span> Testa e ajusta até ficares satisfeito com a forma</div>
+      <div class="task"><span class="ta" style="color:var(--step-2)">→</span> Exporta o STL e prepara para impressão</div>
+      <div class="task"><span class="ta" style="color:var(--step-2)">→</span> Enquanto imprime: escreve título, descrição e licença CC BY-SA 4.0</div>
+    </div>
+    <div style="margin-top:14px;padding:12px 16px;background:rgba(255,107,53,.08);border-radius:8px;border-left:3px solid var(--cicf-orange);font-size:15px;">🔸 <strong>Desafio extra:</strong> Ativa o modo fractal (repetições ≥ 2) e explica ao grupo o padrão que aparece.</div>
+    </div>
+  </div>
+
+  <div class="sec no-print">
+    <div class="sh sh3"><div class="si si3">🎯</div><div><div class="stitle tc3">Step 3 · Validar — Mostrar, Questionar, Projetar</div><div class="ssub">Apresentação + feedback estruturado</div></div><span class="pill p3">20 min</span></div>
+    <div class="sb"><div class="tasks">
+      <div class="task"><span class="ta" style="color:var(--step-3)">→</span> Apresenta ao grupo (máx. 3 min): <em>O que criaste · Porquê · O que descobriste</em></div>
+      <div class="task"><span class="ta" style="color:var(--step-3)">→</span> Mostra o JSON no ecrã — explica <strong>um ponto</strong> que foi decisivo para a forma final</div>
+      <div class="task"><span class="ta" style="color:var(--step-3)">→</span> Recebe feedback: 1 coisa que funcionou + 1 sugestão</div>
+      <div class="task"><span class="ta" style="color:var(--step-3)">→</span> Avalia o teu trabalho contra os critérios de sucesso do Canvas</div>
+    </div></div>
+  </div>
+
+  <!-- ═══════ PRINTABLE ZONE ═══════ -->
+  <div id="printzone">
+
+  <!-- BRIEF CANVAS -->
+  <div class="canvas">
+    <div class="ch">
+      <div><div class="ctitle">📋 Brief Canvas</div><div class="csub">Preencher em grupo no Step 1 · Guardar para Step 2</div></div>
+      <div class="cbadge">Step 1</div>
+    </div>
+    <div class="cf">
+      <div class="fl"><span class="fn">1</span> O que descobrimos sobre como a forma é controlada</div>
+      <div class="fi" contenteditable="true" data-ph="Escreve aqui o que o grupo descobriu ao explorar os exemplos…"></div>
+    </div>
+    <div class="cf">
+      <div class="fl"><span class="fn">2</span> Para que serve o objeto que queremos criar</div>
+      <div class="fi" contenteditable="true" data-ph="Qual a função? Para quem é? Em que contexto vai ser usado?"></div>
+    </div>
+    <div class="cf">
+      <div class="fl"><span class="fn">3</span> Que problema resolve ou que necessidade satisfaz</div>
+      <div class="fi" contenteditable="true" data-ph="Descreve o problema ou necessidade que o teu design pretende responder…"></div>
+    </div>
+    <div class="cf">
+      <div class="fl"><span class="fn">4</span> A nossa ideia de desafio — nome, função e destinatário <span class="vbadge">✓ validar com facilitador</span></div>
+      <div class="fi" contenteditable="true" data-ph="Ex: «Vaso para a entrada da biblioteca da escola, para flores secas doadas pelos alunos»" style="min-height:90px;"></div>
+    </div>
+    <div class="cf">
+      <div class="fl" style="background:rgba(6,214,160,.07);color:var(--step-3);"><span class="fn" style="background:var(--step-3);">5</span> Como sabemos que resultou — critérios de sucesso (define tu)</div>
+      <div class="cc">
+        <div class="cr"><input type="checkbox" id="c1"><input class="ct-inp" type="text" placeholder="Critério 1: o objeto é reconhecível como…"></div>
+        <div class="cr"><input type="checkbox" id="c2"><input class="ct-inp" type="text" placeholder="Critério 2: o ficheiro STL exporta sem erros e…"></div>
+        <div class="cr"><input type="checkbox" id="c3"><input class="ct-inp" type="text" placeholder="Critério 3: conseguimos explicar porque escolhemos…"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="sec">
+    <div class="sh sh4"><div class="si si4">💜</div><div><div class="stitle tc4">Step 4 · Retrospetiva — O Que Ficou em Mim?</div><div class="ssub">Individual · partilha uma frase com o grupo</div></div><span class="pill p4">15 min</span></div>
+    <div class="sb">
+      <div class="rg"><div class="rl">💡 Aprendi que…</div><div class="rf" contenteditable="true" data-ph="Escreve aqui o que aprendeste hoje…"></div></div>
+      <div class="rg"><div class="rl">😮 Fiquei surpreendido quando…</div><div class="rf" contenteditable="true" data-ph="O que te surpreendeu durante a sessão?"></div></div>
+      <div class="rg"><div class="rl">🚀 Na próxima vez quero…</div><div class="rf" contenteditable="true" data-ph="O que gostarias de explorar numa próxima sessão?"></div></div>
+      <div class="rg">
+        <div class="rl">📊 Nível de confiança em JSON</div>
+        <div class="conf-row">
+          <span class="cl">Antes da sessão:</span>
+          <div class="cbs" id="bb"><button class="cb" onclick="sel(this,'b')">1</button><button class="cb" onclick="sel(this,'b')">2</button><button class="cb" onclick="sel(this,'b')">3</button><button class="cb" onclick="sel(this,'b')">4</button><button class="cb" onclick="sel(this,'b')">5</button></div>
+          <span class="cl" style="margin-left:16px;">Depois:</span>
+          <div class="cbs" id="ab"><button class="cb" onclick="sel(this,'a')">1</button><button class="cb" onclick="sel(this,'a')">2</button><button class="cb" onclick="sel(this,'a')">3</button><button class="cb" onclick="sel(this,'a')">4</button><button class="cb" onclick="sel(this,'a')">5</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /printzone -->
+
+  <!-- RUBRIC (no-print) -->
+  <div class="sec no-print" style="margin-top:4px;">
+    <div class="sh" style="background:rgba(0,0,0,.04);"><div class="si" style="background:rgba(0,0,0,.08);">📊</div><div><div class="stitle">Rubrica de Avaliação</div><div class="ssub">Referência — facilita reflexão no Step 3</div></div></div>
+    <div class="sb" style="padding:0;">
+      <table class="rt">
+        <tr><th>Critério</th><th>Básico (40%)</th><th>Intermédio (70%)</th><th>Avançado (100%)</th></tr>
+        <tr><td>JSON funcional</td><td>Carrega sem erros</td><td>5+ pontos, forma reconhecível</td><td>7+ pontos, forma intencional e justificada</td></tr>
+        <tr><td>Intenção de design</td><td>Objeto sem contexto</td><td>Objeto com nome e função</td><td>Nome, função, destinatário e critério cumprido</td></tr>
+        <tr><td>Apresentação oral</td><td>Mostra o objeto</td><td>Explica as escolhas</td><td>Explica escolhas e aprendizagens com os erros</td></tr>
+        <tr><td>Open source</td><td>Ficheiro exportado</td><td>Com descrição</td><td>Descrição completa + licença correta</td></tr>
+        <tr><td>Retrospetiva</td><td>Uma frase escrita</td><td>Três frases escritas</td><td>Três frases + comparação antes/depois</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- TIPS (no-print) -->
+  <div class="sec no-print">
+    <div class="sh" style="background:rgba(0,180,216,.06);"><div class="si" style="background:rgba(0,180,216,.12);color:var(--cicf-teal);">💡</div><div><div class="stitle" style="color:var(--cicf-teal);">Dicas Rápidas</div><div class="ssub">Mantém visível enquanto trabalhas</div></div></div>
+    <div class="sb"><div class="tg">
+      <div class="tip"><span class="ti">📏</span><div class="tt"><strong>Eixo x = largura</strong>Nunca negativo! x=0 fecha (ponta). Maior x = mais largo.</div></div>
+      <div class="tip"><span class="ti">📐</span><div class="tt"><strong>Eixo y = altura</strong>Pontos ordenados do mais baixo para o mais alto (y crescente).</div></div>
+      <div class="tip"><span class="ti">🔬</span><div class="tt"><strong>Método científico</strong>Muda um número de cada vez. Observa. Forma a hipótese. Repete.</div></div>
+      <div class="tip"><span class="ti">🔧</span><div class="tt"><strong>Se ficar estranho</strong>Volta ao exemplo mais simples e constrói a partir daí.</div></div>
+    </div></div>
+  </div>
+
+  <div class="foot">
+    <div><div class="fb">Centro de Inovação Carlos Fiolhais · CDI Portugal</div><div class="fs">cicf.pt · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2d1ddd6dbd5ddf2d1dbd1d49cc2c6">[email&#160;protected]</a> · CODE3D Ficha de Projeto v1.0</div></div>
+    <span class="lic">CC BY-SA 4.0</span>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function sel(btn,g){
+  const p=g==='b'?document.getElementById('bb'):document.getElementById('ab');
+  p.querySelectorAll('.cb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function doPrint(){
+  document.querySelectorAll('.no-print').forEach(e=>e.style.display='none');
+  document.querySelector('.pfab').style.display='none';
+  window.print();
+  setTimeout(()=>{
+    document.querySelectorAll('.no-print').forEach(e=>e.style.display='');
+    document.querySelector('.pfab').style.display='';
+  },600);
+}
+// Persist edits
+document.querySelectorAll('[contenteditable]').forEach((el,i)=>{
+  const k='fp-'+i;
+  if(sessionStorage.getItem(k)) el.innerHTML=sessionStorage.getItem(k);
+  el.addEventListener('input',()=>sessionStorage.setItem(k,el.innerHTML));
+});
+document.querySele

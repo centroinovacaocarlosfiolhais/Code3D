@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  TEMPLATE — FICHA DE PROJETO (PARTICIPANTES)                     ║
+  ║  CICF DESIGN SYSTEM v1.0                                         ║
+  ║                                                                  ║
+  ║  PLACEHOLDERS A SUBSTITUIR:                                      ║
+  ║  [NOME_ATIVIDADE]       → ex: CODE3D, BioSense, RoboArm         ║
+  ║  [ÁREA_STEM]            → ex: Design 3D, Biologia, Robótica      ║
+  ║  [PÚBLICO]              → ex: 12–16 anos                         ║
+  ║  [DURAÇÃO]              → ex: 2 horas                            ║
+  ║  [FERRAMENTA]           → ferramenta principal                    ║
+  ║  [EMOJI_ATIVIDADE]      → emoji representativo                   ║
+  ║  [CANVAS_CAMPO_1..5]    → descrição de cada campo do Brief Canvas║
+  ║  [CANVAS_HINT_1..5]     → texto de placeholder em cada campo     ║
+  ║  [CANVAS_EXEMPLO_1..5]  → exemplo preenchido para esse campo     ║
+  ║  [DESAFIO_1..4_TEXTO]   → enunciado dos desafios por nível       ║
+  ║  [DESAFIO_X_DICA]       → dica específica do desafio             ║
+  ║  [REFLEXAO_1..3]        → frases guia de reflexão               ║
+  ║  [VOCABULARIO_1..N]     → glossário de termos-chave              ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[NOME_ATIVIDADE] — Ficha de Projeto · CICF</title>
+<style>
+/* ── CICF DESIGN SYSTEM v1.0 ── */
+:root {
+  --dark:#0D1B2A; --teal:#00B4D8; --green:#06D6A0;
+  --orange:#FF6B35; --blue:#0057A8; --purple:#6D62E8;
+  --amber:#F59E0B;
+  --gray:#F2F5F9; --text:#1A2535; --muted:#5A6B7E; --border:#DDE3EC;
+  --s0:#556B7A; --s1:#0057A8; --s2:#FF6B35; --s3:#06D6A0; --s4:#6D62E8;
+  --ff:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --fm:'Courier New',Courier,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#EEF1F6;font-family:var(--ff);color:var(--text);font-size:16px;line-height:1.6}
+
+.print-bar{position:fixed;bottom:28px;right:28px;z-index:999}
+.btn-print{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:8px;border:none;cursor:pointer;font-family:var(--ff);font-size:15px;font-weight:600;background:var(--teal);color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .15s}
+.btn-print:hover{transform:translateY(-2px)}
+
+.page{max-width:860px;margin:40px auto 80px;display:flex;flex-direction:column;gap:0;background:#fff;border-radius:16px;box-shadow:0 2px 40px rgba(0,0,0,.1);overflow:hidden}
+
+/* HEADER */
+.doc-header{background:var(--dark);padding:40px 48px 36px;position:relative;overflow:hidden}
+.doc-header::before{content:'';position:absolute;top:-80px;right:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(0,180,216,.18) 0%,transparent 70%);pointer-events:none}
+.doc-header::after{content:'';position:absolute;bottom:-60px;left:-40px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.14) 0%,transparent 70%);pointer-events:none}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1;margin-bottom:20px}
+.header-badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{padding:6px 13px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.b-teal{background:rgba(0,180,216,.2);color:#00D4FA;border:1px solid rgba(0,180,216,.35)}
+.b-orange{background:rgba(255,107,53,.2);color:#FF8A60;border:1px solid rgba(255,107,53,.35)}
+.b-muted{background:rgba(255,255,255,.08);color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.15)}
+.doc-title{font-size:36px;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.05;position:relative;z-index:1}
+.doc-title span{color:var(--teal)}
+.doc-sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:7px;position:relative;z-index:1}
+
+/* IDENTITY ROW */
+.identity-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;overflow:hidden;margin-top:24px;position:relative;z-index:1}
+.id-cell{padding:13px 18px}
+.id-cell+.id-cell{border-left:1px solid rgba(255,255,255,.08)}
+.id-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px}
+.id-input{font-size:15px;font-weight:600;color:rgba(255,255,255,.85);background:transparent;border:none;border-bottom:1.5px solid rgba(255,255,255,.2);outline:none;width:100%;padding:2px 0;font-family:var(--ff)}
+.id-input::placeholder{color:rgba(255,255,255,.2);font-weight:400}
+.id-input:focus{border-bottom-color:var(--teal)}
+
+/* STEP STRIP */
+.step-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-top:1px solid rgba(255,255,255,.07);margin-top:20px;position:relative;z-index:1}
+.step-seg{padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.step-seg+.step-seg{border-left:1px solid rgba(255,255,255,.07)}
+.ss-num{font-size:18px;font-weight:800;color:#fff;line-height:1}
+.ss-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.7)}
+.ss-time{font-size:11px;color:rgba(255,255,255,.35)}
+
+/* BODY */
+.doc-body{padding:44px 48px;display:flex;flex-direction:column;gap:36px}
+.section-hd{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+/* BRIEF CANVAS */
+.canvas-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.canvas-cell{border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.canvas-cell.wide{grid-column:1/-1}
+.cc-head{display:flex;align-items:center;gap:10px;padding:11px 16px}
+.cc-num{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.cc-title{font-size:13px;font-weight:700}
+.cc-example{font-size:11px;opacity:.6;font-style:italic;margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.cc-body{padding:12px 16px;background:#fff}
+.cc-body textarea{width:100%;min-height:60px;border:none;border-bottom:1.5px solid var(--border);outline:none;font-family:var(--ff);font-size:15px;color:var(--text);line-height:1.6;resize:none;display:block;padding:4px 0 6px;background:transparent}
+.cc-body textarea::placeholder{color:#B0B8C8;font-style:italic}
+.cc-body textarea:focus{border-bottom-color:var(--teal)}
+/* canvas color variants */
+.cv0 .cc-head{background:rgba(85,107,122,.1)} .cv0 .cc-num{background:var(--s0)} .cv0 .cc-title{color:var(--s0)}
+.cv1 .cc-head{background:rgba(0,87,168,.08)} .cv1 .cc-num{background:var(--s1)} .cv1 .cc-title{color:var(--s1)}
+.cv2 .cc-head{background:rgba(255,107,53,.08)} .cv2 .cc-num{background:var(--s2)} .cv2 .cc-title{color:var(--s2)}
+.cv3 .cc-head{background:rgba(6,214,160,.08)} .cv3 .cc-num{background:var(--s3)} .cv3 .cc-title{color:var(--s3)}
+.cv4 .cc-head{background:rgba(109,98,232,.08)} .cv4 .cc-num{background:var(--s4)} .cv4 .cc-title{color:var(--s4)}
+
+/* DESAFIOS */
+.desafios-stack{display:flex;flex-direction:column;gap:18px}
+.desafio-card{border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.dc-head{display:flex;align-items:center;gap:12px;padding:13px 18px}
+.dc-level{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:5px 11px;border-radius:20px}
+.dc-title{font-size:15px;font-weight:700;flex:1}
+.dc-time{font-size:12px;color:var(--muted);white-space:nowrap}
+.dc-body{padding:16px 18px;background:#fff;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
+.dc-text{font-size:15px;color:var(--muted);line-height:1.6}
+.dc-check{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:70px}
+.dc-check span{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.dc-check input[type=checkbox]{width:22px;height:22px;accent-color:var(--teal);cursor:pointer}
+.dc-dica{margin-top:10px;padding:10px 14px;background:rgba(0,180,216,.06);border-radius:6px;font-size:13px;color:var(--muted);line-height:1.55;border-left:3px solid var(--teal)}
+.dc-dica strong{color:var(--teal)}
+
+/* lv colors */
+.lv-g .dc-head{background:rgba(6,214,160,.08)} .lv-g .dc-level{background:rgba(6,214,160,.15);color:var(--s3)} .lv-g .dc-title{color:var(--s3)}
+.lv-o .dc-head{background:rgba(255,107,53,.08)} .lv-o .dc-level{background:rgba(255,107,53,.15);color:var(--orange)} .lv-o .dc-title{color:var(--orange)}
+.lv-p .dc-head{background:rgba(109,98,232,.08)} .lv-p .dc-level{background:rgba(109,98,232,.15);color:var(--purple)} .lv-p .dc-title{color:var(--purple)}
+
+/* NOTAS DE TRABALHO */
+.work-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.work-cell{background:var(--gray);border-radius:10px;padding:16px 18px}
+.wc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+.wc-lines{display:flex;flex-direction:column;gap:0}
+.wc-line{border-bottom:1px solid var(--border);padding:8px 0;min-height:36px}
+
+/* REFLEXÃO */
+.reflexao-stack{display:flex;flex-direction:column;gap:12px}
+.rx-card{background:var(--gray);border-radius:10px;padding:16px 20px}
+.rx-label{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px}
+.rx-label span{font-style:italic;font-weight:400;color:var(--muted)}
+.rx-input{width:100%;border:none;border-bottom:1.5px solid var(--border);outline:none;font-family:var(--ff);font-size:15px;color:var(--text);background:transparent;padding:4px 0 6px;line-height:1.5;resize:none;min-height:36px;display:block}
+.rx-input:focus{border-bottom-color:var(--teal)}
+
+/* AUTO-AVALIAÇÃO */
+.aa-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.aa-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--gray);border-radius:8px;font-size:14px}
+.aa-label{color:var(--text);font-weight:500}
+.aa-stars{display:flex;gap:4px}
+.star{width:26px;height:26px;border-radius:6px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:background .1s,border-color .1s;font-family:var(--fm);font-weight:700;color:var(--muted)}
+.star:hover,.star.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.aa-desafios{background:var(--gray);border-radius:10px;padding:16px 20px}
+.aa-desafios-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px}
+.aa-tally{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.aa-tally-item{display:flex;align-items:center;gap:8px;font-size:14px}
+.aa-tally-item input{width:40px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--fm);font-size:15px;font-weight:700;color:var(--text);text-align:center;outline:none}
+.aa-tally-item input:focus{border-color:var(--teal)}
+.aa-total{font-size:24px;font-weight:800;color:var(--teal)}
+
+/* GLOSSÁRIO */
+.gloss-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.gloss-card{background:var(--gray);border-radius:8px;padding:12px 16px}
+.gloss-term{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;font-family:var(--fm)}
+.gloss-def{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* FOOTER */
+.doc-footer{background:var(--dark);padding:22px 48px;display:flex;justify-content:space-between;align-items:center}
+.footer-left{font-size:12px;color:rgba(255,255,255,.3);line-height:1.7}
+.footer-right{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.2)}
+
+@media print{
+  body{background:#fff}
+  .print-bar{display:none!important}
+  .page{max-width:none;margin:0;border-radius:0;box-shadow:none}
+  .doc-body{padding:28px 36px}
+  .doc-header{padding:28px 36px}
+}
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <button class="btn-print" onclick="window.print()">🖨️ Imprimir ficha</button>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="header-top">
+      <div class="header-badges">
+        <span class="badge b-teal">[EMOJI_ATIVIDADE] [NOME_ATIVIDADE]</span>
+        <span class="badge b-orange">[ÁREA_STEM]</span>
+        <span class="badge b-muted">[PÚBLICO] · [DURAÇÃO]</span>
+      </div>
+    </div>
+    <div class="doc-title">Ficha de <span>Projeto</span></div>
+    <div class="doc-sub">Centro de Inovação Carlos Fiolhais · Clube de Código</div>
+
+    <div class="identity-row">
+      <div class="id-cell"><div class="id-lbl">Nome</div><input class="id-input" type="text" placeholder="O teu nome"></div>
+      <div class="id-cell"><div class="id-lbl">Grupo</div><input class="id-input" type="text" placeholder="Nome do grupo"></div>
+      <div class="id-cell"><div class="id-lbl">Data</div><input class="id-input" type="text" placeholder="dd/mm/aaaa"></div>
+    </div>
+
+    <div class="step-strip">
+      <div class="step-seg"><span class="ss-num" style="color:var(--s0)">0</span><span class="ss-name">Setup</span><span class="ss-time">10 min</span></div>
+      <div class="step-seg"><span class="ss-num" style="color:var(--s1)">1</span><span class="ss-name">Identificar</span><span class="ss-time">20 min</span></div>
+      <div class="step-seg"><span class="ss-num" style="color:var(--s2)">2</span><span class="ss-name">Desafiar</span><span class="ss-time">50 min</span></div>
+      <div class="step-seg"><span class="ss-num" style="color:var(--s3)">3</span><span class="ss-name">Validar</span><span class="ss-time">20 min</span></div>
+      <div class="step-seg"><span class="ss-num" style="color:var(--s4)">4</span><span class="ss-name">Retrospetiva</span><span class="ss-time">15 min</span></div>
+    </div>
+  </div>
+
+  <div class="doc-body">
+
+    <!-- BRIEF CANVAS ──────────────────────────────────────────── -->
+    <section>
+      <div class="section-hd">📋 Brief Canvas — preencher no Step 1</div>
+      <div class="canvas-grid">
+
+        <!-- Campo 1 — O que descobrimos / aprendemos -->
+        <div class="canvas-cell cv0">
+          <div class="cc-head">
+            <div class="cc-num">1</div>
+            <div class="cc-title">[CANVAS_CAMPO_1 — ex: O que descobrimos?]</div>
+            <div class="cc-example">ex: [CANVAS_EXEMPLO_1]</div>
+          </div>
+          <div class="cc-body">
+            <textarea placeholder="[CANVAS_HINT_1 — ex: Descreve o que exploraste na ferramenta nos primeiros minutos]"></textarea>
+          </div>
+        </div>
+
+        <!-- Campo 2 — Para que serve -->
+        <div class="canvas-cell cv1">
+          <div class="cc-head">
+            <div class="cc-num">2</div>
+            <div class="cc-title">[CANVAS_CAMPO_2 — ex: Para que serve?]</div>
+            <div class="cc-example">ex: [CANVAS_EXEMPLO_2]</div>
+          </div>
+          <div class="cc-body">
+            <textarea placeholder="[CANVAS_HINT_2 — ex: Em que situações reais seria útil o que aprendeste?]"></textarea>
+          </div>
+        </div>
+
+        <!-- Campo 3 — Que problema resolve -->
+        <div class="canvas-cell cv2">
+          <div class="cc-head">
+            <div class="cc-num">3</div>
+            <div class="cc-title">[CANVAS_CAMPO_3 — ex: Que problema resolve?]</div>
+            <div class="cc-example">ex: [CANVAS_EXEMPLO_3]</div>
+          </div>
+          <div class="cc-body">
+            <textarea placeholder="[CANVAS_HINT_3 — ex: Que problema real ou necessidade o teu projeto endereça?]"></textarea>
+          </div>
+        </div>
+
+        <!-- Campo 4 — Ideia de desafio (validado pelo dinamizador) -->
+        <div class="canvas-cell cv3">
+          <div class="cc-head">
+            <div class="cc-num">4</div>
+            <div class="cc-title">[CANVAS_CAMPO_4 — ex: Ideia de desafio ✓]</div>
+            <div class="cc-example">ex: [CANVAS_EXEMPLO_4]</div>
+          </div>
+          <div class="cc-body">
+            <textarea placeholder="[CANVAS_HINT_4 — ex: O que o teu grupo vai criar? Sê específico: objeto + destinatário]"></textarea>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--muted)">
+              <input type="checkbox" style="width:15px;height:15px;accent-color:var(--teal);cursor:pointer">
+              <span>Validado pelo dinamizador</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campo 5 — Critérios de sucesso (wide) -->
+        <div class="canvas-cell cv4 wide">
+          <div class="cc-head">
+            <div class="cc-num">5</div>
+            <div class="cc-title">[CANVAS_CAMPO_5 — ex: Critérios de sucesso — como sabemos que funcionou?]</div>
+            <div class="cc-example">ex: [CANVAS_EXEMPLO_5]</div>
+          </div>
+          <div class="cc-body">
+            <textarea style="min-height:48px" placeholder="[CANVAS_HINT_5 — ex: Define 2-3 critérios mensuráveis. Evita subjetivo como 'ficou bonito' — prefere verificável como 'paredes ≥ 1.2mm']"></textarea>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- DESAFIOS ──────────────────────────────────────────────── -->
+    <section>
+      <div class="section-hd">🎯 Desafios — escolhe o teu nível</div>
+      <div class="desafios-stack">
+
+        <!-- Desafio Iniciante -->
+        <div class="desafio-card lv-g">
+          <div class="dc-head">
+            <span class="dc-level">🟢 Iniciante</span>
+            <span class="dc-title">[DESAFIO_1_TÍTULO]</span>
+            <span class="dc-time">10–15 min</span>
+          </div>
+          <div class="dc-body">
+            <div>
+              <div class="dc-text">[DESAFIO_1_TEXTO — enunciado claro do que fazer. Incluir 2-3 requisitos concretos.]</div>
+              <div class="dc-dica"><strong>Dica:</strong> [DESAFIO_1_DICA — sugestão técnica ou processo específico desta atividade]</div>
+            </div>
+            <div class="dc-check"><input type="checkbox"><span>Feito ✓</span></div>
+          </div>
+        </div>
+
+        <!-- Desafio Intermédio -->
+        <div class="desafio-card lv-o">
+          <div class="dc-head">
+            <span class="dc-level">🟠 Intermédio</span>
+            <span class="dc-title">[DESAFIO_2_TÍTULO]</span>
+            <span class="dc-time">20–30 min</span>
+          </div>
+          <div class="dc-body">
+            <div>
+              <div class="dc-text">[DESAFIO_2_TEXTO — enunciado com mais requisitos que o iniciante. Introduz uma variável nova.]</div>
+              <div class="dc-dica"><strong>Dica:</strong> [DESAFIO_2_DICA]</div>
+            </div>
+            <div class="dc-check"><input type="checkbox"><span>Feito ✓</span></div>
+          </div>
+        </div>
+
+        <!-- Desafio Avançado -->
+        <div class="desafio-card lv-p">
+          <div class="dc-head">
+            <span class="dc-level">🟣 Avançado</span>
+            <span class="dc-title">[DESAFIO_3_TÍTULO]</span>
+            <span class="dc-time">30–45 min</span>
+          </div>
+          <div class="dc-body">
+            <div>
+              <div class="dc-text">[DESAFIO_3_TEXTO — desafio aberto ou criativo que exige domínio do conceito central.]</div>
+              <div class="dc-dica"><strong>Dica:</strong> [DESAFIO_3_DICA]</div>
+            </div>
+            <div class="dc-check"><input type="checkbox"><span>Feito ✓</span></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- NOTAS DE TRABALHO ─────────────────────────────────────── -->
+    <section>
+      <div class="section-hd">📝 Notas de trabalho — Step 2</div>
+      <div class="work-grid">
+        <div class="work-cell">
+          <div class="wc-label">[NOTAS_COLUNA_1 — ex: Tentativas e observações]</div>
+          <div class="wc-lines">
+            <div class="wc-line"></div><div class="wc-line"></div><div class="wc-line"></div>
+            <div class="wc-line"></div><div class="wc-line"></div>
+          </div>
+        </div>
+        <div class="work-cell">
+          <div class="wc-label">[NOTAS_COLUNA_2 — ex: O que mudei e porquê]</div>
+          <div class="wc-lines">
+            <div class="wc-line"></div><div class="wc-line"></div><div class="wc-line"></div>
+            <div class="wc-line"></div><div class="wc-line"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REFLEXÃO ──────────────────────────────────────────────── -->
+    <section>
+      <div class="section-hd">💬 Reflexão — Step 4</div>
+      <div class="reflexao-stack">
+        <!-- Substituir com 3 frases-guia específicas da atividade -->
+        <div class="rx-card">
+          <div class="rx-label">Aprendi que… <span>[REFLEXAO_1_HINT — ex: (algo sobre o conceito central)]</span></div>
+          <textarea class="rx-input" placeholder="[REFLEXAO_1_PLACEHOLDER — ex: Aprendi que coordenadas 2D podem descrever qualquer objeto simétrico...]"></textarea>
+        </div>
+        <div class="rx-card">
+          <div class="rx-label">Fiquei surpreendido quando… <span>[REFLEXAO_2_HINT]</span></div>
+          <textarea class="rx-input" placeholder="[REFLEXAO_2_PLACEHOLDER]"></textarea>
+        </div>
+        <div class="rx-card">
+          <div class="rx-label">Na próxima vez quero… <span>[REFLEXAO_3_HINT]</span></div>
+          <textarea class="rx-input" placeholder="[REFLEXAO_3_PLACEHOLDER]"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTO-AVALIAÇÃO ────────────────────────────────────────── -->
+    <section>
+      <div class="section-hd">⭐ Auto-avaliação</div>
+      <div class="aa-grid">
+        <!-- Substituir com 4 competências relevantes para esta atividade -->
+        <div class="aa-row">
+          <span class="aa-label">[COMPETENCIA_1 — ex: Compreendo o conceito central]</span>
+          <div class="aa-stars" id="aa1"></div>
+        </div>
+        <div class="aa-row">
+          <span class="aa-label">[COMPETENCIA_2 — ex: Uso a ferramenta com autonomia]</span>
+          <div class="aa-stars" id="aa2"></div>
+        </div>
+        <div class="aa-row">
+          <span class="aa-label">[COMPETENCIA_3 — ex: Sei iterar a partir dos erros]</span>
+          <div class="aa-stars" id="aa3"></div>
+        </div>
+        <div class="aa-row">
+          <span class="aa-label">[COMPETENCIA_4 — ex: Colaborei e partilhei descobertas]</span>
+          <div class="aa-stars" id="aa4"></div>
+        </div>
+      </div>
+
+      <div class="aa-desafios">
+        <div class="aa-desafios-lbl">Desafios completados</div>
+        <div class="aa-tally">
+          <div class="aa-tally-item">🟢 Iniciante <input type="text" maxlength="1" value=""></div>
+          <div class="aa-tally-item">🟠 Intermédio <input type="text" maxlength="1" value=""></div>
+          <div class="aa-tally-item">🟣 Avançado <input type="text" maxlength="1" value=""></div>
+          <span style="font-size:14px;color:var(--muted)">Total:</span>
+          <span class="aa-total" id="total">0</span>
+          <span style="font-size:14px;color:var(--muted)">/ 3</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- GLOSSÁRIO ─────────────────────────────────────────────── -->
+    <section>
+      <div class="section-hd">📚 Glossário — termos-chave</div>
+      <div class="gloss-grid">
+        <!-- Substituir com 4-8 termos específicos desta atividade -->
+        <div class="gloss-card">
+          <div class="gloss-term">[TERMO_1]</div>
+          <div class="gloss-def">[DEFINICAO_1 — definição simples, 1-2 frases]</div>
+        </div>
+        <div class="gloss-card">
+          <div class="gloss-term">[TERMO_2]</div>
+          <div class="gloss-def">[DEFINICAO_2]</div>
+        </div>
+        <div class="gloss-card">
+          <div class="gloss-term">[TERMO_3]</div>
+          <div class="gloss-def">[DEFINICAO_3]</div>
+        </div>
+        <div class="gloss-card">
+          <div class="gloss-term">[TERMO_4]</div>
+          <div class="gloss-def">[DEFINICAO_4]</div>
+        </div>
+        <div class="gloss-card">
+          <div class="gloss-term">[TERMO_5]</div>
+          <div class="gloss-def">[DEFINICAO_5]</div>
+        </div>
+        <div class="gloss-card">
+          <div class="gloss-term">[TERMO_6]</div>
+          <div class="gloss-def">[DEFINICAO_6]</div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /doc-body -->
+
+  <div class="doc-footer">
+    <div class="footer-left">Centro de Inovação Carlos Fiolhais · CDI Portugal<br>cicf.pt · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d1b2beb5b8b6be91b2b8b2b7ffa1a5">[email&#160;protected]</a></div>
+    <div class="footer-right">CC BY-SA 4.0</div>
+  </div>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// Star ratings
+['aa1','aa2','aa3','aa4'].forEach(id => {
+  const el = document.getElementById(id);
+  let val = 0;
+  for (let i = 1; i <= 5; i++) {
+    const s = document.createElement('div');
+    s.className = 'star'; s.textContent = i; s.dataset.v = i;
+    s.onclick = () => {
+      val = i;
+      el.querySelectorAll('.star').forEach(x => x.classList.toggle('on', +x.dataset.v <= val));
+    };
+    el.appendChild(s);
+  }
+});
+
+// Textarea auto-resize
+document.querySelectorAll('textarea').forEach(ta => {
+  ta.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.max(36, this.scrollHeight) + 'px';
+  });
+});
+
+// Desafio tally counter
+const tallyInputs = document.querySelectorAll('.aa-tally input');
+const totalEl = document.getElementById('total');
+tallyIn

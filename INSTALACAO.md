@@ -1,98 +1,175 @@
-# ⚡ Instalação Rápida — Pixel3D
+# ⚡ GUIA RÁPIDO DE INSTALAÇÃO
 
-## Início em 3 passos (5 minutos)
+## 🚀 Para começar IMEDIATAMENTE (5 minutos):
 
+### 1. Extrair ficheiros
 ```bash
-# 1. Extrair ficheiros
-unzip pixel3d.zip && cd pixel3d/
-
-# 2. Iniciar servidor
-python3 -m http.server 8000
-
-# 3. Abrir no browser
-# http://localhost:8000
+unzip clube-codigo-3d.zip
+cd clube-codigo-3d/
 ```
+
+### 2. Iniciar servidor
+```bash
+python3 -m http.server 8000
+```
+
+### 3. Abrir no browser
+Abre: `http://localhost:8000`
 
 **PRONTO! ✅**
 
 ---
 
-## Checklist por PC (antes dos participantes chegarem)
+## 📋 Checklist Pré-Sessão
 
-- [ ] Servidor a correr (`python3 -m http.server 8000`)
-- [ ] Browser aberto em `http://localhost:8000`
-- [ ] Humanóide visível no ecrã
-- [ ] Testar adicionar 1 bloco e remover com clique direito
-- [ ] Testar rodar câmera (arrastar botão esquerdo)
+Fazer em **cada PC** antes dos participantes chegarem:
 
-**Tempo:** ~2 minutos por PC
+- [ ] Extrair ficheiros do ZIP
+- [ ] Testar servidor local (`python3 -m http.server 8000`)
+- [ ] Abrir browser em `http://localhost:8000`
+- [ ] Verificar que vês o vaso inicial
+- [ ] Testar editar JSON e clicar "Carregar"
+- [ ] Testar controlos de mouse (arrastar, scroll)
+
+**Tempo total:** ~2-3 minutos por PC
 
 ---
 
-## Sem Python?
+## 🖨️ Material para Imprimir
 
-**Opção A — Node.js:**
+Antes da sessão, imprime (1 cópia por participante):
+
+1. **DESAFIOS.md** - Folha de desafios com check-boxes
+2. **GUIA.md** (opcional) - Referência detalhada
+
+**OU** projecta o GUIA.md num ecrã auxiliar para consulta.
+
+---
+
+## 📦 Estrutura dos Ficheiros
+
+```
+clube-codigo-3d/
+│
+├── index.html              ← Aplicação web
+├── app.js                  ← Lógica JavaScript
+│
+├── README.md               ← Para o facilitador
+├── GUIA.md                 ← Para os participantes
+├── DESAFIOS.md             ← Folha de exercícios
+├── APRESENTACAO.md         ← Notas para apresentar
+│
+└── exemplos/               ← 8 exemplos JSON
+    ├── 01_copo.json
+    ├── 02_tigela.json
+    ├── 03_garrafa.json
+    ├── 04_candeeiro.json
+    ├── 05_torre_xadrez.json
+    ├── 06_foguetao.json
+    ├── 07_base_fractal.json
+    └── 08_arvore_natal.json
+```
+
+---
+
+## 🎯 Ordem de Leitura dos Documentos
+
+**ANTES da sessão:**
+1. `README.md` - Visão geral completa
+2. `APRESENTACAO.md` - Como apresentar
+3. Testar app (`index.html`)
+
+**DURANTE a sessão:**
+- Ter `APRESENTACAO.md` aberto
+- Ter `GUIA.md` à mão para questões
+- Dar `DESAFIOS.md` aos participantes
+
+**PARA PARTICIPANTES:**
+- `GUIA.md` - Tutorial completo
+- `DESAFIOS.md` - Exercícios práticos
+- `exemplos/*.json` - Para copiar/modificar
+
+---
+
+## 🔧 Resolução Rápida de Problemas
+
+### "Servidor não inicia"
 ```bash
-npx serve .
+# Tenta outra porta
+python3 -m http.server 8080
+
+# Ou usa Python 2
+python -m SimpleHTTPServer 8000
 ```
 
-**Opção B — Firefox direto (sem servidor):**
-Abre `index.html` diretamente no Firefox. PNG funciona. GIF pode não funcionar.
+### "Browser não carrega"
+1. Verifica firewall
+2. Tenta `http://127.0.0.1:8000`
+3. Último recurso: abre `index.html` directamente (pode ter limitações)
 
-**Opção C — Live Server (VS Code):**
-Clique direito em `index.html` → "Open with Live Server"
-
----
-
-## Problemas Frequentes
-
-| Problema | Solução |
-|----------|---------|
-| "Porta 8000 em uso" | `python3 -m http.server 8080` |
-| Browser não carrega | Tenta `http://127.0.0.1:8000` |
-| GIF não exporta | Usa servidor HTTP (não ficheiro direto) |
-| Aplicação lenta | Menos blocos; fechar outros separadores |
+### "JSON não carrega"
+- Verifica vírgulas no JSON
+- Usa F12 para ver erros no console
+- Copia exemplo funcional primeiro
 
 ---
 
-## Material a Imprimir
+## 💡 Dicas de Última Hora
 
-- **DESAFIOS.md** — 1 por participante (essencial)
-- **FICHA_PROJETO_STEP.md** — 1 por participante (opcional, mais completa)
-- **GUIA.md** — 1 por PC ou projetar num ecrã auxiliar
-
----
-
-## Ordem de Leitura (para o dinamizador)
-
-1. `README.md` — Visão geral (15 min)
-2. `GUIAO_DINAMIZADOR.md` — Sessão detalhada (20 min)
-3. `APRESENTACAO.md` — Script dos slides (10 min)
-4. Testar a app (10 min)
+1. **Testa TUDO antes** dos participantes chegarem
+2. Tem **browser reserva** pronto (Firefox E Chrome)
+3. Prepara **1-2 exemplos extra** teus próprios
+4. Se possível, ter **ecrã auxiliar** com GUIA.md
+5. **Timer visível** ajuda a gerir tempo dos desafios
 
 ---
 
-## Estrutura de Ficheiros
+## 📞 Se Algo Correr Mal
+
+**Plano B - Demonstração Colectiva:**
+
+Se muitos PCs tiverem problemas:
+1. Um PC funcional ligado ao projetor
+2. Fazer exercícios todos juntos
+3. Cada participante diz valores, facilitador escreve
+4. Todos vêem resultado projetado
+5. Menos "hands-on" mas funciona!
+
+---
+
+## ⏱️ Timeline da Sessão (90 min)
 
 ```
-pixel3d/
-├── index.html              ← Aplicação
-├── app.js                  ← Lógica
-├── apresentacao.html       ← Slides (10 slides)
-├── README.md               ← Visão geral
-├── GUIAO_DINAMIZADOR.md    ← Script da sessão STEP
-├── FICHA_PROJETO_STEP.md   ← Ficha de projeto (imprimir)
-├── DESAFIOS.md             ← Folha de desafios (imprimir)
-├── GUIA.md                 ← Tutorial para participantes
-├── APRESENTACAO.md         ← Notas de apresentação
-├── INSTALACAO.md           ← Este ficheiro
-└── exemplos/               ← 4 modelos JSON prontos
-    ├── personagem_guerreiro.json
-    ├── arvore_magica.json
-    ├── casa_basica.json
-    └── foguetao_espacial.json
+0:00 - 0:15  │ Apresentação + Introdução
+0:15 - 0:35  │ Exploração guiada (todos juntos)
+0:35 - 1:15  │ Desafios individuais/pares
+1:15 - 1:30  │ Galeria + Discussão
 ```
 
 ---
 
-**Boa sessão! 🎮✨**
+## ✅ Checklist Final
+
+Antes de começar a sessão:
+
+**Técnico:**
+- [ ] Todos os PCs funcionam
+- [ ] Servidor a correr em cada PC
+- [ ] Browsers abertos
+- [ ] Projetor ligado
+
+**Material:**
+- [ ] DESAFIOS.md impresso (1 por pessoa)
+- [ ] GUIA.md disponível (impresso ou digital)
+- [ ] Tua cópia de APRESENTACAO.md
+
+**Ambiente:**
+- [ ] Sala organizada
+- [ ] Participantes sabem onde sentar
+- [ ] Hora de início clara
+
+---
+
+**Tudo pronto? Diverte-te! 🎨✨**
+
+**Qualquer problema:** Improvisa, adapta, continua! O importante é que aprendam e se divirtam. 😊

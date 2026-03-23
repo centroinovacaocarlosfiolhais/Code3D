@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  TEMPLATE — GUIÃO DO DINAMIZADOR                                 ║
+  ║  CICF DESIGN SYSTEM v1.0 — uso interno, não distribuir          ║
+  ║                                                                  ║
+  ║  PLACEHOLDERS A SUBSTITUIR:                                      ║
+  ║  [NOME_ATIVIDADE]         → ex: CODE3D, BioSense                 ║
+  ║  [ÁREA_STEM]              → ex: Design 3D, Biologia              ║
+  ║  [PÚBLICO]                → ex: 12–16 anos                       ║
+  ║  [DURAÇÃO]                → ex: 2 horas                          ║
+  ║  [GRUPOS]                 → ex: 3–6 grupos de 2–4                ║
+  ║  [FERRAMENTA]             → ferramenta principal                  ║
+  ║  [URL_FERRAMENTA]         → URL da app ou recurso                 ║
+  ║  [OBJETO_STEP0]           → 5 objetos físicos para Step 0        ║
+  ║  [CHECK_DIGITAL_1..3]     → itens de checklist digital            ║
+  ║  [CHECK_MATERIAIS_1..3]   → materiais físicos necessários         ║
+  ║  [CHECK_CONTEUDO_1..3]    → preparação de conteúdo               ║
+  ║  [SCRIPT_0..4]            → frases de abertura de cada step      ║
+  ║  [PERGUNTAS_STEP1..2]     → perguntas de circulação              ║
+  ║  [CANVAS_1..5]            → orientação por campo do Brief Canvas ║
+  ║  [FASES_STEP2_1..3]       → 3 fases internas do Step 2           ║
+  ║  [QUESTOES_SOCRATES]      → perguntas de desbloqueio             ║
+  ║  [DELIVERABLE_STEP2]      → o que cada grupo deve produzir       ║
+  ║  [CONTINGENCIA_1..7]      → planos de contingência               ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[NOME_ATIVIDADE] — Guião do Dinamizador · CICF</title>
+<style>
+/* ── CICF DESIGN SYSTEM v1.0 ── */
+:root {
+  --dark:#0D1B2A; --teal:#00B4D8; --green:#06D6A0;
+  --orange:#FF6B35; --blue:#0057A8; --purple:#6D62E8;
+  --amber:#F59E0B; --red:#EF4444;
+  --gray:#F2F5F9; --text:#1A2535; --muted:#5A6B7E; --border:#DDE3EC;
+  --s0:#556B7A; --s1:#0057A8; --s2:#FF6B35; --s3:#06D6A0; --s4:#6D62E8;
+  --ff:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --fm:'Courier New',Courier,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#EEF1F6;font-family:var(--ff);color:var(--text);font-size:16px;line-height:1.6}
+
+.print-bar{position:fixed;bottom:28px;right:28px;z-index:999}
+.btn-print{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:8px;border:none;cursor:pointer;font-family:var(--ff);font-size:15px;font-weight:600;background:var(--teal);color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .15s}
+.btn-print:hover{transform:translateY(-2px)}
+
+.page{max-width:900px;margin:40px auto;background:#fff;border-radius:16px;box-shadow:0 2px 40px rgba(0,0,0,.1);overflow:hidden}
+
+/* HEADER */
+.doc-header{background:var(--dark);padding:44px 52px 40px;position:relative;overflow:hidden}
+.doc-header::before{content:'';position:absolute;bottom:-100px;right:-60px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.2) 0%,transparent 70%);pointer-events:none}
+.header-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;position:relative;z-index:1}
+.badge{padding:6px 13px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.b-teal{background:rgba(0,180,216,.2);color:#00D4FA;border:1px solid rgba(0,180,216,.35)}
+.b-orange{background:rgba(255,107,53,.2);color:#FF8A60;border:1px solid rgba(255,107,53,.35)}
+.b-muted{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.15)}
+.doc-title{font-size:38px;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.05;position:relative;z-index:1}
+.doc-title span{color:var(--teal)}
+.doc-sub{font-size:15px;color:rgba(255,255,255,.4);margin-top:8px;position:relative;z-index:1}
+.meta-row{display:grid;grid-template-columns:repeat(4,1fr);position:relative;z-index:1;margin-top:28px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;overflow:hidden}
+.meta-cell{padding:13px 18px}
+.meta-cell+.meta-cell{border-left:1px solid rgba(255,255,255,.08)}
+.meta-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:4px}
+.meta-val{font-size:14px;font-weight:600;color:rgba(255,255,255,.8)}
+
+/* BODY */
+.doc-body{padding:48px 52px}
+.section{margin-bottom:44px}
+.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+
+/* TIMELINE */
+.timeline{display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.tl-seg{display:flex;flex-direction:column;padding:14px 16px;border-right:1px solid var(--border)}
+.tl-seg:last-child{border-right:none}
+.tl-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.tl-name{font-size:13px;font-weight:600}
+.tl-min{font-size:12px;margin-top:6px;font-weight:700}
+.tl-bar{height:4px;border-radius:2px;margin-top:10px}
+.tl-0{flex:10}.tl-1{flex:20}.tl-2{flex:50}.tl-3{flex:20}.tl-4{flex:15}
+.c0{color:var(--s0)}.c1{color:var(--s1)}.c2{color:var(--s2)}.c3{color:var(--s3)}.c4{color:var(--s4)}
+.bg0{background:var(--s0)}.bg1{background:var(--s1)}.bg2{background:var(--s2)}.bg3{background:var(--s3)}.bg4{background:var(--s4)}
+
+/* CHECKLIST */
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.checklist-col{background:var(--gray);border-radius:10px;padding:20px 22px}
+.checklist-col h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:14px}
+.check-item{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+.check-item:last-child{border-bottom:none}
+.check-item input[type=checkbox]{width:15px;height:15px;margin-top:3px;accent-color:var(--teal);flex-shrink:0;cursor:pointer}
+
+/* STEP BLOCKS */
+.step-block{border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-bottom:24px}
+.step-head{display:flex;align-items:center;gap:14px;padding:16px 22px}
+.sh0{background:rgba(85,107,122,.1)}.sh1{background:rgba(0,87,168,.09)}.sh2{background:rgba(255,107,53,.09)}.sh3{background:rgba(6,214,160,.09)}.sh4{background:rgba(109,98,232,.09)}
+.step-pip{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0}
+.pip0{background:var(--s0)}.pip1{background:var(--s1)}.pip2{background:var(--s2)}.pip3{background:var(--s3)}.pip4{background:var(--s4)}
+.step-head-text{flex:1}
+.step-head-name{font-size:17px;font-weight:700}
+.step-head-sub{font-size:13px;color:var(--muted);margin-top:1px}
+.step-role{font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;background:rgba(0,0,0,.07);color:var(--muted);white-space:nowrap}
+.step-time-badge{font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;background:rgba(0,0,0,.07);color:var(--muted)}
+.step-body-inner{padding:22px 24px}
+
+.script-box{background:rgba(0,87,168,.06);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:16px 20px;margin-bottom:20px}
+.script-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:8px}
+.script-box p{font-size:15px;font-style:italic;color:var(--muted);line-height:1.65}
+
+.task-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.task-list li{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.5}
+.task-list li::before{content:'→';color:var(--teal);font-weight:700;flex-shrink:0;margin-top:1px}
+
+.questions-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:10px;padding:18px 20px;margin-bottom:18px}
+.questions-box h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);margin-bottom:12px}
+.questions-box ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.questions-box ul li{font-size:14px;font-style:italic;color:var(--muted);padding-left:18px;position:relative;line-height:1.5}
+.questions-box ul li::before{content:'?';position:absolute;left:0;font-weight:700;color:var(--amber);font-style:normal}
+
+.canvas-guide{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.cg-row{display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.5}
+.cg-num{width:24px;height:24px;border-radius:5px;background:var(--teal);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.cg-text strong{color:var(--text)}
+.cg-text span{color:var(--muted)}
+
+.phase-list{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+.phase-item{background:var(--gray);border-radius:8px;padding:14px 18px}
+.phase-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--orange);margin-bottom:6px}
+.phase-body{font-size:14px;color:var(--muted);line-height:1.55}
+
+.transition-box{display:flex;gap:12px;align-items:flex-start;background:rgba(0,0,0,.04);border-radius:8px;padding:14px 18px;margin-top:16px}
+.transition-box-icon{font-size:18px;flex-shrink:0}
+.transition-box p{font-size:14px;font-style:italic;color:var(--muted);line-height:1.5}
+
+/* GAMIFICATION */
+.game-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.game-card{border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.game-card-head{padding:14px 18px;display:flex;align-items:center;gap:10px}
+.game-card-head h3{font-size:15px;font-weight:700}
+.game-card-body{padding:14px 18px;font-size:14px;color:var(--muted);line-height:1.6}
+.gh-teal{background:rgba(0,180,216,.1)}
+.gh-amber{background:rgba(245,158,11,.1)}
+.gh-green{background:rgba(6,214,160,.1)}
+
+/* CONTINGÊNCIAS */
+.ct-list{display:flex;flex-direction:column;gap:14px}
+.ct-card{border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.ct-head{display:flex;align-items:center;gap:12px;padding:13px 18px;background:rgba(239,68,68,.07);border-bottom:1px solid rgba(239,68,68,.15)}
+.ct-num{width:26px;height:26px;border-radius:6px;background:var(--red);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ct-head strong{font-size:14px;font-weight:700;color:var(--text)}
+.ct-body{padding:14px 18px;font-size:14px;color:var(--muted);line-height:1.6}
+.ct-body strong{color:var(--text)}
+
+/* NOTAS */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.note-field{background:var(--gray);border-radius:10px;padding:16px 18px}
+.note-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:8px}
+.note-field input[type=text],.note-field textarea{width:100%;border:none;border-bottom:1.5px solid var(--border);outline:none;background:transparent;font-family:var(--ff);font-size:15px;color:var(--text);padding:4px 0;line-height:1.5;resize:none}
+.note-field input[type=text]:focus,.note-field textarea:focus{border-bottom-color:var(--teal)}
+.note-field textarea{min-height:56px;display:block}
+.notes-check-row{display:flex;gap:20px;flex-wrap:wrap}
+.notes-check-row label{display:flex;gap:8px;align-items:center;font-size:15px;cursor:pointer}
+.notes-check-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--teal)}
+.star-row{display:flex;gap:4px}
+.star{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .1s,border-color .1s;font-family:var(--fm)}
+.star:hover,.star.on{background:var(--teal);border-color:var(--teal);color:#fff}
+
+/* FOOTER */
+.doc-footer{background:var(--dark);padding:24px 52px;display:flex;justify-content:space-between;align-items:center}
+.footer-left{font-size:13px;color:rgba(255,255,255,.35);line-height:1.7}
+.footer-right{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.25)}
+
+@media print{
+  body{background:#fff;font-size:12px}
+  .print-bar{display:none!important}
+  .page{max-width:none;margin:0;border-radius:0;box-shadow:none}
+  .doc-body{padding:24px 32px}
+  .doc-header{padding:28px 32px}
+  .note-field input[type=text],.note-field textarea{border-bottom:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <button class="btn-print" onclick="window.print()">🖨️ Imprimir guião</button>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="header-badges">
+      <span class="badge b-teal">🛠 MAKE · CODE</span>
+      <span class="badge b-orange">STEP Learning Framework</span>
+      <span class="badge b-muted">Guião do Dinamizador</span>
+    </div>
+    <div class="doc-title"><span>[NOME_ATIVIDADE]</span></div>
+    <div class="doc-sub">Guião do Dinamizador — Uso interno · não distribuir a participantes</div>
+    <div class="meta-row">
+      <div class="meta-cell"><div class="meta-lbl">Duração</div><div class="meta-val">[DURAÇÃO]</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Grupos</div><div class="meta-val">[GRUPOS]</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Idade</div><div class="meta-val">[PÚBLICO]</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Ferramentas</div><div class="meta-val">[FERRAMENTA]</div></div>
+    </div>
+  </div>
+
+  <div class="doc-body">
+
+    <!-- TIMELINE -->
+    <div class="section">
+      <div class="section-title">Timeline da Sessão</div>
+      <div class="timeline">
+        <div class="tl-seg tl-0"><div class="tl-lbl c0">Step 0</div><div class="tl-name">Setup</div><div class="tl-min c0">10 min</div><div class="tl-bar bg0"></div></div>
+        <div class="tl-seg tl-1"><div class="tl-lbl c1">Step 1</div><div class="tl-name">Identificar</div><div class="tl-min c1">20 min</div><div class="tl-bar bg1"></div></div>
+        <div class="tl-seg tl-2"><div class="tl-lbl c2">Step 2</div><div class="tl-name">Desafiar</div><div class="tl-min c2">50 min</div><div class="tl-bar bg2"></div></div>
+        <div class="tl-seg tl-3"><div class="tl-lbl c3">Step 3</div><div class="tl-name">Validar</div><div class="tl-min c3">20 min</div><div class="tl-bar bg3"></div></div>
+        <div class="tl-seg tl-4"><div class="tl-lbl c4">Step 4</div><div class="tl-name">Retrospetiva</div><div class="tl-min c4">15 min</div><div class="tl-bar bg4"></div></div>
+      </div>
+    </div>
+
+    <!-- CHECKLIST D-1 -->
+    <div class="section">
+      <div class="section-title">Checklist D-1 — Preparação (véspera da sessão)</div>
+      <div class="checklist-grid">
+        <div class="checklist-col">
+          <h3>🔧 [EQUIPAMENTO_TÍTULO — ex: Impressoras 3D]</h3>
+          <!-- Substituir com checklist específica do equipamento desta atividade -->
+          <div class="check-item"><input type="checkbox"><span>[CHECK_EQUIPAMENTO_1]</span></div>
+          <div class="check-item"><input type="checkbox"><span>[CHECK_EQUIPAMENTO_2]</span></div>
+          <div class="check-item"><input type="checkbox"><span>[CHECK_EQUIPAMENTO_3]</span></div>
+          <div class="check-item"><input type="checkbox"><span>[CHECK_EQUIPAMENTO_4]</span></div>
+          <div class="check-item"><input type="checkbox"><span>[CHECK_EQUIPAMENTO_5]</span></div>
+        </div>
+        <div class="checklist-col">
+          <h3>💻 Digital</h3>
+          <div class="check-item"><input type="checkbox"><span>Todos os PCs com browser moderno (Chrome ou Firefox)</span></div>
+          <div class="check-item"><input type="checkbox"><span>Testar URL: [URL_FERRAMENTA]</span></div>
+          <div class="check-item"><input type="checkbox"><span>[CHECK_DIGITAL_1]</span></div>
+          <div class="check-item"><input type="checkbox"><span>PC dedicado ao projetor com apresentacao.html pronto</span></div>
+          <div class="check-item"><input type="checkbox"><span>[CHECK_DIGITAL_2]</span></div>
+        </div>
+        <div class="checklist-col">
+          <h3>📦 Materiais físicos</h3>
+          <div class="check-item"><input type="checkbox"><span>5 objetos para Step 0: [OBJETO_STEP0]</span></div>
+          <div class="check-item"><input type="checkbox"><span>Fichas de projeto impressas (1 por participante)</span></div>
+          <div class="check-item"><input type="checkbox"><span>[CHECK_MATERIAIS_1]</span></div>
+          <div class="check-item"><input type="checkbox"><span>[CHECK_MATERIAIS_2]</span></div>
+        </div>
+        <div class="checklist-col">
+          <h3>🧠 Conteúdo</h3>
+          <div class="check-item"><input type="checkbox"><span>[CHECK_CONTEUDO_1 — ex: Rever os 5 exemplos pré-definidos na app]</span></div>
+          <div class="check-item"><input type="checkbox"><span>[CHECK_CONTEUDO_2 — ex: Saber explicar os conceitos centrais]</span></div>
+          <div class="check-item"><input type="checkbox"><span>Ter prontas 3 perguntas de Sócrates para grupos bloqueados</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEPS -->
+    <div class="section">
+      <div class="section-title">Guia por Step</div>
+
+      <!-- ── STEP 0 ── -->
+      <div class="step-block">
+        <div class="step-head sh0">
+          <div class="step-pip pip0">0</div>
+          <div class="step-head-text"><div class="step-head-name">Setup — Preparar o Terreno</div><div class="step-head-sub">Observação silenciosa · ativação</div></div>
+          <div class="step-role">Lidera · cria curiosidade · não explica</div>
+          <div class="step-time-badge">10 min</div>
+        </div>
+        <div class="step-body-inner">
+          <div class="script-box">
+            <div class="script-box-label">📢 Script de abertura</div>
+            <!-- Substituir com frase de abertura específica desta atividade -->
+            <p>"[SCRIPT_0 — ex: Antes de ligar qualquer computador, preciso que olhem para esta mesa. Cinco objetos. Dois minutos em silêncio. O que têm estes objetos em comum?]"</p>
+          </div>
+          <ul class="task-list">
+            <li><span>Colocar os 5 objetos ([OBJETO_STEP0]) na mesa antes de os participantes entrarem</span></li>
+            <li><span>Deixar 2 minutos de silêncio real — não interromper</span></li>
+            <li><span>Recolher as respostas oralmente (1 por pessoa, sem comentar ainda)</span></li>
+            <li><span>Registar as respostas visíveis no quadro/ecrã</span></li>
+            <li><span>Fazer a pergunta de ligação: <em>"[PERGUNTA_LIGACAO_STEP0 — ex: E se eu vos disser que todos estes objetos podem ser descritos com apenas dois números?]"</em></span></li>
+          </ul>
+          <div class="transition-box"><div class="transition-box-icon">▶</div><p>"[TRANSICAO_STEP0 — frase curta que abre o Step 1, ex: Vamos descobrir como. Abram o browser.]"</p></div>
+        </div>
+      </div>
+
+      <!-- ── STEP 1 ── -->
+      <div class="step-block">
+        <div class="step-head sh1">
+          <div class="step-pip pip1">1</div>
+          <div class="step-head-text"><div class="step-head-name">Identificar — Ler o Mundo com Novos Olhos</div><div class="step-head-sub">Exploração · Brief Canvas</div></div>
+          <div class="step-role">Circula · faz perguntas · não dá respostas</div>
+          <div class="step-time-badge">20 min</div>
+        </div>
+        <div class="step-body-inner">
+          <div class="script-box">
+            <div class="script-box-label">📢 Script de abertura</div>
+            <p>"[SCRIPT_1 — instrução para exploração livre + anúncio do Brief Canvas. Manter: 'Se ficarem presos, a primeira pergunta que vou fazer é: O que já tentaram?']"</p>
+          </div>
+          <div class="questions-box">
+            <h4>Perguntas de discussão (usar enquanto circula)</h4>
+            <ul>
+              <!-- Substituir com perguntas específicas desta atividade -->
+              <li>[PERGUNTA_CIRCULACAO_1 — pergunta sobre o conceito central da atividade]</li>
+              <li>[PERGUNTA_CIRCULACAO_2 — pergunta que liga a ferramenta ao mundo real]</li>
+              <li>[PERGUNTA_CIRCULACAO_3 — pergunta que desafia a pensar diferente]</li>
+              <li>[PERGUNTA_CIRCULACAO_4]</li>
+              <li>[PERGUNTA_CIRCULACAO_5]</li>
+            </ul>
+          </div>
+          <p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:12px">Brief Canvas — orientação por campo</p>
+          <div class="canvas-guide">
+            <div class="cg-row"><div class="cg-num">1</div><div class="cg-text"><strong>O que descobrimos:</strong> <span>[CANVAS_1 — orientação para este campo nesta atividade]</span></div></div>
+            <div class="cg-row"><div class="cg-num">2</div><div class="cg-text"><strong>Para que serve:</strong> <span>[CANVAS_2 — empurrar para contexto real]</span></div></div>
+            <div class="cg-row"><div class="cg-num">3</div><div class="cg-text"><strong>Que problema resolve:</strong> <span>[CANVAS_3 — aceitar respostas amplas, mas empurrar para específico]</span></div></div>
+            <div class="cg-row"><div class="cg-num">4</div><div class="cg-text"><strong>Ideia de desafio (validar tu):</strong> <span>[CANVAS_4 — critérios de calibração: se vago → especificar; se ambicioso → versão mínima]</span></div></div>
+            <div class="cg-row"><div class="cg-num">5</div><div class="cg-text"><strong>Critérios de sucesso:</strong> <span>[CANVAS_5 — forçar mensurável: o que é verificável vs o que é subjetivo]</span></div></div>
+          </div>
+          <div class="transition-box"><div class="transition-box-icon">▶</div><p>"[TRANSICAO_STEP1 — frase que arranca o Step 2, ex: Têm o vosso desafio validado. Agora têm 50 minutos. O relógio está a correr.]"</p></div>
+        </div>
+      </div>
+
+      <!-- ── STEP 2 ── -->
+      <div class="step-block">
+        <div class="step-head sh2">
+          <div class="step-pip pip2">2</div>
+          <div class="step-head-text"><div class="step-head-name">Desafiar — Mãos à Obra com Propósito</div><div class="step-head-sub">[ÁREA_STEP2 — ex: Design · impressão · publicação]</div></div>
+          <div class="step-role">Calibra · não resolve · celebra a tentativa</div>
+          <div class="step-time-badge">50 min</div>
+        </div>
+        <div class="step-body-inner">
+          <div class="script-box">
+            <div class="script-box-label">📢 Script de abertura</div>
+            <p>"Regra de ouro desta sessão: cada vez que me pedirem para resolver um problema, vou fazer-vos uma pergunta em vez disso. Não é crueldade — é o método. Quando descobrem vocês próprios, fica. Quando eu digo, esquece-se em dois minutos."</p>
+          </div>
+          <div class="phase-list">
+            <!-- Substituir com as 3 fases específicas do Step 2 desta atividade -->
+            <div class="phase-item"><div class="phase-label">0–15 min · [FASE_1_NOME — ex: Exploração dirigida]</div><div class="phase-body">[FASE_1_DESCRIÇÃO — o que os grupos fazem e o que o dinamizador observa]</div></div>
+            <div class="phase-item"><div class="phase-label">15–35 min · [FASE_2_NOME — ex: Construção intencional]</div><div class="phase-body">[FASE_2_DESCRIÇÃO — trabalho no objeto do Brief Canvas. Incluir checkpoint: 'versão 1 feita — o que melhoras?']</div></div>
+            <div class="phase-item"><div class="phase-label">35–50 min · [FASE_3_NOME — ex: Preparação para entrega/impressão]</div><div class="phase-body">[FASE_3_DESCRIÇÃO — passos de finalização, entrega, ou preparação para Step 3. Incluir critérios técnicos mínimos se aplicável]</div></div>
+          </div>
+          <div class="questions-box">
+            <h4>Perguntas de Sócrates (para grupos bloqueados)</h4>
+            <ul>
+              <!-- Substituir com perguntas específicas desta atividade -->
+              <li>[SOCRATES_1 — o que querias que acontecesse? o que está a acontecer?]</li>
+              <li>[SOCRATES_2 — muda apenas um elemento. o que muda?]</li>
+              <li>[SOCRATES_3 — qual é o elemento mais importante? porquê?]</li>
+              <li>[SOCRATES_4 — se descrevesses o resultado em palavras, como traduzias para ação?]</li>
+            </ul>
+          </div>
+          <div class="transition-box"><div class="transition-box-icon">▶</div><p>"[TRANSICAO_STEP2 — ex: Cinco minutos. Guardem o trabalho e preparem uma coisa para mostrar — pode ser a versão que ficou melhor, não precisa de ser perfeita.]"</p></div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3 ── -->
+      <div class="step-block">
+        <div class="step-head sh3">
+          <div class="step-pip pip3">3</div>
+          <div class="step-head-text"><div class="step-head-name">Validar — Mostrar, Questionar, Projetar</div><div class="step-head-sub">Galeria · feedback · critérios</div></div>
+          <div class="step-role">Modera · valoriza processo E resultado</div>
+          <div class="step-time-badge">20 min</div>
+        </div>
+        <div class="step-body-inner">
+          <div class="script-box">
+            <div class="script-box-label">📢 Script de abertura</div>
+            <p>"Cada grupo tem 3 minutos. Mostram o [DELIVERABLE], dizem o nome, para que serve, e uma coisa que descobriram durante o processo. Depois, cada grupo dá feedback com post-its: amarelo — o que funcionou; verde — uma sugestão. Sem 'está bonito' — queremos feedback específico."</p>
+          </div>
+          <ul class="task-list">
+            <!-- Substituir com logística específica da galeria desta atividade -->
+            <li><span>[LOGISTICA_GALERIA_1 — ex: projetar o resultado com rotação/demo ativa]</span></li>
+            <li><span>[LOGISTICA_GALERIA_2 — ex: mostrar o ficheiro de configuração durante apresentação]</span></li>
+            <li><span>[LOGISTICA_GALERIA_3 — ex: colocar deliverables físicos na mesa central]</span></li>
+          </ul>
+          <div class="questions-box">
+            <h4>Perguntas de discussão para a galeria</h4>
+            <ul>
+              <li>Qual foi a decisão de design mais difícil?</li>
+              <li>Se tivessem mais 10 minutos, o que mudavam?</li>
+              <li>[PERGUNTA_GALERIA_ESPECIFICA — pergunta técnica específica desta atividade]</li>
+            </ul>
+          </div>
+          <div class="transition-box"><div class="transition-box-icon">▶</div><p>"Ótimo trabalho. Agora o mais importante: o que ficou em cada um de vocês."</p></div>
+        </div>
+      </div>
+
+      <!-- ── STEP 4 ── -->
+      <div class="step-block">
+        <div class="step-head sh4">
+          <div class="step-pip pip4">4</div>
+          <div class="step-head-text"><div class="step-head-name">Retrospetiva — O Que Ficou em Mim?</div><div class="step-head-sub">Reflexão individual · partilha</div></div>
+          <div class="step-role">Cria espaço · não avalia · regista</div>
+          <div class="step-time-badge">15 min</div>
+        </div>
+        <div class="step-body-inner">
+          <div class="script-box">
+            <div class="script-box-label">📢 Script de abertura</div>
+            <p>"Dois minutos em silêncio. Escrevam três frases: 'Aprendi que...' / 'Fiquei surpreendido quando...' / 'Na próxima vez quero...' Não vou recolher. É para vocês. Depois cada um partilha uma — a que quiser."</p>
+          </div>
+          <ul class="task-list">
+            <li><span>Quem usou vocabulário técnico correto ([VOCABULARIO_CHAVE — ex: JSON, coordenadas, revolução])?</span></li>
+            <li><span>Algum grupo definiu critérios de sucesso no Canvas e avaliou contra eles?</span></li>
+            <li><span>Quem demonstrou iteração deliberada (tentou, falhou, ajustou, tentou de novo)?</span></li>
+            <li><span>Nível de confiança antes/depois — pedir show of hands: 1–2–3–4–5</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAMIFICAÇÃO -->
+    <div class="section">
+      <div class="section-title">⚡ Gamificação</div>
+      <div class="game-grid">
+        <div class="game-card">
+          <div class="game-card-head gh-teal"><span>⚡</span><h3>Sensor Pick</h3></div>
+          <div class="game-card-body">Ativa quando observas um momento de descoberta genuína: "Para todos — o grupo X acabou de descobrir algo interessante. Grupo X, expliquem em 30 segundos." Não anunciar antecipadamente.</div>
+        </div>
+        <div class="game-card">
+          <div class="game-card-head gh-amber"><span>🏆</span><h3>Prémio de Argumento</h3></div>
+          <!-- Substituir com variante específica desta atividade -->
+          <div class="game-card-body">[PREMIO_ARGUMENTO — ex: No Step 3, o grupo com o critério de sucesso mais preciso e verificável ganha reconhecimento público.]</div>
+        </div>
+        <div class="game-card">
+          <div class="game-card-head gh-green"><span>🌍</span><h3>Open Source / Partilha</h3></div>
+          <div class="game-card-body">[MECANICA_PARTILHA — ex: O primeiro objeto publicado na plataforma com descrição completa recebe menção especial no canal do CICF.]</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTINGÊNCIAS -->
+    <div class="section">
+      <div class="section-title">🔴 Contingências</div>
+      <div class="ct-list">
+        <!-- Sempre incluir contingência 1 (ferramenta não carrega) e adaptar as restantes -->
+        <div class="ct-card"><div class="ct-head"><div class="ct-num">1</div><strong>[FERRAMENTA] não carrega / browser com erro</strong></div><div class="ct-body">Abre o ficheiro local (ter cópia offline em todos os PCs). Se não houver cópia offline: muda para <strong>modo demonstração coletiva</strong> num único PC projetado.</div></div>
+        <div class="ct-card"><div class="ct-head"><div class="ct-num">2</div><strong>Um grupo está muito atrasado em relação aos outros</strong></div><div class="ct-body">Simplifica o Brief Canvas para campos 3 e 4 apenas. Sugere começar pelo exemplo mais simples e fazer apenas 2 alterações. O objetivo é ter uma <strong>experiência completa de ciclo</strong>, mesmo que o resultado seja simples.</div></div>
+        <div class="ct-card"><div class="ct-head"><div class="ct-num">3</div><strong>[CONTINGENCIA_3 — problema técnico específico desta atividade]</strong></div><div class="ct-body">[RESPOSTA_3 — incluir pergunta de Sócrates que transforma o problema em oportunidade de aprendizagem]</div></div>
+        <div class="ct-card"><div class="ct-head"><div class="ct-num">4</div><strong>Um grupo terminou o Step 2 muito cedo (20+ min de sobra)</strong></div><div class="ct-body">Ativa o desafio extra ([DESAFIO_EXTRA — funcionalidade avançada ou variante criativa]). Se também estiver feito: "Cria agora algo que seja complementar ao primeiro — juntos, contam uma história."</div></div>
+        <div class="ct-card"><div class="ct-head"><div class="ct-num">5</div><strong>Participante sem nenhuma experiência com [ÁREA_STEM]</strong></div><div class="ct-body">Emparelha com alguém mais experiente, mas garante que a pessoa sem experiência <strong>é quem executa</strong> — não quem observa. Fazer e ver o resultado é o núcleo da aprendizagem.</div></div>
+        <div class="ct-card"><div class="ct-head"><div class="ct-num">6</div><strong>Grupo que questiona "para que serve isto no mundo real?"</strong></div><div class="ct-body">[RESPOSTA_MUNDO_REAL — ligação concreta a aplicações profissionais ou científicas desta área. Incluir 2-3 exemplos específicos.]</div></div>
+      </div>
+    </div>
+
+    <!-- NOTAS PÓS-SESSÃO -->
+    <div class="section">
+      <div class="section-title">📝 Notas Pós-Sessão</div>
+      <div class="notes-grid">
+        <div class="note-field"><label>Data</label><input type="text" placeholder="dd/mm/aaaa"></div>
+        <div class="note-field"><label>N.º de participantes</label><input type="text" placeholder=""></div>
+        <div class="note-field"><label>[METRICA_1 — ex: Objetos impressos com sucesso]</label><input type="text" placeholder=""></div>
+        <div class="note-field"><label>[METRICA_2 — ex: Objetos publicados em open source]</label><input type="text" placeholder=""></div>
+        <div class="note-field">
+          <label>Nível de confiança médio — antes</label>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+            <div class="star-row" id="stars-before"></div>
+            <span style="font-size:14px;color:var(--muted)">/5</span>
+          </div>
+        </div>
+        <div class="note-field">
+          <label>Nível de confiança médio — depois</label>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+            <div class="star-row" id="stars-after"></div>
+            <span style="font-size:14px;color:var(--muted)">/5</span>
+          </div>
+        </div>
+        <div class="note-field">
+          <label>Contingência ativada?</label>
+          <div class="notes-check-row" style="margin-top:6px">
+            <label><input type="checkbox"> Sim</label>
+            <label><input type="checkbox"> Não</label>
+          </div>
+          <input type="text" placeholder="Qual?" style="margin-top:8px">
+        </div>
+        <div class="note-field"><label>O que correu melhor</label><textarea placeholder="…"></textarea></div>
+        <div class="note-field" style="grid-column:1/-1"><label>O que mudaria na próxima sessão</label><textarea placeholder="…"></textarea></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="doc-footer">
+    <div class="footer-left">Centro de Inovação Carlos Fiolhais · CDI Portugal<br>cicf.pt · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="95f6faf1fcf2fad5f6fcf6f3bbe5e1">[email&#160;protected]</a> &nbsp;·&nbsp; Uso interno — não distribuir a participantes</div>
+    <div class="footer-right">CC BY-SA 4.0</div>
+  </div>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function buildStars(id) {
+  const el = document.getElementById(id);
+  let val = 0;
+  for (let i = 1; i <= 5; i++) {
+    const s = document.createElement('div');
+    s.className = 'star'; s.textContent = i; s.dataset.v = i;
+    s.onclick = () => { val = i; el.querySelectorAll('.star').forEach(x => x.classList.toggle('on', +x.dataset.v <= val)); };
+    el.appendChild(s);
+  }
+}
+buildStars('stars-before');
+buildStars('sta
